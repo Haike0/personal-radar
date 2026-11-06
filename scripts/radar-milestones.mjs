@@ -3,7 +3,7 @@
 // Only unsorted items (milestone IS NULL) are sent, and only their title + one-line note — never raw chat.
 // Usage: node scripts/radar-milestones.mjs [--dry]
 import { DatabaseSync } from "node:sqlite";
-import { AI, RADAR_DB, requireKey } from "./lib/env.mjs";
+import { AI, RADAR_DB, extraBody, requireKey } from "./lib/env.mjs";
 
 const DB = RADAR_DB;
 const dry = process.argv.includes("--dry");
@@ -18,7 +18,7 @@ async function classify(k, rows) {
   const user = rows.map((r) => `${r.id} | ${r.title} | ${(r.summary ?? "").replace(/\s+/g, " ").slice(0, 80)}`).join("\n");
   const res = await fetch(`${AI.baseUrl}/chat/completions`, {
     method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${k}` },
-    body: JSON.stringify({ model: AI.model, ...(/deepseek/i.test(AI.baseUrl) ? { thinking: { type: "disabled" } } : {}), messages: [{ role: "system", content: SYSTEM }, { role: "user", content: user }], temperature: 0, max_tokens: 400 }),
+    body: JSON.stringify({ model: AI.model, ...extraBody(), messages: [{ role: "system", content: SYSTEM }, { role: "user", content: user }], temperature: 0, max_tokens: 400 }),
     signal: AbortSignal.timeout(90_000),
   });
   if (!res.ok) throw new Error(`DeepSeek HTTP ${res.status}`);

@@ -74,6 +74,11 @@ export function status(): { ok: boolean; dir: string; sessions: number; error?: 
   return { ok: sessions > 0, dir: realDirs().join(" + "), sessions, error: sessions ? undefined : "还没有导入聊天：运行 npm run import -- <导出文件>" };
 }
 
+/** Drop cached handles of imported chats (after an import, so the next read sees the new file state). */
+export function closeReal() {
+  for (const [id, d] of cache) if (!id.startsWith("demo_")) { try { d.close(); } catch {} cache.delete(id); }
+}
+
 /** Drop cached handles (demo dbs are rebuilt when the demo set changes). */
 export function closeDemo() {
   for (const [id, d] of cache) if (id.startsWith("demo_")) { try { d.close(); } catch {} cache.delete(id); }

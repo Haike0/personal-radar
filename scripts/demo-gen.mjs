@@ -7,7 +7,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { CAST, HOSTESS, STYLE } from "../demo/night/cast.mjs";
-import { AI, requireKey } from "./lib/env.mjs";
+import { AI, extraBody, requireKey } from "./lib/env.mjs";
 
 const ROOT = path.join(path.dirname(new URL(import.meta.url).pathname), "..");
 const OUT = path.join(ROOT, "demo/night");
@@ -27,7 +27,7 @@ async function ds(system, user, { max = 8000, temp = 1.0 } = {}) {
     try {
       const res = await fetch(`${AI.baseUrl}/chat/completions`, {
         method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${K}` },
-        body: JSON.stringify({ model: AI.model, ...(/deepseek/i.test(AI.baseUrl) ? { thinking: { type: "disabled" } } : {}), messages: [{ role: "system", content: system }, { role: "user", content: user }], temperature: temp, max_tokens: max }),
+        body: JSON.stringify({ model: AI.model, ...extraBody(), messages: [{ role: "system", content: system }, { role: "user", content: user }], temperature: temp, max_tokens: max }),
         signal: AbortSignal.timeout(300_000),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status} ${(await res.text()).slice(0, 200)}`);

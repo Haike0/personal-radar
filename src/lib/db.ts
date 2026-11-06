@@ -54,6 +54,24 @@ const DEFAULT_SETTINGS: Record<string, string> = {
   bark_server: "https://api.day.app",
   bark_key: "",
   bark_encrypt_key: "",
+  // AI service (OpenAI-compatible). RADAR_AI_* environment variables override these.
+  ai_preset: "deepseek",
+  ai_base_url: "https://api.deepseek.com",
+  ai_model: "deepseek-flash",
+  ai_key: "",
+  // what may leave the computer (see scripts/lib/redact.mjs)
+  privacy_rules: '["secrets","contact","finance","ids","network"]',
+  privacy_keywords: "[]",
+  privacy_custom: "[]",
+  ai_excluded: "[]",
+  // organizing
+  auto_organize: "off",
+  auto_organize_time: "21:50",
+  last_auto_organize: "",
+  // ChatLab local API (optional)
+  chatlab_api_url: "http://127.0.0.1:3110",
+  chatlab_api_token: "",
+  chatlab_sessions: "[]",
 };
 
 let _db: DatabaseSync | null = null;

@@ -1,0 +1,6 @@
+{"name":"Mika","type":"personal_chat","id":4242,"messages":[
+ {"id":1,"type":"message","date":"2026-11-05T21:03:12","date_unixtime":"1793880192","from":"Mika","from_id":"user100","text":"exam results come out on the 20th"},
+ {"id":2,"type":"message","date":"2026-11-05T21:04:00","date_unixtime":"1793880240","from":"Leo","from_id":"user200","text":[{"type":"plain","text":"good luck, "},{"type":"bold","text":"call me"}],"reply_to_message_id":1},
+ {"id":3,"type":"message","date":"2026-11-05T21:05:00","date_unixtime":"1793880300","from":"Mika","from_id":"user100","media_type":"sticker","sticker_emoji":"🙏","text":""},
+ {"id":4,"type":"service","date":"2026-11-05T21:06:00","date_unixtime":"1793880360","actor":"Leo","actor_id":"user200","action":"phone_call","text":""}
+]}

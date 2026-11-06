@@ -46,7 +46,14 @@ const SESSIONS = (() => {
       } catch {}
     }
   }
-  return [...ids];
+  // people set to "不发给 AI" in 设置 → 隐私 are never organized
+  let excluded = new Set();
+  try {
+    const d = new DatabaseSync(RADAR_DB, { readOnly: true });
+    excluded = new Set(JSON.parse(d.prepare("SELECT value FROM settings WHERE key='ai_excluded'").get()?.value ?? "[]").map(String));
+    d.close();
+  } catch {}
+  return [...ids].filter((id) => !excluded.has(id));
 })();
 const TEXT_TYPES = new Set([0, 4, 7, 20, 21, 24, 25, 26]); // text, file, link, red packet, transfer, share, reply, forwarded record
 const KINDS = ["plan", "promise", "need", "pending", "preference", "concern", "change", "fact"];

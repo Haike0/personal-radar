@@ -1,0 +1,5 @@
+{"personal_information":{"user_id":200,"first_name":"Leo","last_name":""},
+ "chats":{"about":"","list":[
+  {"name":"Mika","type":"personal_chat","id":4242,"messages":[{"id":1,"type":"message","date":"2026-11-05T21:03:12","date_unixtime":"1793880192","from":"Mika","from_id":"user100","text":"hi"},{"id":2,"type":"message","date":"2026-11-05T21:04:12","date_unixtime":"1793880252","from":"Leo","from_id":"user200","text":"hey"}]},
+  {"name":"Book club","type":"private_group","id":5555,"messages":[{"id":1,"type":"message","date":"2026-11-01T10:00:00","date_unixtime":"1793494800","from":"Ann","from_id":"user300","text":"next book?"},{"id":2,"type":"message","date":"2026-11-01T10:01:00","date_unixtime":"1793494860","from":"Ben","from_id":"user400","text":"dune"},{"id":3,"type":"message","date":"2026-11-01T10:02:00","date_unixtime":"1793494920","from":"Leo","from_id":"user200","text":"ok"}]}
+ ]}}

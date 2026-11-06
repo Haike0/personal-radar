@@ -1,11 +1,12 @@
 import "server-only";
 import * as chatlab from "./chatlab";
 import { complete } from "./ai/deepseek";
+import { isExcluded } from "./ai-config";
 import { db, listItems, nowStr } from "./db";
 import type { Item } from "./types";
 
 // 聊天记忆: one person's chat by day (after ChatLab's 记忆 view). Raw messages are read live from ChatLab (read-only);
-// the only thing stored here is the optional one-day summary, made by DeepSeek the first time you ask for it.
+// the only thing stored here is the optional one-day summary, made by your AI service the first time you ask for it.
 
 let ready = false;
 function d() {
@@ -36,8 +37,9 @@ export function day(key: string, date: string) {
   };
 }
 
-/** Summarize one day with DeepSeek (only that day's messages are sent) and keep it. */
+/** Summarize one day with the AI service (only that day's messages are sent) and keep it. */
 export async function summarize(key: string, name: string, date: string) {
+  if (isExcluded(key)) return null; // set to "不发给 AI" in 设置 → 隐私
   const msgs = chatlab.dayMessages(key, date, 800).filter((m) => m.text.trim() && !/^\[(表情|图片|动画表情)\]$/.test(m.text));
   if (!msgs.length) return null;
   const text = msgs.map((m) => `(${m.ts.slice(11)} ${m.sender}) ${m.text.replace(/\s+/g, " ").slice(0, 120)}`).join("\n");

@@ -12,7 +12,7 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import readline from "node:readline/promises";
 import path from "node:path";
-import { AI, DATA_DIR, requireKey } from "./lib/env.mjs";
+import { AI, DATA_DIR, extraBody, requireKey, scrub } from "./lib/env.mjs";
 
 const HERE = path.dirname(new URL(import.meta.url).pathname);
 const NODE = process.execPath;
@@ -47,7 +47,7 @@ async function chat(K, messages, maxTokens = 8000) {
   const t0 = Date.now();
   const res = await fetch(`${AI.baseUrl}/chat/completions`, {
     method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${K}` },
-    body: JSON.stringify({ model: MODEL, messages, ...(/deepseek/i.test(AI.baseUrl) ? { thinking: { type: "disabled" } } : {}), temperature: 0.2, max_tokens: maxTokens, response_format: { type: "json_object" } }),
+    body: JSON.stringify({ model: MODEL, messages: messages.map((m) => (m.role === "user" ? { ...m, content: scrub(m.content) } : m)), ...extraBody(), temperature: 0.2, max_tokens: maxTokens, response_format: { type: "json_object" } }),
   });
   if (!res.ok) throw new Error(`AI API HTTP ${res.status} ${(await res.text()).slice(0, 200)}`);
   const j = await res.json(), u = j.usage ?? {};

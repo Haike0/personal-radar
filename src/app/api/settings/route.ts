@@ -3,7 +3,7 @@ import { db, getSettings, nowStr, setDemoSet, setSettings } from "@/lib/db";
 import { deepseekKey } from "@/lib/ai/deepseek";
 import { syncStatus } from "@/lib/sync";
 
-const SECRET = ["bark_key", "bark_encrypt_key"];
+const SECRET = ["bark_key", "bark_encrypt_key", "ai_key", "chatlab_api_token"];
 
 export async function GET() {
   await connection();
