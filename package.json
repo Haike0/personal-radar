@@ -1,0 +1,45 @@
+{
+  "name": "personal-radar",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3210",
+    "build": "next build",
+    "start": "next start -p 3210",
+    "lint": "eslint",
+    "import": "node scripts/import.mjs",
+    "organize": "node scripts/organize.mjs",
+    "milestones": "node scripts/radar-milestones.mjs",
+    "check:privacy": "sh scripts/check-privacy.sh"
+  },
+  "dependencies": {
+    "@mantine/core": "^9.7.5",
+    "@mantine/dates": "^9.7.5",
+    "@mantine/hooks": "^9.7.5",
+    "@mantine/modals": "^9.7.5",
+    "@mantine/notifications": "^9.7.5",
+    "@tabler/icons-react": "^3.50.0",
+    "dayjs": "^1.11.23",
+    "next": "16.4.5",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "server-only": "^0.0.1",
+    "web-push": "^3.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/web-push": "^3.6.4",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.5",
+    "postcss-preset-mantine": "^1.18.0",
+    "postcss-simple-vars": "^7.0.1",
+    "typescript": "^5"
+  },
+  "description": "Local-first relationship memory: turns your chat exports into reminders, promises and notes about the people you care about.",
+  "license": "AGPL-3.0-only",
+  "engines": {
+    "node": ">=22.13"
+  }
+}

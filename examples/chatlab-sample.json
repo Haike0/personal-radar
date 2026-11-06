@@ -1,0 +1,8 @@
+{"chatlab":{"version":"0.0.2","exportedAt":1794000000},
+ "meta":{"name":"Lin","platform":"weixin","type":"private","ownerId":"me"},
+ "members":[{"platformId":"me","accountName":"我"},{"platformId":"lin","accountName":"Lin"}],
+ "messages":[
+  {"platformMessageId":"s-1","sender":"lin","accountName":"Lin","timestamp":1793786000,"type":0,"content":"下周五我面试，好紧张"},
+  {"platformMessageId":"s-2","sender":"me","accountName":"我","timestamp":1793786060,"type":0,"content":"我那天提醒你，先帮你改简历"},
+  {"platformMessageId":"s-3","sender":"lin","accountName":"Lin","timestamp":1793786120,"type":0,"content":"好呀，我不吃香菜记得哈"}
+ ]}
