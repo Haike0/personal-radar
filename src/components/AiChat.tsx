@@ -152,7 +152,7 @@ export function AiChat({ context, layout, seedPrompt, onNavigate, picker }: {
     </Stack>
   );
 
-  // four assistants up front (like ChatLab's selector); the rest behind 更多
+  // four assistants up front; the rest behind 更多
   const [moreA, setMoreA] = useState(false);
   const shown = ASSISTANTS.filter((x) => x.pinned || moreA || x.id === assistant);
   const pills = (

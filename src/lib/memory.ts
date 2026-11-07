@@ -5,7 +5,7 @@ import { isExcluded } from "./ai-config";
 import { db, listItems, nowStr } from "./db";
 import type { Item } from "./types";
 
-// 聊天记忆: one person's chat by day (after ChatLab's 记忆 view). Raw messages are read live from ChatLab (read-only);
+// 聊天记忆: one person's chat by day. Raw messages are read live from the chat databases (read-only);
 // the only thing stored here is the optional one-day summary, made by your AI service the first time you ask for it.
 
 let ready = false;

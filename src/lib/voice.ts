@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { DATA_DIR } from "./config";
 
-// Derived, local-only ASR. This database is separate from the read-only ChatLab source.
+// Derived, local-only ASR. This database is separate from the read-only chat databases.
 let cached: DatabaseSync | null = null;
 function open(): DatabaseSync | null {
   const dir = DATA_DIR;
@@ -14,7 +14,7 @@ function open(): DatabaseSync | null {
     if (!cached) cached = new DatabaseSync(file, { readOnly: true });
     return cached;
   } catch {
-    return null; // sidecar unreadable → pages fall back to ChatLab's own text
+    return null; // sidecar unreadable → pages fall back to the original text
   }
 }
 // LIKE treats % and _ as wildcards; escape user input so a search for "50%" means the literal text

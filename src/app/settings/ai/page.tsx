@@ -7,7 +7,7 @@ import { useState } from "react";
 import { usePageContext } from "@/components/Shell";
 import { post, refreshAll, useApi } from "@/lib/client";
 
-// AI 设置, laid out like ChatLab's: a section list on the left (top on phones), one card per section.
+// AI 设置: a section list on the left (top on phones), one card per section.
 type Svc = { id: string; name: string; baseUrl: string; models: string[]; builtin?: boolean; fromEnv?: boolean; keyUrl?: string; hasKey: boolean };
 type Preset = { id: string; name: string; baseUrl: string; models: string[]; keyUrl: string };
 type Pick = { serviceId: string; model: string };

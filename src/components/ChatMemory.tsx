@@ -11,7 +11,7 @@ import { post, useApi } from "@/lib/client";
 import { WEEKDAYS } from "@/lib/format";
 import type { Item } from "@/lib/types";
 
-// 聊天记忆 (after ChatLab's 记忆 view): every day you talked, newest first → open a day to read it,
+// 聊天记忆: every day you talked, newest first → open a day to read it,
 // see what was learned that day, get a short summary, and ask the AI about exactly that day. Plus a search over the words.
 
 type Day = { date: string; messages: number; items: number; summary: string | null };
