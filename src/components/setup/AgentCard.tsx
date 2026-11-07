@@ -3,7 +3,7 @@ import { Button, CopyButton, Group, Paper, Stack, Text } from "@mantine/core";
 import { IconCheck, IconCopy, IconRobot } from "@tabler/icons-react";
 import { useApi } from "@/lib/client";
 
-type Agent = { skill: string; run: string; prompt: string };
+type Agent = { run: string; prompt: string };
 const AGENTS = ["Claude Code", "Codex", "WorkBuddy", "Hermes"];
 
 /** Hand Radar to the agent you already use: one sentence to paste, and it imports, organizes and schedules itself. */

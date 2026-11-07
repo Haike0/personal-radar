@@ -14,7 +14,7 @@ const parse = <T,>(s: string | undefined, fb: T): T => { try { const v = JSON.pa
 // one line per option, so ticking or unticking an option visibly changes its own line (all fictional)
 const SAMPLES: Record<string, string> = {
   secrets: "服务器密码发你了：sk-demo-0000-0000-0000",
-  contact: "到了打我电话 138 1234 5678，或发邮件 xiaoyu@example.com",
+  contact: "到了打我电话 138 1234 5678，或发邮件 lin@example.com",
   finance: "定金转这张卡 6214 8301 2345 6781",
   ids: "订票要身份证号 110101199003077777",
   network: "店在这儿 https://map.example.com/place?id=8812&from=share",

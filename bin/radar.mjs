@@ -8,7 +8,7 @@
 //   personal-radar import <files…>     import chat exports
 //   personal-radar ai status|next|submit|digest|analysis …   organize with your own agent (see agent/SKILL.md)
 //   personal-radar organize --yes      organize with the API key saved in Settings
-//   personal-radar guide extract|analysis|export   print the organizing rules / analysis rules / export guide
+//   personal-radar guide agent|extract|analysis|export   print the agent skill / organizing rules / analysis rules / export guide
 // Listens on this computer only by default: anyone on the same Wi-Fi could otherwise read your chats.
 // For your phone, use Tailscale (`tailscale serve 3210`) instead of opening it to the network.
 import { spawn, spawnSync } from "node:child_process";
@@ -31,10 +31,10 @@ if (maj < 22 || (maj === 22 && min < 13)) {
 
 // subcommands run a script and exit; they read and write the same data folder as the app
 const SUB = { import: "import.mjs", ai: "radar-ai.mjs", organize: "organize.mjs" };
-const GUIDES = { extract: "ai-extract-guide.md", analysis: "ai-analysis-guide.md", export: "export-guide.md" };
+const GUIDES = { agent: "../agent/SKILL.md", extract: "ai-extract-guide.md", analysis: "ai-analysis-guide.md", export: "export-guide.md" };
 if (args[0] === "guide") {
   const f = GUIDES[args[1]];
-  if (!f) { console.error("用法：personal-radar guide extract|analysis|export"); process.exit(1); }
+  if (!f) { console.error("用法：personal-radar guide agent|extract|analysis|export"); process.exit(1); }
   process.stdout.write(fs.readFileSync(path.join(ROOT, "docs", f), "utf8"));
   process.exit(0);
 }
