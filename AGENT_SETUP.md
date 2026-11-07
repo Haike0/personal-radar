@@ -33,6 +33,7 @@ curl -s http://localhost:3210/api/health   # expect JSON
 Stop it again before phase 4.
 
 ## 4. Keep it running (starts at login)
+Always keep `-H 127.0.0.1`: without it the server answers anyone on the same Wi-Fi. The phone goes through Tailscale (phase 5), not the open network.
 Reminders are sent by this server, so it must be running.
 
 **macOS** — write `~/Library/LaunchAgents/local.personal-radar.plist`:
@@ -42,7 +43,7 @@ Reminders are sent by this server, so it must be running.
 <plist version="1.0"><dict>
   <key>Label</key><string>local.personal-radar</string>
   <key>ProgramArguments</key><array>
-    <string>NODE_PATH_HERE</string><string>node_modules/next/dist/bin/next</string><string>start</string><string>-p</string><string>3210</string>
+    <string>NODE_PATH_HERE</string><string>node_modules/next/dist/bin/next</string><string>start</string><string>-p</string><string>3210</string><string>-H</string><string>127.0.0.1</string>
   </array>
   <key>WorkingDirectory</key><string>REPO_PATH_HERE</string>
   <key>EnvironmentVariables</key><dict><key>NODE_ENV</key><string>production</string></dict>
@@ -53,7 +54,7 @@ Reminders are sent by this server, so it must be running.
 Replace `NODE_PATH_HERE` with `which node` and `REPO_PATH_HERE` with the absolute repo path, then `launchctl load ~/Library/LaunchAgents/local.personal-radar.plist`.
 Tell the user: if the Mac sleeps, reminders wait until it wakes (System Settings → Battery/Energy → prevent automatic sleeping, if they want them on time).
 
-**Linux** — a user unit `~/.config/systemd/user/personal-radar.service` with `WorkingDirectory=<repo>`, `ExecStart=<node> node_modules/next/dist/bin/next start -p 3210`, `Environment=NODE_ENV=production`, `Restart=always`; then `systemctl --user enable --now personal-radar`.
+**Linux** — a user unit `~/.config/systemd/user/personal-radar.service` with `WorkingDirectory=<repo>`, `ExecStart=<node> node_modules/next/dist/bin/next start -p 3210 -H 127.0.0.1`, `Environment=NODE_ENV=production`, `Restart=always`; then `systemctl --user enable --now personal-radar`.
 
 **Windows** — `schtasks /Create /SC ONLOGON /TN PersonalRadar /TR "cmd /c cd /d <repo> && npm run serve"`.
 

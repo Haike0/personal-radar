@@ -3,7 +3,9 @@
 //   npx github:Ikarishinji00/personal-radar         (or `npm start` inside a clone)
 // The package ships the built app (npm runs `prepare` → next build when installing from GitHub), so it starts in seconds.
 // In a clone without a build, the first run builds it (about a minute).
-// Options: --port 3210   --rebuild   --no-open
+// Options: --port 3210   --rebuild   --no-open   --host 127.0.0.1
+// Listens on this computer only by default: anyone on the same Wi-Fi could otherwise read your chats.
+// For your phone, use Tailscale (`tailscale serve 3210`) instead of opening it to the network.
 import { spawn, spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
@@ -14,6 +16,7 @@ const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..")
 const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf(`--${k}`); return i >= 0 ? args[i + 1] : d; };
 const PORT = String(opt("port", process.env.PORT ?? "3210"));
+const HOST = String(opt("host", process.env.RADAR_HOST ?? "127.0.0.1"));
 
 const [maj, min] = process.versions.node.split(".").map(Number);
 if (maj < 22 || (maj === 22 && min < 13)) {
@@ -43,8 +46,8 @@ if (!built || args.includes("--rebuild")) {
   if (b.status !== 0) { console.error(`${b.stdout ?? ""}${b.stderr ?? ""}\n准备失败，上面是出错信息。可以到 GitHub 提 issue。`); process.exit(1); }
 }
 
-const url = `http://localhost:${PORT}`;
-const server = spawn(process.execPath, [next, "start", "-p", PORT], {
+const url = `http://${HOST === "127.0.0.1" || HOST === "0.0.0.0" || HOST === "::" ? "localhost" : HOST}:${PORT}`;
+const server = spawn(process.execPath, [next, "start", "-p", PORT, "-H", HOST], {
   cwd: ROOT, stdio: ["ignore", "ignore", "inherit"],
   env: { ...process.env, NODE_ENV: "production", RADAR_PORT: PORT, NEXT_TELEMETRY_DISABLED: "1" },
 });
@@ -53,11 +56,13 @@ for (const sig of ["SIGINT", "SIGTERM"]) process.on(sig, () => server.kill(sig))
 
 // wait until it answers, then open the browser
 for (let i = 0; i < 60; i++) {
-  try { const r = await fetch(`${url}/api/health`); if (r.ok) break; } catch {}
+  // ask 127.0.0.1 directly: "localhost" may resolve to ::1 first, where nothing listens
+  try { const r = await fetch(`http://${HOST === "0.0.0.0" || HOST === "::" || HOST === "localhost" ? "127.0.0.1" : HOST}:${PORT}/api/health`); if (r.ok) break; } catch {}
   await new Promise((r) => setTimeout(r, 500));
 }
 const dataDir = (process.env.RADAR_DATA_DIR ?? path.join(os.homedir(), ".personal-radar")).replace(os.homedir(), "~");
 console.log(`\n  Personal Radar 已经开好：${url}\n  聊天和记录都在你自己的电脑上（${dataDir}）。按 Ctrl+C 关闭。\n`);
+if (HOST !== "127.0.0.1" && HOST !== "localhost") console.log(`  注意：现在监听的是 ${HOST}，同一网络里的人也能打开这个页面、看到你的聊天整理结果。\n`);
 if (!args.includes("--no-open")) {
   const cmd = process.platform === "darwin" ? "open" : process.platform === "win32" ? "cmd" : "xdg-open";
   const a = process.platform === "win32" ? ["/c", "start", "", url] : [url];
