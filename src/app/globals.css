@@ -297,3 +297,7 @@ a.apl-tl-title:hover { text-decoration: underline; text-underline-offset: 3px; }
 .privacy-pair:not([data-on]) { border-left-color: light-dark(rgba(250,82,82,.5), rgba(250,82,82,.5)); }
 .privacy-pair .privacy-before { color: var(--mantine-color-dimmed); }
 .privacy-pair:not([data-on]) .privacy-after { color: var(--mantine-color-red-7); }
+
+/* 说话算数账本 entry on 今天: warm, so it reads as the fun part */
+.ledger-entry { display: block; width: 100%; background: light-dark(linear-gradient(120deg, #fff4ec, #fff0f5), linear-gradient(120deg, rgba(255,106,61,.12), rgba(255,79,134,.10))); border: 1px solid light-dark(rgba(255,106,61,.22), rgba(255,106,61,.25)); }
+.ledger-row + .ledger-row { border-top: 1px solid light-dark(rgba(20,24,39,.07), rgba(255,255,255,.06)); }

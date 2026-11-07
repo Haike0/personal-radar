@@ -1,4 +1,5 @@
 import type { DatabaseSync } from "node:sqlite";
+import { LEDGER_SQL } from "./ledger-schema";
 import { clearNightChats, nightAvailable, seedNight } from "./seed-night";
 
 // Clearly-labelled demo data (mode='demo'). Names are fictional; never real chat content.
@@ -26,7 +27,8 @@ export function seedDemo(d: DatabaseSync, set: string = "love") {
 /** Replace the demo rows with another demo set (real data is never touched). */
 export function reseedDemo(d: DatabaseSync, set: string) {
   const ids = "SELECT id FROM items WHERE mode='demo'";
-  d.exec(`DELETE FROM evidence WHERE item_id IN (${ids}); DELETE FROM history WHERE item_id IN (${ids}); DELETE FROM items WHERE mode='demo';`);
+  d.exec(LEDGER_SQL);
+  d.exec(`DELETE FROM evidence WHERE item_id IN (${ids}); DELETE FROM history WHERE item_id IN (${ids}); DELETE FROM ledger WHERE item_id IN (${ids}); DELETE FROM items WHERE mode='demo';`);
   ensureAnalysisTable(d);
   d.exec("DELETE FROM person_analysis WHERE session_id LIKE 'demo:%'");
   seedDemo(d, set);

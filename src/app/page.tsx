@@ -1,17 +1,19 @@
 "use client";
 import { Alert, Badge, Box, Button, Collapse, Group, Paper, SimpleGrid, Skeleton, Stack, Text, Title, UnstyledButton } from "@mantine/core";
-import { IconChevronDown, IconChevronRight, IconCloudOff, IconFlask, IconInbox } from "@tabler/icons-react";
+import { IconChevronDown, IconChevronRight, IconCloudOff, IconFlask, IconInbox, IconShare2 } from "@tabler/icons-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CAT_COLOR, ItemCard, ReviewButtons } from "@/components/ItemCard";
 import { UpdateNotice } from "@/components/DataAbout";
+import { LedgerShare } from "@/components/LedgerShare";
 import { PersonBar, useCurrentPerson } from "@/components/PersonSwitcher";
 import { usePageContext } from "@/components/Shell";
 import { useApi } from "@/lib/client";
 import { ORDER, pickFocus } from "@/lib/focus";
 import { dayDiff, greeting, relDate, sinceText, WEEKDAYS, weekdayLine } from "@/lib/format";
 import type { Health } from "@/lib/health";
+import { tally, type LedgerData } from "@/lib/ledger-view";
 import { CATEGORY_LABEL, CERTAINTY_LABEL, isKnowledge, unreviewed, type Item, type Mode } from "@/lib/types";
 
 type Data = { mode: Mode; items: Item[]; counts: { action: number; review: number; watching: number } };
@@ -123,6 +125,29 @@ function DataState({ h }: { h: Health | null }) {
   );
 }
 
+/** 说话算数账本: who promised what and didn't do it, one tap to a card you can post. */
+function LedgerEntry({ personKey, name }: { personKey: string; name: string }) {
+  const { data } = useApi<LedgerData>(`/api/people/${encodeURIComponent(personKey)}/ledger`);
+  const [open, setOpen] = useState(false);
+  if (!data?.rows.length) return null;
+  const t = tally(data.rows);
+  const sub = data.unchecked && data.aiReady ? `你们互相答应过 ${data.rows.length} 件事，看看谁没做到` : `我欠${name} ${t.me.owed} 件 · ${name}欠我 ${t.them.owed} 件`;
+  return (
+    <>
+      <UnstyledButton onClick={() => setOpen(true)} className="surface pressable ledger-entry" p="md" style={{ borderRadius: "var(--mantine-radius-xl)" }}>
+        <Group justify="space-between" wrap="nowrap" gap="sm">
+          <div style={{ minWidth: 0 }}>
+            <Text size="sm" fw={650}>说话算数账本</Text>
+            <Text size="xs" className="muted" truncate>{sub}</Text>
+          </div>
+          <Group gap={6} wrap="nowrap" style={{ flex: "none" }} c="orange.6"><IconShare2 size={16} /><Text size="sm" fw={650}>一键晒图</Text></Group>
+        </Group>
+      </UnstyledButton>
+      <LedgerShare personKey={personKey} personName={name} opened={open} onClose={() => setOpen(false)} />
+    </>
+  );
+}
+
 export default function Home() {
   const router = useRouter();
   // always ask fresh (a cached "not set up yet" would bounce you back to the welcome page right after choosing)
@@ -176,6 +201,7 @@ export default function Home() {
         <Box mt="md">
           <PersonBar {...who} subtitle={focus.length ? `今天有 ${focus.length} 件值得你关注的事` : "今天没有需要你操心的事"} />
         </Box>
+        <Box mt="sm"><LedgerEntry personKey={pk} name={person!.name.replace(/^演示·/, "")} /></Box>
       </div>
 
       <UpdateNotice />

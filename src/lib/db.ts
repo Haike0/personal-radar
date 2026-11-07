@@ -3,6 +3,7 @@ import { DatabaseSync } from "node:sqlite";
 import fs from "node:fs";
 import path from "node:path";
 import { isKnowledge, unreviewed, type PersonProfile, type Category, type Certainty, type Evidence, type HistoryEntry, type Item, type ItemDetail, type Kind, type Mode, type Person, type Status } from "./types";
+import { LEDGER_SQL } from "./ledger-schema";
 import { reseedDemo, seedDemo, type DemoSet } from "./seed-demo";
 import * as chatlab from "./chatlab";
 
@@ -106,7 +107,13 @@ export function db(): DatabaseSync {
   const ins = d.prepare("INSERT OR IGNORE INTO settings(key,value) VALUES(?,?)");
   for (const [k, v] of Object.entries(DEFAULT_SETTINGS)) ins.run(k, v);
   const has = d.prepare("SELECT 1 FROM items WHERE mode='demo' LIMIT 1").get();
-  if (!has) seedDemo(d, ((d.prepare("SELECT value FROM settings WHERE key='demo_set'").get() as { value?: string } | undefined)?.value ?? "love") as DemoSet);
+  const set = ((d.prepare("SELECT value FROM settings WHERE key='demo_set'").get() as { value?: string } | undefined)?.value ?? "love") as DemoSet;
+  if (!has) seedDemo(d, set);
+  else {
+    // demo data seeded before 说话算数账本 existed: seed it again once so the demo ledger is filled in
+    d.exec(LEDGER_SQL);
+    if (!d.prepare("SELECT 1 FROM ledger l JOIN items i ON i.id=l.item_id WHERE i.mode='demo' LIMIT 1").get()) reseedDemo(d, set);
+  }
   try {
     fs.chmodSync(DB_PATH, 0o600);
   } catch {}

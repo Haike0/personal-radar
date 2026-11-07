@@ -1,7 +1,7 @@
 "use client";
 import { Alert, Avatar, Badge, Box, Button, Collapse, Group, Paper, SimpleGrid, Skeleton, Stack, Tabs, Text, ThemeIcon, Timeline, Title, UnstyledButton } from "@mantine/core";
 import {
-  IconArrowLeft, IconBriefcase, IconBulb, IconCalendarEvent, IconChartBar, IconChevronDown, IconChevronRight, IconClock, IconFlag, IconHeart,
+  IconArrowLeft, IconBriefcase, IconBulb, IconCalendarEvent, IconChartBar, IconScale, IconChevronDown, IconChevronRight, IconClock, IconFlag, IconHeart,
   IconHeartHandshake, IconMessageHeart, IconSparkles, IconUser, IconUsersGroup,
 } from "@tabler/icons-react";
 import Link from "next/link";
@@ -173,6 +173,18 @@ export default function PersonPage() {
                   <div style={{ minWidth: 0 }}>
                     <Group gap={6}><IconChartBar size={16} color="var(--mantine-color-radar-6)" /><Text size="sm" fw={600}>聊天分析</Text></Group>
                     <Text size="xs" className="faint" mt={2}>回复率、谁先开口、什么时候聊、口头禅、聊什么</Text>
+                  </div>
+                  <IconChevronRight size={18} className="faint" />
+                </Group>
+              </Paper>
+            )}
+
+            {!p.isGroup && (
+              <Paper component={Link} href={`/people/${encodeURIComponent(p.key)}/ledger`} className="surface report-entry pressable">
+                <Group justify="space-between" wrap="nowrap">
+                  <div style={{ minWidth: 0 }}>
+                    <Group gap={6}><IconScale size={16} color="var(--mantine-color-orange-6)" /><Text size="sm" fw={600}>说话算数账本</Text></Group>
+                    <Text size="xs" className="faint" mt={2}>你们互相答应过的事，谁做到了、谁没做</Text>
                   </div>
                   <IconChevronRight size={18} className="faint" />
                 </Group>

@@ -125,6 +125,18 @@ export function getContext(sessionId: string, messageId: string, before = 3, aft
   return [...prev.reverse(), ...cur, ...next].map((r) => toMsg(r, self));
 }
 
+/** Up to `limit` messages right after a given one (text and stickers, no system lines), for 说话算数账本. */
+export function after(sessionId: string, messageId: string, limit = 160): ChatMessage[] {
+  const d = open(sessionId);
+  if (!d) return [];
+  const self = owner(d);
+  const pivot = d.prepare("SELECT id, ts FROM message WHERE platform_message_id=?").get(messageId) as Row | undefined;
+  if (!pivot) return [];
+  const rows = d.prepare(`${SELECT} WHERE m.type NOT IN (80, 81) AND (m.ts > ? OR (m.ts = ? AND m.id > ?)) ORDER BY m.ts, m.id LIMIT ?`)
+    .all(pivot.ts as number, pivot.ts as number, pivot.id as number, limit) as Row[];
+  return rows.map((r) => toMsg(r, self));
+}
+
 /** The latest `limit` messages of a session, oldest first (for “最近” questions). */
 export function recent(sessionId: string, limit = 50): ChatMessage[] {
   const d = open(sessionId);

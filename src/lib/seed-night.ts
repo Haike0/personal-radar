@@ -3,6 +3,7 @@ import { DatabaseSync as Sqlite } from "node:sqlite";
 import fs from "node:fs";
 import path from "node:path";
 import { closeDemo, demoDir } from "./chatlab";
+import { LEDGER_SQL } from "./ledger-schema";
 
 // 夜间接客演示（全部虚构）。数据不写在代码里：demo/night/ 下的三个文件由 scripts/demo-gen.mjs 用 DeepSeek 生成——
 //   chats.json     12 位常客、180 天的 LINE 聊天（约 2 万条），日期是相对天数
@@ -100,7 +101,18 @@ export function seedNight(d: DatabaseSync, now: string, dateOf: (off: number) =>
   }
   d.exec("UPDATE items SET observed_at=(SELECT MAX(ts) FROM evidence e WHERE e.item_id=items.id) WHERE mode='demo'");
 
-  // 3) analysis: items in the file are indexes into that person's list
+  // 3) 说话算数账本, judged ahead of time by scripts/demo-gen-ledger.mjs so the demo card shows up instantly
+  d.exec(LEDGER_SQL);
+  const ledger = fs.existsSync(path.join(SRC(), "ledger.json")) ? read<Record<string, { who: string; result: string; proof: number | null; reason: string | null }>>("ledger.json") : {};
+  const insL = d.prepare("INSERT OR REPLACE INTO ledger(item_id,who,ai,reason,proof_mid,proof_ts,proof_sender,proof_text,checked_at) VALUES(?,?,?,?,?,?,?,?,?)");
+  for (const s of sessions) for (const x of items[s.id] ?? []) {
+    const l = ledger[x.tmp], id = ids.get(x.tmp);
+    if (!l || id == null) continue;
+    const m = l.proof ? s.messages[l.proof - 1] : undefined;
+    insL.run(id, l.who, l.result, l.reason, m ? String(l.proof) : null, m ? `${dateOf(m[0])} ${m[1]}` : null, m ? (m[2] === "A" ? "我" : m[2] === "M" ? MEMO : s.name) : null, m ? m[3] : null, now);
+  }
+
+  // 4) analysis: items in the file are indexes into that person's list
   const ins = d.prepare("INSERT OR REPLACE INTO person_analysis(session_id,content,basis_items,basis_until,generated_at) VALUES(?,?,?,?,?)");
   for (const s of sessions) {
     const a = analysis[s.id]; if (!a) continue;
