@@ -10,7 +10,7 @@
 
 ## What it does
 
-- **Promise ledger**: the AI goes through what you two promised each other and who actually followed through, then makes a shareable card in one tap ("I owe her 7, she owes me 5").
+- **A promise ledger you can post.** The AI goes through what you two promised each other and who actually followed through, then makes a shareable card in one tap ("I owe her 7, she owes me 5").
 - **Reminders from your chats.** "Saturday 7 pm at the ramen place", "I'll bring the book back", "my interview is next Friday" — found in the conversation, dated, and shown on the day they matter. If a plan changes later, the old one is replaced.
 - **A sourced profile of each person.** Likes, dislikes, work, family, things they asked of you. Every line links back to the exact messages it came from, so you can check it.
 - **Chat numbers at a glance.** Reply rate, how fast they answer, who writes more, how the conversation's pace changed over time — straight from the messages, right after import. No "interest score": Radar only shows facts.
