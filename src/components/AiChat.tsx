@@ -2,7 +2,7 @@
 import { ActionIcon, Box, Button, Collapse, CopyButton, Group, Menu, Modal, Paper, ScrollArea, SimpleGrid, Stack, Text, Textarea, TextInput, Title, Tooltip, UnstyledButton } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useMediaQuery } from "@mantine/hooks";
-import { IconArrowUp, IconCheck, IconChevronDown, IconChevronRight, IconCopy, IconDots, IconEye, IconHistory, IconLock, IconPlus, IconSearch, IconSparkles, IconTrash, IconWand } from "@tabler/icons-react";
+import { IconArrowUp, IconCheck, IconChevronRight, IconCopy, IconDots, IconEye, IconHistory, IconPlus, IconSearch, IconSparkles, IconTrash, IconWand } from "@tabler/icons-react";
 import Link from "next/link";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { PersonPicker } from "@/components/PersonPicker";
@@ -30,23 +30,20 @@ export function AiChat({ context, layout, seedPrompt, onNavigate, picker }: {
   const { data: ppl } = useApi<{ people: Person[] }>("/api/people");
   const privates = (ppl?.people ?? []).filter((p) => !p.isGroup);
 
-  const [pick, setPick] = useState<string | null>(null);
-  // `over`: a scope chosen inside the chat (widened from the scope menu, or restored from a past conversation)
+  // `over`: the scope picked above the chat (a person, a tag, or one restored from a past conversation)
   const [over, setOver] = useState<CompanionContext | null>(null);
   const canPick = picker || context.page === "home" || context.page === "companion";
-  const ctx: CompanionContext = over ?? (canPick
-    ? pick ? { page: "person", personKey: pick, personName: privates.find((p) => p.key === pick)?.name } : { page: "home" }
-    : context);
+  const ctx: CompanionContext = over ?? (canPick ? { page: "home" } : context);
   const personKey = scopePerson(ctx);
   const who = ctx.page === "person" || ctx.page === "day" ? (ctx.personName ?? null) : null;
   const itemTitle = ctx.page === "item" ? (ctx.title ?? "这件事") : null;
   const quick = (a: ReturnType<typeof assistantOf>) =>
     itemTitle ? ITEM_QUICK : ctx.page === "day" ? DAY_QUICK : who ? [briefFor(who), ...quickFor(a, who)] : quickFor(a, who);
-  // the scope menu: stay on this day/item, widen to the whole person, or everyone
-  const owner = ctx.page === "day" ? { key: ctx.personKey, name: ctx.personName } : ctx.page === "item" && ctx.personKey ? { key: ctx.personKey, name: ctx.personName } : null;
-  const scopeChoices: CompanionContext[] = [
+  // scopes from the page the AI was opened on (this item / this day, and its person), offered on top of the picker
+  const owner = context.page === "day" || (context.page === "item" && context.personKey) ? { key: context.personKey!, name: context.personName } : null;
+  const extra: CompanionContext[] = canPick ? [] : [
+    ...(context.page === "item" || context.page === "day" ? [context] : []),
     ...(owner ? [{ page: "person", personKey: owner.key, personName: owner.name } as CompanionContext] : []),
-    { page: "home" },
   ];
   const [preview, setPreview] = useState<{ question: string; text: string; chars: number } | null>(null);
   async function showPreview() {
@@ -144,7 +141,7 @@ export function AiChat({ context, layout, seedPrompt, onNavigate, picker }: {
         <Group key={c.id} gap={4} wrap="nowrap" className={`conv-row${c.id === activeId ? " is-active" : ""}`}>
           <UnstyledButton onClick={() => open(c.id)} style={{ flex: 1, minWidth: 0 }} py={8} px={10}>
             <Text size="sm" truncate>{c.title}</Text>
-            <Text size="11px" className="faint" truncate>{c.scope ? scopeLabel(c.scope) : c.personKey ? privates.find((p) => p.key === c.personKey)?.name ?? "某个联系人" : "全部私聊"} · {assistantOf(c.assistant).name} · {c.updatedAt.slice(5, 16)}</Text>
+            <Text size="11px" className="faint" truncate>{c.scope ? scopeLabel(c.scope) : c.personKey ? privates.find((p) => p.key === c.personKey)?.name ?? "某个联系人" : "所有人"} · {assistantOf(c.assistant).name} · {c.updatedAt.slice(5, 16)}</Text>
           </UnstyledButton>
           <ActionIcon size="sm" variant="subtle" color="gray" className="conv-del" aria-label="删除对话" onClick={() => remove(c.id)}><IconTrash size={14} /></ActionIcon>
         </Group>
@@ -218,26 +215,9 @@ export function AiChat({ context, layout, seedPrompt, onNavigate, picker }: {
     </Box>
   );
 
-  // what the AI is reading, always visible; tap to widen it
-  const scopeChip = (
-    <Menu position="bottom-start" withinPortal zIndex={600}>
-      <Menu.Target>
-        <UnstyledButton className="scope-chip" style={{ minWidth: 0 }} aria-label="AI 正在看的范围">
-          <IconLock size={13} style={{ flex: "none" }} /><span>正在问：{scopeLabel(ctx)}</span><IconChevronDown size={12} style={{ flex: "none" }} />
-        </UnstyledButton>
-      </Menu.Target>
-      <Menu.Dropdown>
-        <Menu.Label>AI 只读这个范围里的记录和聊天</Menu.Label>
-        <Menu.Item leftSection={<IconCheck size={14} />}>{scopeLabel(ctx)}</Menu.Item>
-        {scopeChoices.filter((c) => keyOf(c) !== scopeKey).map((c) => (
-          <Menu.Item key={keyOf(c)} leftSection={<span style={{ width: 14 }} />} onClick={() => setOver(c)}>改成：{c.page === "person" ? `${c.personName ?? "这个人"}的全部记录` : scopeLabel(c)}</Menu.Item>
-        ))}
-      </Menu.Dropdown>
-    </Menu>
-  );
   const header = (
     <Group justify="space-between" wrap="nowrap" gap={6} pb={8}>
-      <Box style={{ flex: 1, minWidth: 0 }}>{canPick && !over ? <PersonPicker people={privates} value={pick} onChange={setPick} /> : scopeChip}</Box>
+      <Box style={{ flex: 1, minWidth: 0 }}><PersonPicker people={privates} value={ctx} extra={extra} onChange={setOver} /></Box>
       {!sidebar && <Button size="compact-sm" variant="subtle" color="gray" leftSection={<IconHistory size={15} />} onClick={() => setHistoryOpen(true)}>历史</Button>}
       <Button size="compact-sm" variant="light" leftSection={<IconPlus size={15} />} onClick={fresh}>新对话</Button>
       <Menu position="bottom-end" withinPortal zIndex={600}>

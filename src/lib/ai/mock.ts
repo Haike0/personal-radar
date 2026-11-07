@@ -1,5 +1,5 @@
 import "server-only";
-import { getItem, listItems } from "@/lib/db";
+import { getItem, listItems, listPeople } from "@/lib/db";
 import type { Item } from "@/lib/types";
 import type { Citation, CompanionContext, CompanionProvider, Proposal, StreamEvent } from "./types";
 
@@ -18,6 +18,10 @@ function cite(i: Item): Citation {
 function scope(ctx: CompanionContext): Item[] {
   const all = listItems();
   if (ctx.page === "person") return all.filter((i) => i.personKey === ctx.personKey);
+  if (ctx.page === "tag") {
+    const keys = new Set(listPeople().filter((p) => p.tags?.includes(ctx.tag)).map((p) => p.key));
+    return all.filter((i) => keys.has(i.personKey));
+  }
   if (ctx.page === "item") {
     const it = all.find((i) => i.id === ctx.itemId);
     return it ? all.filter((i) => i.personKey === it.personKey) : all;

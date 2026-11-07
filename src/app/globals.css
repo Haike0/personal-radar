@@ -272,3 +272,6 @@ a.apl-tl-title:hover { text-decoration: underline; text-underline-offset: 3px; }
 .who-all.big { width: 40px; height: 40px; border-radius: 10px; }
 .assistant-card { display: block; text-align: left; padding: 12px 14px; border-radius: 16px; background: light-dark(#fff, rgba(255,255,255,.05)); border: 1px solid light-dark(rgba(20,24,39,.07), rgba(255,255,255,.07)); min-width: 0; }
 .assistant-card.is-active { border-color: var(--mantine-color-radar-5); background: light-dark(rgba(0,168,145,.06), rgba(52,204,182,.1)); }
+/* contact-book section header: label ─── count */
+.group-head { display: flex; align-items: center; gap: 10px; padding: 12px 4px 4px; }
+.group-head > span { flex: 1; height: 1px; background: light-dark(rgba(20,24,39,.08), rgba(255,255,255,.08)); }

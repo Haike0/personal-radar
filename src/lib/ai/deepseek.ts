@@ -38,7 +38,9 @@ function people(question: string, ctx: CompanionContext) {
     const it = getItem(ctx.itemId);
     if (it) return all.filter((p) => p.key === it.personKey);
   }
-  const named = all.filter((p) => question.includes(p.name));
+  const pool = ctx.page === "tag" ? all.filter((p) => p.tags?.includes(ctx.tag)) : all;
+  const named = pool.filter((p) => question.includes(p.name));
+  if (ctx.page === "tag") return named.length ? named : pool;
   return named.length ? named : all;
 }
 
