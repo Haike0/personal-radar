@@ -2,7 +2,7 @@
 import { Badge, Button, Group, SegmentedControl, Stack, Text, useMantineColorScheme, type MantineColorScheme } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconDeviceMobile, IconMoon, IconShare2, IconSun } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { useApi } from "@/lib/client";
 import { disablePush, enablePush, pushState, type PushState } from "@/lib/push-client";
 import type { Health } from "@/lib/health";
@@ -136,5 +136,23 @@ export function DataHealth() {
         {checked < 20 && <Text size="xs" className="faint">核对满 20 条以后，这里的准确率才有参考价值。</Text>}
       </Stack>
     </Stack>
+  );
+}
+
+const glassSubscribe = (cb: () => void) => { window.addEventListener("storage", cb); return () => window.removeEventListener("storage", cb); };
+/** How see-through the bottom bar and AI button are. Saved on this device. */
+export function GlassControl() {
+  // read from localStorage after hydration (the server always renders "适中")
+  const stored = useSyncExternalStore(glassSubscribe, () => { try { return localStorage.getItem("radar-glass") || "normal"; } catch { return "normal"; } }, () => "normal");
+  const [picked, setV] = useState<string | null>(null);
+  const v = picked ?? stored;
+  const set = (x: string) => {
+    setV(x);
+    try { if (x === "normal") localStorage.removeItem("radar-glass"); else localStorage.setItem("radar-glass", x); } catch {}
+    if (x === "normal") delete document.documentElement.dataset.glass; else document.documentElement.dataset.glass = x;
+  };
+  return (
+    <SegmentedControl fullWidth radius="xl" value={v} onChange={set}
+      data={[{ value: "clear", label: "通透" }, { value: "normal", label: "适中" }, { value: "solid", label: "不透明" }]} />
   );
 }

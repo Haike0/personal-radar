@@ -34,6 +34,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="zh-CN" {...mantineHtmlProps}>
       <head>
         <ColorSchemeScript defaultColorScheme="light" />
+        {/* bottom-bar glass strength (设置 → 通用), applied before paint so it never flashes */}
+        <script dangerouslySetInnerHTML={{ __html: `try{var g=localStorage.getItem("radar-glass");if(g)document.documentElement.dataset.glass=g}catch(e){}` }} />
       </head>
       <body>
         <MantineProvider theme={theme} defaultColorScheme="light">

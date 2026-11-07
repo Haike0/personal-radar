@@ -8,6 +8,7 @@ import { usePageContext } from "@/components/Shell";
 import { AiService } from "@/components/setup/AiService";
 import { OrganizeCard } from "@/components/OrganizeCard";
 import { ConnectApps } from "@/components/setup/ConnectApps";
+import { WatchFolder } from "@/components/setup/AutoImport";
 import { ImportPanel } from "@/components/setup/ImportPanel";
 import { PrivacyPanel } from "@/components/setup/PrivacyPanel";
 import { post, refreshAll } from "@/lib/client";
@@ -40,6 +41,7 @@ export default function SetupPage() {
     <Stack key="import" gap="md">
       <ImportPanel onImported={() => setStep(1)} />
       <ConnectApps />
+      <WatchFolder />
     </Stack>,
     <AiService key="ai" onReady={() => setStep(2)} />,
     <PrivacyPanel key="privacy" />,

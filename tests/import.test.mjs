@@ -116,3 +116,37 @@ test("unknown files get a readable error", () => {
   assert.throws(() => read(Buffer.from("hello world"), "notes.txt"), /认不出/);
   assert.throws(() => read(Buffer.from('{"a":1}'), "x.json"), /认不出这个 JSON/);
 });
+
+test("QQ Chat Exporter JSON: owner from selfUid, elements text, image type", () => {
+  const { format, chats } = load("qce-private.json");
+  assert.equal(format, "qq");
+  const c = chats[0];
+  assert.equal(c.name, "小周");
+  assert.equal(c.group, false);
+  assert.equal(c.messages[1].text, "好啊，8点集合");
+  assert.equal(c.messages[2].type, T.image);
+  const p = plan(c, {}, tmp());
+  assert.equal(p.meName, "阿明");
+});
+
+test("QQ legacy .txt export (CRLF, multi-line body)", () => {
+  const { format, chats } = load("qq-legacy.txt");
+  assert.equal(format, "qq");
+  const c = chats[0];
+  assert.equal(c.name, "老王");
+  assert.equal(c.messages.length, 3);
+  assert.equal(c.messages[1].text, "收到，我改一下日历\n顺便把材料发你");
+  assert.equal(c.messages[2].type, T.image);
+  assert.equal(local(c.messages[0].ts), "2026-11-03 20:15");
+  assert.equal(plan(c, {}, tmp()).meName, "小李");
+});
+
+test("Google Chat Takeout zip: DM, owner from user_info, narrow-space dates", () => {
+  const { format, chats } = load("takeout-googlechat.zip");
+  assert.equal(format, "googlechat");
+  const c = chats[0];
+  assert.equal(c.name, "Rin");
+  assert.equal(c.group, false);
+  assert.equal(new Date(c.messages[0].ts * 1000).toISOString(), "2026-11-04T21:03:12.000Z");
+  assert.equal(plan(c, {}, tmp()).meName, "Kai");
+});

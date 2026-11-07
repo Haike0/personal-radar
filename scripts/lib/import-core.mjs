@@ -20,7 +20,9 @@ export const FORMATS = [
   { id: "telegram", label: "Telegram", hint: "Telegram Desktop → 导出聊天记录 → JSON（result.json）" },
   { id: "discord", label: "Discord", hint: "DiscordChatExporter → JSON" },
   { id: "instagram", label: "Instagram / Messenger", hint: "下载你的信息 → JSON（message_1.json）" },
-  { id: "chatlab", label: "ChatLab JSON / JSONL", hint: "ChatLab Format 0.0.x" },
+  { id: "qq", label: "QQ", hint: "QQ Chat Exporter 的 JSON，或 QQ 自带「导出消息记录」的 .txt" },
+  { id: "googlechat", label: "Google Chat", hint: "Google Takeout 只选 Google Chat（.zip）" },
+  { id: "chatlab", label: "ChatLab JSON / JSONL", hint: "ChatLab Format 0.0.x（WeFlow、抖音聊天导出工具都能导出这种格式）" },
 ];
 
 const p2 = (n) => String(n).padStart(2, "0");
@@ -202,6 +204,99 @@ function parseChatLabJsonl(text) {
   return [chatlabChat(meta, members, msgs)];
 }
 
+
+// ---------------------------------------------------------------- QQ Chat Exporter (QCE) JSON
+// { chatInfo: { name, type|chatType, selfUid|selfUin, selfName }, statistics: { senders: [...] }, messages: [{ msgId|id|seq, sender: {uid, uin, name} | "id", timestamp, content: string | {text, elements} }] }
+const QCE_KIND = { image: T.image, pic: T.image, face: T.sticker, marketface: T.sticker, sticker: T.sticker, file: T.file, video: T.video, ptt: T.voice, voice: T.voice, record: T.voice, location: T.location };
+function parseQce(doc) {
+  const info = doc.chatInfo ?? {};
+  const selfIds = new Set([info.selfUid, info.selfUin].filter(Boolean).map(String));
+  const names = new Map();
+  for (const s of [...(doc.statistics?.senders ?? []), ...(info.members ?? [])]) {
+    const name = s.remark || s.cardName || s.name || s.nick;
+    for (const id of [s.uid, s.uin].filter(Boolean)) if (name) names.set(String(id), name);
+  }
+  let owner = null;
+  const messages = (doc.messages ?? []).map((m) => {
+    const s = m.sender;
+    const ids = typeof s === "object" && s ? [s.uid, s.uin].filter(Boolean).map(String) : [String(s || m.senderUin || m.senderUid || "")];
+    const id = ids[0] || "SYSTEM";
+    if (ids.some((x) => selfIds.has(x))) owner = id;
+    const sender = (typeof s === "object" && s ? s.name || s.nick : null) || names.get(id) || id;
+    let ts = Number(m.timestamp ?? m.time ?? 0); if (ts > 1e12) ts = Math.floor(ts / 1000);
+    const c = m.content;
+    let text = typeof c === "string" ? c : c?.text ?? "";
+    let type = T.text;
+    if (c && typeof c === "object" && !text) {
+      for (const el of c.elements ?? []) if (el?.type === "text") text += el.data?.text ?? el.data?.content ?? "";
+      if (!text) { const k = String(c.elements?.[0]?.type ?? "").toLowerCase(); type = QCE_KIND[k] ?? T.other; text = { [T.image]: "[图片]", [T.sticker]: "[表情]", [T.file]: "[文件]", [T.video]: "[视频]", [T.voice]: "[语音]", [T.location]: "[位置]" }[type] ?? "[消息]"; }
+    }
+    if (m.type === "system" || m.isSystem) type = T.system;
+    const pid = m.msgId ?? m.id ?? m.seq;
+    return { ts, senderId: id, sender, text, type: type === T.text && linkOnly(text.trim()) ? T.link : type, pid: pid != null ? `qq:${pid}` : null };
+  });
+  const raw = String(info.chatType ?? info.type ?? "").toLowerCase();
+  return [{ platform: "qq", name: info.name || info.peerName || null, group: /group|room/.test(raw) ? true : /private|friend|c2c|single/.test(raw) ? false : undefined, ownerId: owner, messages }];
+}
+
+// ---------------------------------------------------------------- QQ message manager (.txt, old QQ)
+// 消息对象:张三   then blocks of  "2016-05-01 12:00:00 张三" + body lines
+function parseQqTxt(text) {
+  const chats = [];
+  let cur = null, last = null;
+  for (const raw of text.replace(/^\uFEFF/, "").split(/\r?\n/)) {
+    const line = raw.replace(/\s+$/, "");
+    let m;
+    if ((m = line.match(/^消息对象[:：]\s*(.+)$/))) { cur = { platform: "qq", name: m[1].trim(), messages: [] }; chats.push(cur); last = null; continue; }
+    if (/^消息分组[:：]|^={10,}|^消息记录（/.test(line)) continue;
+    if ((m = line.match(/^(\d{4})-(\d{1,2})-(\d{1,2}) (\d{1,2}):(\d{2}):(\d{2}) (.+)$/))) {
+      if (!cur) { cur = { platform: "qq", name: null, messages: [] }; chats.push(cur); }
+      const sender = m[7].replace(/\(\d{5,}\)$|<[^>]+>$/, "").trim();
+      last = { ts: epochOf(m[1], m[2], m[3], m[4], m[5], m[6]), sender, text: "" };
+      cur.messages.push(last);
+      continue;
+    }
+    if (last) last.text += (last.text ? "\n" : "") + line;
+  }
+  for (const c of chats) for (const msg of c.messages) {
+    msg.text = msg.text.replace(/\n+$/, "");
+    const t = msg.text.trim();
+    msg.type = /^\[图片\]$/.test(t) ? T.image : /^\[表情\]$/.test(t) ? T.sticker : /^\[文件\]/.test(t) ? T.file : linkOnly(t) ? T.link : T.text;
+  }
+  return chats.filter((c) => c.messages.length);
+}
+
+// ---------------------------------------------------------------- Google Chat (Google Takeout .zip)
+// Google Chat/Groups/<DM or Space>/messages.json  + group_info.json;  Google Chat/Users/User */user_info.json = you
+function parseGoogleChat(entries) {
+  const meEntry = entries.find((e) => /Google Chat\/Users\/[^/]+\/user_info\.json$/.test(e.name));
+  let myEmail = null;
+  try { myEmail = JSON.parse(meEntry.read().toString("utf8")).user?.email ?? null; } catch {}
+  const groups = new Map();
+  for (const e of entries) {
+    const m = e.name.match(/Google Chat\/Groups\/([^/]+)\/(messages|group_info)\.json$/);
+    if (m) groups.set(m[1], { ...(groups.get(m[1]) ?? {}), [m[2]]: e });
+  }
+  const chats = [];
+  for (const [dir, g] of groups) {
+    if (!g.messages) continue;
+    let info = {};
+    try { info = g.group_info ? JSON.parse(g.group_info.read().toString("utf8")) : {}; } catch {}
+    const doc = JSON.parse(g.messages.read().toString("utf8"));
+    const members = (info.members ?? []).filter((x) => x.email !== myEmail);
+    const messages = (doc.messages ?? []).map((m, i) => {
+      const d = String(m.created_date ?? "").replace(/[\u202f\u00a0]/g, " ").replace(/^[A-Za-z]+,\s*/, "").replace(" at ", " ");
+      const ts = Math.floor(Date.parse(d) / 1000);
+      const email = m.creator?.email ?? m.creator?.name ?? "unknown";
+      const text = m.text ?? (m.attached_files?.length ? "[文件]" : "");
+      return { ts, senderId: email, sender: m.creator?.name ?? email, text, type: text === "[文件]" ? T.file : linkOnly(text.trim()) ? T.link : T.text, pid: `gchat:${dir}:${m.message_id ?? i}` };
+    });
+    const isDM = /^DM /i.test(dir) || members.length <= 1;
+    chats.push({ platform: "googlechat", name: info.name || members.map((x) => x.name).join("、") || dir, group: !isDM, ownerId: myEmail, messages });
+  }
+  return chats;
+}
+
 // ---------------------------------------------------------------- entry points
 /** Read an export (Buffer or string) and return its chats. Throws with a readable message when the format is unknown. */
 export function read(input, filename = "", opts = {}) {
@@ -209,6 +304,7 @@ export function read(input, filename = "", opts = {}) {
   let name = filename;
   if (isZip(buf)) {
     const entries = readZip(buf).filter((e) => !e.name.startsWith("__MACOSX") && /\.(txt|json|jsonl)$/i.test(e.name));
+    if (entries.some((e) => /Google Chat\/Groups\/[^/]+\/messages\.json$/.test(e.name))) return { format: "googlechat", chats: parseGoogleChat(entries) };
     const pickEntry = entries.find((e) => /(^|\/)_chat\.txt$/i.test(e.name)) ?? entries.find((e) => /WhatsApp/i.test(e.name)) ?? entries.find((e) => /message_\d+\.json$|result\.json$/i.test(e.name)) ?? entries[0];
     if (!pickEntry) throw new Error("zip 里没有找到聊天文件（.txt / .json）");
     buf = pickEntry.read();
@@ -223,14 +319,16 @@ export function read(input, filename = "", opts = {}) {
     try { doc = JSON.parse(text); } catch (e) { throw new Error(`JSON 解析失败：${e.message}`); }
     if (doc.chatlab || (doc.meta && doc.messages)) return { format: "chatlab", chats: [chatlabChat(doc.meta, doc.members, doc.messages ?? [])] };
     if (doc.guild && doc.channel && Array.isArray(doc.messages)) return { format: "discord", chats: parseDiscord(doc) };
+    if (doc.chatInfo && Array.isArray(doc.messages)) return { format: "qq", chats: parseQce(doc) };
     if (Array.isArray(doc.participants) && Array.isArray(doc.messages) && doc.messages.some((m) => "sender_name" in m)) return { format: "instagram", chats: parseInstagram(doc, name) };
     if (doc.chats?.list || (Array.isArray(doc.messages) && "type" in doc && doc.messages.some((m) => "date" in m))) return { format: "telegram", chats: parseTelegram(doc) };
-    throw new Error("认不出这个 JSON：支持 ChatLab、Telegram、Discord（DiscordChatExporter）、Instagram / Messenger 的导出");
+    throw new Error("认不出这个 JSON：支持 ChatLab（含 WeFlow、抖音导出工具）、QQ Chat Exporter、Telegram、Discord、Instagram / Messenger");
   }
   if (/^\[LINE\]/.test(head)) return { format: "line", chats: parseLine(text) };
+  if (/消息对象[:：]|^消息记录（此消息记录为文本格式/m.test(head)) return { format: "qq", chats: parseQqTxt(text) };
   const wa = parseWhatsApp(text, name, opts);
   if (wa && wa[0].messages.length) return { format: "whatsapp", chats: wa };
-  throw new Error("认不出这个文件的格式。支持：LINE / WhatsApp 的 .txt（或 .zip），Telegram / Discord / Instagram / ChatLab 的 JSON。");
+  throw new Error("认不出这个文件的格式。支持：LINE / WhatsApp / QQ 的 .txt，WhatsApp 和 Google Chat 的 .zip，以及 ChatLab、QQ Chat Exporter、Telegram、Discord、Instagram 的 JSON。");
 }
 
 /** Work out who is "me", the conversation id, and how many messages are new. Never writes. */

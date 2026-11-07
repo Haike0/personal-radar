@@ -1,7 +1,8 @@
 "use client";
-import { Avatar, Badge, Drawer, Skeleton, Text, UnstyledButton } from "@mantine/core";
+import Link from "next/link";
+import { Avatar, Badge, Drawer, Group, Skeleton, Text, UnstyledButton } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
-import { IconUsers } from "@tabler/icons-react";
+import { IconChevronRight, IconUsers } from "@tabler/icons-react";
 import { useMemo, useState, useSyncExternalStore, type ReactNode } from "react";
 import { useApi } from "@/lib/client";
 import { pickFocus } from "@/lib/focus";
@@ -64,14 +65,17 @@ export function PersonBar({ person, contacts, pick, loading, subtitle }: ReturnT
   if (!person) return <Text className="faint">还没有联系人</Text>;
   return (
     <>
-      <UnstyledButton className="person-bar surface pressable" onClick={() => setOpen(true)} aria-label="切换联系人">
-        <Face p={person} size={44} />
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <Text fw={650} truncate>{person.name}</Text>
-          {subtitle && <Text size="xs" className="muted" truncate>{subtitle}</Text>}
-        </div>
-        <span className="person-more" aria-hidden><IconUsers size={20} stroke={1.7} /></span>
-      </UnstyledButton>
+      <div className="person-bar surface">
+        {/* tap the person → their page (portrait, analysis); tap the right button → switch contact */}
+        <Link href={`/people/${encodeURIComponent(person.key)}`} className="person-link pressable" aria-label={`打开${person.name}的画像`}>
+          <Face p={person} size={44} />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <Group gap={4} wrap="nowrap"><Text fw={650} truncate>{person.name}</Text><IconChevronRight size={15} className="faint" style={{ flex: "none" }} /></Group>
+            {subtitle && <Text size="xs" className="muted" truncate>{subtitle}</Text>}
+          </div>
+        </Link>
+        <UnstyledButton className="person-more pressable" onClick={() => setOpen(true)} aria-label="切换联系人"><IconUsers size={20} stroke={1.7} /></UnstyledButton>
+      </div>
 
       <Drawer opened={open} onClose={() => setOpen(false)} position={desktop ? "right" : "bottom"} size={desktop ? 380 : "auto"}
         title={<Text fw={650}>联系人</Text>} styles={{ body: { padding: "0 0 calc(var(--safe-bottom) + 12px)" }, content: desktop ? undefined : { height: "auto", maxHeight: "80dvh" } }}>

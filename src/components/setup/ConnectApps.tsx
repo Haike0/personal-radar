@@ -7,7 +7,7 @@ import { post, refreshAll, useApi } from "@/lib/client";
 
 type S = { id: string; name: string; platform: string; type: string; messages: number | null };
 type Data = { url: string; hasToken: boolean; connected: boolean; selected: string[]; sessions?: S[]; error?: string };
-type App = { id: string; name: string; color: string; endpoint: string; tagline: string; steps: string[]; href: string };
+type App = { id: string; name: string; color: string; endpoint: string; tagline: string; steps: string[]; href: string; tokenOptional?: boolean; urlHint?: string };
 
 // Apps that already hold your chats and expose a local, read-only API. No export files: connect once, then sync.
 export const APPS: App[] = [
@@ -21,13 +21,18 @@ export const APPS: App[] = [
     tagline: "读取 ChatLab 里已经导入的聊天（含 QQ、微信导出等）",
     steps: ["打开 ChatLab", "设置 →「ChatLab API」→ 启用服务", "复制令牌"],
   },
+  {
+    id: "pull", name: "其他导出工具", color: "#0EA5E9", endpoint: "/api/pull-api", href: "https://docs.chatlab.fun/cn/standard/chatlab-pull", tokenOptional: true, urlHint: "http://127.0.0.1:端口",
+    tagline: "支持「ChatLab 远程数据源」的工具，比如抖音聊天导出工具 douyin-chat-export",
+    steps: ["打开那个工具并启动它的服务", "在它的说明里找到「ChatLab 远程数据源 / Pull」地址", "把地址填在下面（有令牌就一起填）"],
+  },
 ];
 
 /** "One-tap" sources: pick an app, follow three steps, paste a token, choose chats. */
 export function ConnectApps() {
   return (
     <Stack gap="xs">
-      <Group gap={6}><Text size="sm" fw={600}>一键连接，不用导出文件</Text><Badge size="xs" variant="light" color="gray">未实测</Badge></Group>
+      <Group gap={6}><Text size="sm" fw={600}>聚合平台</Text><Badge size="xs" variant="light" color="gray">未实测</Badge></Group>
       {APPS.map((a) => <ConnectCard key={a.id} app={a} />)}
     </Stack>
   );
@@ -91,9 +96,9 @@ function ConnectCard({ app }: { app: App }) {
           )}
           {data?.error && <Text size="xs" c="red">{data.error}</Text>}
           <Group gap="xs" align="flex-end">
-            <PasswordInput size="xs" radius="md" label="令牌" style={{ flex: "1 1 180px" }} value={token} onChange={(e) => setToken(e.currentTarget.value)} placeholder={data?.hasToken ? "已保存，不改就留空" : "粘贴令牌"} />
-            <TextInput size="xs" radius="md" label="地址" style={{ flex: "0 1 190px" }} value={url} onChange={(e) => setUrl(e.currentTarget.value)} />
-            <Button size="xs" radius="md" variant="light" loading={busy === "connect"} disabled={!token && !data?.hasToken} onClick={connect}>{data?.connected ? "重新连接" : "连接"}</Button>
+            <PasswordInput size="xs" radius="md" label="令牌" style={{ flex: "1 1 180px" }} value={token} onChange={(e) => setToken(e.currentTarget.value)} placeholder={app.tokenOptional ? "没有就留空" : data?.hasToken ? "已保存，不改就留空" : "粘贴令牌"} />
+            <TextInput size="xs" radius="md" label="地址" style={{ flex: "0 1 190px" }} value={url} placeholder={app.urlHint} onChange={(e) => setUrl(e.currentTarget.value)} />
+            <Button size="xs" radius="md" variant="light" loading={busy === "connect"} disabled={app.tokenOptional ? !url : !token && !data?.hasToken} onClick={connect}>{data?.connected ? "重新连接" : "连接"}</Button>
           </Group>
           {data?.connected && data.sessions && (
             <>

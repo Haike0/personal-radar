@@ -1,0 +1,7 @@
+{"metadata":{"name":"QQChatExporter"},"chatInfo":{"name":"小周","type":"private","selfUid":"u_me","selfUin":"10001","selfName":"阿明"},
+ "statistics":{"senders":[{"uid":"u_me","uin":"10001","name":"阿明"},{"uid":"u_zhou","uin":"20002","name":"小周"}]},
+ "messages":[
+  {"msgId":"m1","sender":{"uid":"u_zhou","uin":"20002","name":"小周"},"timestamp":1793880192000,"content":{"text":"周六去爬山吗"}},
+  {"msgId":"m2","sender":{"uid":"u_me","uin":"10001","name":"阿明"},"timestamp":1793880252000,"content":{"text":"","elements":[{"type":"text","data":{"text":"好啊，8点集合"}}]}},
+  {"msgId":"m3","sender":{"uid":"u_zhou","uin":"20002","name":"小周"},"timestamp":1793880312000,"content":{"text":"","elements":[{"type":"image","data":{}}]}}
+ ]}

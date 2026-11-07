@@ -69,7 +69,9 @@ export default function PersonPage() {
   if (error || !p) return <Alert color="red" title="找不到这个人">{error}</Alert>;
 
   const short = p.name.replace(/^演示·/, "");
-  const aboutThem = p.items.filter((i) => isKnowledge(i) && i.subject !== "self");
+  // newest first: what you learned most recently is what you want to see first
+  const when = (i: Item) => i.observedAt ?? i.eventDate ?? i.createdAt;
+  const aboutThem = p.items.filter((i) => isKnowledge(i) && i.subject !== "self").sort((a, b) => when(b).localeCompare(when(a)));
   const aboutMe = p.items.filter((i) => isKnowledge(i) && i.subject === "self");
   const actions = p.items.filter((i) => !isKnowledge(i));
   const openActions = actions.filter((i) => i.status === "open");

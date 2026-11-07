@@ -45,11 +45,15 @@ a { color: inherit; text-decoration: none; }
 .tabular { font-variant-numeric: tabular-nums; }
 
 /* floating glass tab bar + AI button (iOS 26 style: a capsule with a separate round button beside it) */
+/* bottom bar + AI button glass: adjustable in 设置 → 通用 (data-glass on <html>) */
+:root { --glass: .9; --glass-blur: 22px; }
+:root[data-glass="clear"] { --glass: .62; --glass-blur: 22px; }
+:root[data-glass="solid"] { --glass: .98; --glass-blur: 8px; }
 .tabbar {
   position: fixed; left: 14px; right: calc(14px + 60px + 10px); bottom: calc(max(var(--safe-bottom), 10px) + 2px); z-index: 100;
   height: 60px; padding: 4px; border-radius: 30px; display: flex; justify-content: space-between;
-  background: light-dark(rgba(255, 255, 255, .72), rgba(30, 34, 52, .72)); border: .5px solid light-dark(rgba(0, 0, 0, .06), rgba(255, 255, 255, .09));
-  backdrop-filter: saturate(1.8) blur(22px); -webkit-backdrop-filter: saturate(1.8) blur(22px);
+  background: light-dark(rgba(255, 255, 255, var(--glass)), rgba(30, 34, 52, var(--glass))); border: .5px solid light-dark(rgba(0, 0, 0, .08), rgba(255, 255, 255, .1));
+  backdrop-filter: saturate(1.8) blur(var(--glass-blur)); -webkit-backdrop-filter: saturate(1.8) blur(var(--glass-blur));
   box-shadow: 0 10px 30px rgba(0, 0, 0, .12), 0 1px 3px rgba(0, 0, 0, .06);
 }
 .tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; border-radius: 26px;
@@ -59,8 +63,8 @@ a { color: inherit; text-decoration: none; }
 .ai-fab {
   position: fixed; right: 14px; bottom: calc(max(var(--safe-bottom), 10px) + 2px); z-index: 101;
   width: 60px; height: 60px; border-radius: 30px; display: grid; place-items: center; color: var(--mantine-color-violet-filled);
-  background: light-dark(rgba(255, 255, 255, .72), rgba(30, 34, 52, .72)); border: .5px solid light-dark(rgba(0, 0, 0, .06), rgba(255, 255, 255, .09));
-  backdrop-filter: saturate(1.8) blur(22px); -webkit-backdrop-filter: saturate(1.8) blur(22px);
+  background: light-dark(rgba(255, 255, 255, var(--glass)), rgba(30, 34, 52, var(--glass))); border: .5px solid light-dark(rgba(0, 0, 0, .08), rgba(255, 255, 255, .1));
+  backdrop-filter: saturate(1.8) blur(var(--glass-blur)); -webkit-backdrop-filter: saturate(1.8) blur(var(--glass-blur));
   box-shadow: 0 10px 30px rgba(0, 0, 0, .12), 0 1px 3px rgba(0, 0, 0, .06);
   transition: transform 160ms cubic-bezier(.2, .8, .2, 1);
 }
@@ -119,7 +123,8 @@ a { color: inherit; text-decoration: none; }
 body:has(.ai-inline) .ai-fab { display: none; }
 
 /* person switcher (Today / Timeline) */
-.person-bar { display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 10px 10px 12px; border-radius: var(--mantine-radius-xl); }
+.person-bar { display: flex; align-items: center; gap: 8px; width: 100%; padding: 10px 10px 10px 12px; border-radius: var(--mantine-radius-xl); }
+.person-link { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; color: inherit; text-decoration: none; }
 .person-more { flex: none; width: 40px; height: 40px; border-radius: 20px; display: grid; place-items: center;
   background: light-dark(rgba(20, 24, 39, .05), rgba(255, 255, 255, .06)); color: light-dark(var(--mantine-color-dark-4), var(--mantine-color-dark-1)); }
 .contact-row { display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 16px; text-align: left; }
@@ -248,3 +253,12 @@ a.apl-tl-title:hover { text-decoration: underline; text-underline-offset: 3px; }
 .freq-bar[data-last] { background: var(--mantine-color-radar-5); }
 .quick-row { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-radius: 16px; background: light-dark(#fff, rgba(255,255,255,.05)); border: 1px solid light-dark(rgba(20,24,39,.06), rgba(255,255,255,.06)); text-align: left; }
 .quick-row:hover { border-color: light-dark(rgba(20,24,39,.14), rgba(255,255,255,.14)); }
+/* settings */
+.back-link { display: inline-flex; align-items: center; gap: 2px; font-size: 14px; color: var(--mantine-color-radar-7); margin-left: -4px; }
+.set-group { overflow: hidden; }
+.set-row { padding: 12px 14px; min-height: 52px; }
+.set-group > * + * { border-top: .5px solid light-dark(rgba(20, 24, 39, .07), rgba(255, 255, 255, .07)); }
+.set-group > .set-pad { padding: 14px; }
+.set-row-link { display: block; color: inherit; text-decoration: none; }
+.set-row-link:hover .set-row { background: light-dark(rgba(20, 24, 39, .025), rgba(255, 255, 255, .03)); }
+.stat-tile { display: block; padding: 14px; border-radius: 20px; color: inherit; text-decoration: none; }
