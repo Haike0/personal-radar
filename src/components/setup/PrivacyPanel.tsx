@@ -1,5 +1,5 @@
 "use client";
-import { ActionIcon, Button, Checkbox, Group, Stack, Switch, TagsInput, Text, Textarea, TextInput } from "@mantine/core";
+import { ActionIcon, Button, Group, Stack, TagsInput, Text, Textarea, TextInput } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconPlus, IconTrash } from "@tabler/icons-react";
 import { useMemo, useState } from "react";
@@ -7,22 +7,18 @@ import { post, useApi } from "@/lib/client";
 import { outbound, privacyConfig, RULE_GROUPS } from "../../../scripts/lib/redact.mjs";
 
 type Settings = { settings: Record<string, string> };
-type Chats = { sessions: { id: string; name: string; isGroup: boolean }[] };
 type Rule = { name?: string; pattern: string; replace?: string };
 const parse = <T,>(s: string | undefined, fb: T): T => { try { const v = JSON.parse(s ?? ""); return Array.isArray(v) ? (v as T) : fb; } catch { return fb; } };
 
-/** What is hidden before anything is sent to the AI service, and which people are never sent at all. */
+/** The finer privacy controls (Settings → 隐私): blocked keywords, your own patterns, and a box to try them. The everyday choices are in PrivacySimple. */
 export function PrivacyPanel() {
   const { data, reload } = useApi<Settings>("/api/settings");
-  const { data: chats } = useApi<Chats>("/api/chatlab");
   const [sample, setSample] = useState("周五 3 点在 https://tabelog.com/tokyo/123?ref=x 见，有事打 090-1234-5678 或发邮件 sato@example.com");
   const [draft, setDraft] = useState<Rule>({ name: "", pattern: "", replace: "" });
   const s = data?.settings;
   const cfg = useMemo(() => privacyConfig((k: string) => s?.[k]), [s]);
   if (!s) return <Text size="xs" className="faint">读取中…</Text>;
-  const rules = parse<string[]>(s.privacy_rules, []);
   const custom = parse<Rule[]>(s.privacy_custom, []);
-  const excluded = parse<string[]>(s.ai_excluded, []);
 
   async function save(patch: Record<string, string>) {
     try { await post("/api/settings", patch, "PATCH"); reload(); }
@@ -37,15 +33,7 @@ export function PrivacyPanel() {
 
   return (
     <Stack gap="md">
-      <Stack gap={6}>
-        <Text size="sm" fw={600}>发出去之前自动替换</Text>
-        {RULE_GROUPS.map((g) => (
-          <Checkbox key={g.id} label={<Text size="sm">{g.label}</Text>} description={g.hint} checked={rules.includes(g.id)}
-            onChange={(e) => save({ privacy_rules: JSON.stringify(e.currentTarget.checked ? [...rules, g.id] : rules.filter((x) => x !== g.id)) })} />
-        ))}
-      </Stack>
-
-      <TagsInput label="关键词黑名单" description="消息里出现任一关键词，这条消息整条不发（输入后按回车）" radius="md"
+      <TagsInput label="屏蔽词" description="消息里出现任何一个屏蔽词，这条消息整条不发给 AI（输入后按回车）" radius="md"
         value={parse<string[]>(s.privacy_keywords, [])} onChange={(v) => save({ privacy_keywords: JSON.stringify(v) })} placeholder="例如：病院、住址、工资" />
 
       <Stack gap={6}>
@@ -70,17 +58,6 @@ export function PrivacyPanel() {
         <Text size="xs" className="hint-box" style={{ whiteSpace: "pre-wrap" }}>{result.text || "（整条不发）"}{result.dropped ? `\n（${result.dropped} 行因黑名单不发）` : ""}</Text>
       </Stack>
 
-      <Stack gap={6}>
-        <Text size="sm" fw={600}>这些人的聊天完全不发给 AI</Text>
-        <Text size="xs" className="faint">打开后：不整理、不写人物分析、问答和每日摘要也不会带上 TA 的任何内容。聊天照样能在 App 里看。</Text>
-        {(chats?.sessions ?? []).filter((c) => !c.isGroup).map((c) => (
-          <Group key={c.id} justify="space-between" wrap="nowrap">
-            <Text size="sm" truncate>{c.name}</Text>
-            <Switch checked={excluded.includes(c.id)} onChange={(e) => save({ ai_excluded: JSON.stringify(e.currentTarget.checked ? [...excluded, c.id] : excluded.filter((x) => x !== c.id)) })} />
-          </Group>
-        ))}
-        {!chats?.sessions.length && <Text size="xs" className="faint">导入聊天后，这里会列出每个人。</Text>}
-      </Stack>
       <Button variant="subtle" color="gray" size="xs" radius="md" w="fit-content" onClick={() => save({ privacy_rules: JSON.stringify(RULE_GROUPS.filter((g) => g.on).map((g) => g.id)) })}>替换规则恢复默认</Button>
     </Stack>
   );

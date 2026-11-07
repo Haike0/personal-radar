@@ -10,13 +10,13 @@ import { OrganizeCard } from "@/components/OrganizeCard";
 import { ConnectApps } from "@/components/setup/ConnectApps";
 import { WatchFolder } from "@/components/setup/AutoImport";
 import { ImportPanel } from "@/components/setup/ImportPanel";
-import { PrivacyPanel } from "@/components/setup/PrivacyPanel";
+import { PrivacySimple } from "@/components/setup/PrivacySimple";
 import { post, refreshAll } from "@/lib/client";
 
 const STEPS = [
   { label: "导入聊天", desc: "拖进导出文件" },
   { label: "AI 服务", desc: "用你自己的密钥" },
-  { label: "隐私", desc: "什么不发出去" },
+  { label: "隐私", desc: "聊天都在本地" },
   { label: "整理", desc: "变成提醒和画像" },
 ];
 
@@ -44,7 +44,7 @@ export default function SetupPage() {
       <WatchFolder />
     </Stack>,
     <AiService key="ai" onReady={() => setStep(2)} />,
-    <PrivacyPanel key="privacy" />,
+    <PrivacySimple key="privacy" advancedHref="/settings/privacy" />,
     <OrganizeCard key="organize" />,
   ][step];
 
@@ -55,7 +55,7 @@ export default function SetupPage() {
           <Title order={1} fz={28}>用自己的聊天</Title>
           <Button variant="subtle" color="gray" size="xs" radius="xl" onClick={leave}>先不设置，看演示</Button>
         </Group>
-        <Text size="sm" className="muted" mt={4}>四步。聊天只在这台电脑上读取；只有整理和提问时，过滤、脱敏后的内容才会发给你选的 AI 服务。</Text>
+        <Text size="sm" className="muted" mt={4}>四步，聊天始终存在这台电脑上。</Text>
       </div>
       <Stepper active={step} onStepClick={setStep} size="sm" allowNextStepsSelect>
         {STEPS.map((s) => <Stepper.Step key={s.label} label={s.label} description={s.desc} />)}
