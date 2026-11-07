@@ -71,6 +71,8 @@ const DEFAULT_SETTINGS: Record<string, string> = {
   chatlab_api_url: "http://127.0.0.1:3110",
   chatlab_api_token: "",
   chatlab_sessions: "[]",
+  // first run: "" → show the welcome page; "demo" = chose to look around; "done" = finished setup
+  onboarded: "",
 };
 
 let _db: DatabaseSync | null = null;

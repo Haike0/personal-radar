@@ -43,6 +43,8 @@ export function Shell({ children }: { children: ReactNode }) {
   const value = useMemo(() => ({ openCompanion, setPageContext, pageContext }), [openCompanion, pageContext]);
   const active = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
   const onCompanionPage = path.startsWith("/companion");
+  // first-run pages are a focused flow: no sidebar, no bottom tab bar, no AI button
+  const bare = path.startsWith("/welcome") || path.startsWith("/setup");
   // reading pages (one item, settings) stay narrow; overview pages use the width of a desktop screen
   const wide = onCompanionPage; // everything else reads as one calm column
   // iOS Safari ignores user-scalable=no; block pinch-zoom gestures directly so the layout never ends up zoomed
@@ -72,7 +74,7 @@ export function Shell({ children }: { children: ReactNode }) {
 
   return (
     <CompanionCtx.Provider value={value}>
-      <AppShell navbar={{ width: 232, breakpoint: "sm", collapsed: { mobile: true } }} padding={0}>
+      <AppShell navbar={{ width: 232, breakpoint: "sm", collapsed: { mobile: true, desktop: bare } }} padding={0}>
         <AppShell.Navbar p="md" style={{ background: "transparent", borderRight: "1px solid light-dark(rgba(20,24,39,.06), rgba(255,255,255,.05))" }}>
           <Group gap={10} mb="xl" px={6} mt={4}>
             <ThemeIcon size={34} radius="md" variant="gradient" gradient={{ from: "radar.5", to: "violet.6", deg: 135 }}>
@@ -92,13 +94,13 @@ export function Shell({ children }: { children: ReactNode }) {
         </AppShell.Navbar>
         <AppShell.Main>
           <Box maw={wide ? 1120 : 760} mx="auto" px={{ base: 16, sm: 32 }} pt={{ base: "calc(var(--safe-top) + 18px)", sm: 36 }}
-            pb={{ base: "calc(var(--tabbar-h) + var(--safe-bottom) + 28px)", sm: 48 }}>
+            pb={{ base: bare ? "calc(var(--safe-bottom) + 28px)" : "calc(var(--tabbar-h) + var(--safe-bottom) + 28px)", sm: 48 }}>
             {children}
           </Box>
         </AppShell.Main>
       </AppShell>
 
-      {!desktop && (
+      {!desktop && !bare && (
         <nav className="tabbar" aria-label="主导航">
           {TABS.filter((t) => t.href !== "/companion").map((t) => (
             <Link key={t.href} href={t.href} className="tab" data-active={active(t.href) || undefined}>
@@ -108,7 +110,7 @@ export function Shell({ children }: { children: ReactNode }) {
           ))}
         </nav>
       )}
-      {!onCompanionPage && (
+      {!onCompanionPage && !bare && (
         <button className="ai-fab" aria-label="打开 AI 助手" onClick={() => openCompanion()}>
           <IconSparkles size={26} stroke={1.8} />
         </button>

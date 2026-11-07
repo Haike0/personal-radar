@@ -2,7 +2,8 @@
 import { Alert, Badge, Box, Collapse, Group, Paper, SimpleGrid, Skeleton, Stack, Text, Title, UnstyledButton } from "@mantine/core";
 import { IconChevronDown, IconChevronRight, IconCloudOff, IconFlask, IconInbox } from "@tabler/icons-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { CAT_COLOR, ItemCard, ReviewButtons } from "@/components/ItemCard";
 import { PersonBar, useCurrentPerson } from "@/components/PersonSwitcher";
 import { usePageContext } from "@/components/Shell";
@@ -122,6 +123,16 @@ function DataState({ h }: { h: Health | null }) {
 }
 
 export default function Home() {
+  const router = useRouter();
+  // always ask fresh (a cached "not set up yet" would bounce you back to the welcome page right after choosing)
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    fetch("/api/onboarding", { cache: "no-store" }).then((r) => r.json())
+      .then((j: { onboarded: boolean }) => { if (!alive) return; if (j.onboarded) setReady(true); else router.replace("/welcome"); })
+      .catch(() => alive && setReady(true));
+    return () => { alive = false; };
+  }, [router]);
   const who = useCurrentPerson();
   const person = who.person;
   // the AI button on this page answers about the person being shown
@@ -133,6 +144,7 @@ export default function Home() {
   const [showDone, setShowDone] = useState(false);
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 
+  if (!ready) return <Stack><Skeleton h={60} radius="lg" /><Skeleton h={120} radius="lg" /></Stack>;
   if (!who.loading && !person) return <Text className="faint" ta="center" py="xl">还没有联系人</Text>;
   if ((loading || who.loading) && !data) return <Stack><Skeleton h={60} radius="lg" /><Skeleton h={90} radius="lg" /><Skeleton h={120} radius="lg" /><Skeleton h={120} radius="lg" /></Stack>;
   if (error && !data) return <Alert color="red" icon={<IconCloudOff />} title="连不上">{error}</Alert>;

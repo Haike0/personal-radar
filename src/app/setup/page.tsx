@@ -1,7 +1,8 @@
 "use client";
-import { Button, Group, Paper, Stack, Stepper, Text, Title } from "@mantine/core";
+import { Accordion, Button, Group, Paper, Stack, Stepper, Text, Title } from "@mantine/core";
 import { IconArrowRight, IconCheck } from "@tabler/icons-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { usePageContext } from "@/components/Shell";
 import { AiService } from "@/components/setup/AiService";
@@ -25,11 +26,26 @@ export default function SetupPage() {
   const [done, setDone] = useState(false);
   async function finish() {
     await post("/api/settings", { mode: "real" }, "PATCH");
+    await post("/api/onboarding", { state: "done" });
     refreshAll();
     setDone(true);
   }
+  const router = useRouter();
+  async function leave() {
+    await post("/api/onboarding", { state: "demo" });
+    refreshAll();
+    router.replace("/");
+  }
   const body = [
-    <Stack key="import" gap="md"><ImportPanel onImported={() => setStep(1)} /><Paper className="surface" radius="lg" p="md"><ChatLabConnect /></Paper></Stack>,
+    <Stack key="import" gap="md">
+      <ImportPanel onImported={() => setStep(1)} />
+      <Accordion variant="contained" radius="lg">
+        <Accordion.Item value="chatlab">
+          <Accordion.Control><Text size="sm">已经在用 ChatLab？直接读取它里面的聊天</Text></Accordion.Control>
+          <Accordion.Panel><ChatLabConnect /></Accordion.Panel>
+        </Accordion.Item>
+      </Accordion>
+    </Stack>,
     <AiService key="ai" onReady={() => setStep(2)} />,
     <PrivacyPanel key="privacy" />,
     <OrganizeCard key="organize" />,
@@ -38,7 +54,10 @@ export default function SetupPage() {
   return (
     <Stack gap="lg" className="fade-in">
       <div>
-        <Title order={1} fz={28}>用自己的聊天</Title>
+        <Group justify="space-between" align="center">
+          <Title order={1} fz={28}>用自己的聊天</Title>
+          <Button variant="subtle" color="gray" size="xs" radius="xl" onClick={leave}>先不设置，看演示</Button>
+        </Group>
         <Text size="sm" className="muted" mt={4}>四步。聊天只在这台电脑上读取；只有整理和提问时，过滤、脱敏后的内容才会发给你选的 AI 服务。</Text>
       </div>
       <Stepper active={step} onStepClick={setStep} size="sm" allowNextStepsSelect>
