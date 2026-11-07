@@ -61,6 +61,7 @@ Tell the user: if the Mac sleeps, reminders wait until it wakes (System Settings
 **Docker (any OS, if Docker is installed)** — `docker compose up -d` in the repo; data goes to `./radar-data`.
 
 ## 5. Phone (optional)
+Radar only answers localhost, 127.0.0.1 and `*.ts.net` host names. If you put it behind any other name, add it to `RADAR_ALLOWED_HOSTS` (comma-separated, `*.example` allowed) in the service environment.
 Only if the user wants Radar on their phone. Install Tailscale on the computer and phone (same account). The user enables MagicDNS and HTTPS certificates once in the Tailscale admin console (they must click it themselves). Then `tailscale serve --bg 3210` and give them the `https://<machine>.<tailnet>.ts.net` address. On the phone: open it in Safari/Chrome → Add to Home Screen → open from the icon → Settings → turn on notifications.
 
 ## 6. Hand over

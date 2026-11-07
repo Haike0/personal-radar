@@ -83,6 +83,7 @@ The server only listens on your computer. To use it from your phone, put both de
 ## Privacy
 
 - Chats, notes and keys stay in `~/.personal-radar` (override with `RADAR_DATA_DIR`). The original chat files are never modified.
+- The server listens on 127.0.0.1 only. It also ignores requests other websites make through your browser: only localhost, 127.0.0.1 and Tailscale host names are answered (against DNS rebinding), and API calls must come from Radar's own pages (against CSRF). Other host names can be added with `RADAR_ALLOWED_HOSTS`.
 - Only two things send content to the AI service you chose: organizing (chunks of new messages) and questions you ask in the app. Both pass through the same redaction rules and keyword blacklist at the last step, and both have a preview that shows exactly what would be sent.
 - People you mark "不发给 AI" are never organized, analyzed, summarized or included in answers.
 - With a local Ollama model nothing leaves your computer.
