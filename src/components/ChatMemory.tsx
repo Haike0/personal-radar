@@ -112,12 +112,12 @@ function DayView({ personKey, personName, date, onBack, focusId }: { personKey: 
   );
 }
 
-export function ChatMemory({ personKey, personName, initialDate = null }: { personKey: string; personName: string; initialDate?: string | null }) {
+export function ChatMemory({ personKey, personName, initialDate = null, initialMid = null }: { personKey: string; personName: string; initialDate?: string | null; initialMid?: string | null }) {
   const wide = useMediaQuery("(min-width: 900px)") ?? false;
   const { data, loading } = useApi<{ days: Day[] }>(`/api/people/${encodeURIComponent(personKey)}/memory`);
   const [selected, setSelected] = useState<string | null>(initialDate);
   const top = useRef<HTMLDivElement>(null);
-  const [focusId, setFocusId] = useState<string | null>(null);
+  const [focusId, setFocusId] = useState<string | null>(initialMid);
   const [q, setQ] = useState("");
   const [hits, setHits] = useState<{ q: string; messages: ChatMessage[] } | null>(null);
   const [searching, setSearching] = useState(false);

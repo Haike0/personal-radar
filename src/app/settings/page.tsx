@@ -15,7 +15,7 @@ type Data = { settings: Record<string, string>; sync: SyncStatus; deepseekKey: b
 type Chats = { status: { ok: boolean; sessions: number } };
 type Push = { devices: number };
 const SCENES = [
-  { id: "love", label: "恋人与朋友", icon: IconHeart, color: "pink" },
+  { id: "love", label: "生活", icon: IconHeart, color: "pink" },
   { id: "work", label: "职场", icon: IconBriefcase, color: "cyan" },
   { id: "night", label: "夜场", icon: IconGlassFull, color: "violet" },
 ];

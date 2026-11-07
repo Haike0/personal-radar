@@ -5,7 +5,7 @@ import {
   IconHeartHandshake, IconMessageHeart, IconSparkles, IconUser, IconUsersGroup,
 } from "@tabler/icons-react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useCurrentPerson } from "@/components/PersonSwitcher";
 import { ChatMemory } from "@/components/ChatMemory";
@@ -59,12 +59,15 @@ export default function PersonPage() {
   const { openCompanion } = useCompanion();
   const { pick } = useCurrentPerson(); // "在今天里处理" switches Today to this person
   const { data: p, loading, error } = useApi<PersonProfile>(`/api/people/${encodeURIComponent(key)}`);
-  const [tab, setTab] = useState<string | null>("overview");
+  // ?tab=chat&date=YYYY-MM-DD&mid=… opens 聊天记忆 on that day at that message (from a quote on an item page)
+  const sp = useSearchParams();
+  const [tab, setTab] = useState<string | null>(sp.get("tab") ?? "overview");
+  const linkMid = sp.get("mid");
   const [showSelf, setShowSelf] = useState(false);
   const { contacts } = useCurrentPerson();
   // set the AI's scope from the URL right away — before, it kept the previous page's person until this page's data arrived
   usePageContext({ page: "person", personKey: key, personName: p?.name ?? contacts.find((c) => c.key === key)?.name });
-  const [memDate, setMemDate] = useState<string | null>(null);
+  const [memDate, setMemDate] = useState<string | null>(sp.get("date"));
   // tapping a line of the portrait opens 记忆 at that exact line (or at its group), and lights it up for a moment
   const [focus, setFocus] = useState<{ facet: string; item?: number; at: number } | null>(null);
   const [flash, setFlash] = useState<number | string | null>(null);
@@ -270,7 +273,7 @@ export default function PersonPage() {
         </Tabs.Panel>
 
         <Tabs.Panel value="chat">
-          <ChatMemory personKey={key} personName={short} initialDate={memDate} />
+          <ChatMemory personKey={key} personName={short} initialDate={memDate} initialMid={memDate === sp.get("date") ? linkMid : null} key={`${memDate}:${linkMid}`} />
         </Tabs.Panel>
 
         <Tabs.Panel value="memory">

@@ -6,7 +6,7 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import {
-  IconArrowBackUp, IconArrowLeft, IconBan, IconCheck, IconChevronDown, IconCircleCheck, IconClockPause, IconDots, IconEdit, IconEyeOff,
+  IconArrowBackUp, IconArrowLeft, IconBan, IconCheck, IconChevronDown, IconChevronRight, IconCircleCheck, IconClockPause, IconDots, IconEdit, IconEyeOff,
   IconHistory, IconMessage2, IconQuote, IconRefresh, IconSparkles,
 } from "@tabler/icons-react";
 import Link from "next/link";
@@ -120,19 +120,22 @@ export default function ItemPage() {
         </Group>
         <Paper className="surface" p="md" radius="xl">
           <Stack gap={10}>
-            {shown.map((e) => (
-              <div key={e.id} className="quote" data-key={e.isKey || undefined} style={{ opacity: e.isKey ? 1 : 0.6 }}>
-                <Group gap={6}><Text size="xs" fw={600}>{e.sender}</Text><Text size="xs" className="faint tabular">{e.ts.slice(5)}</Text></Group>
-                <Text size="sm" lh={1.6} style={{ whiteSpace: "pre-wrap" }}>{e.text}</Text>
-              </div>
-            ))}
+            {shown.map((e) => {
+              // tap a quote → that person's 聊天记忆, opened on that day and scrolled to that message
+              const href = e.messageId && e.ts ? `/people/${encodeURIComponent(it.personKey)}?tab=chat&date=${e.ts.slice(0, 10)}&mid=${encodeURIComponent(e.messageId)}` : null;
+              const body = (
+                <>
+                  <Group gap={6}><Text size="xs" fw={600}>{e.sender}</Text><Text size="xs" className="faint tabular">{e.ts.slice(5)}</Text>{href && <IconChevronRight size={13} className="faint" />}</Group>
+                  <Text size="sm" lh={1.6} style={{ whiteSpace: "pre-wrap" }}>{e.text}</Text>
+                </>
+              );
+              return href
+                ? <Link key={e.id} href={href} className="quote pressable" data-key={e.isKey || undefined} style={{ opacity: e.isKey ? 1 : 0.6, display: "block", color: "inherit", textDecoration: "none" }}>{body}</Link>
+                : <div key={e.id} className="quote" data-key={e.isKey || undefined} style={{ opacity: e.isKey ? 1 : 0.6 }}>{body}</div>;
+            })}
             {!shown.length && <Text size="sm" className="faint">没有保存原话。没有证据的事项不应该出现，可以忽略它。</Text>}
           </Stack>
-          {it.mode === "demo" ? (
-            <Text size="xs" className="faint" mt="sm">演示数据没有对应的原始消息</Text>
-          ) : (
-            <Text size="xs" className="faint" mt="sm">消息 ID：{key[0]?.messageId ?? "—"}</Text>
-          )}
+          {shown.some((e) => e.messageId) && <Text size="xs" className="faint" mt="sm">点一条原话，看当时前后聊了什么</Text>}
         </Paper>
       </Stack>
 

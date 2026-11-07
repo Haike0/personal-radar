@@ -11,7 +11,14 @@ type Settings = { settings: Record<string, string> };
 type Chats = { sessions: { id: string; name: string; isGroup: boolean }[] };
 const parse = <T,>(s: string | undefined, fb: T): T => { try { const v = JSON.parse(s ?? ""); return Array.isArray(v) ? (v as T) : fb; } catch { return fb; } };
 
-const SAMPLE = "明天下午3点见，到了打我电话 138 1234 5678";
+// one line per option, so ticking or unticking an option visibly changes its own line (all fictional)
+const SAMPLES: Record<string, string> = {
+  secrets: "服务器密码发你了：sk-demo-0000-0000-0000",
+  contact: "到了打我电话 138 1234 5678，或发邮件 xiaoyu@example.com",
+  finance: "定金转这张卡 6214 8301 2345 6781",
+  ids: "订票要身份证号 110101199003077777",
+  network: "店在这儿 https://map.example.com/place?id=8812&from=share",
+};
 const PROMISES = [
   "聊天记录只存在这台电脑上。Radar 没有服务器，也没有账号。",
   "不收集你的任何数据。",
@@ -30,7 +37,6 @@ export function PrivacySimple({ advancedHref }: { advancedHref?: string }) {
   const rules = parse<string[]>(s.privacy_rules, RULE_GROUPS.filter((g) => g.on).map((g) => g.id));
   const excluded = parse<string[]>(s.ai_excluded, []);
   const people = (chats?.sessions ?? []).filter((c) => !c.isGroup);
-  const after = outbound(SAMPLE, cfg).text;
   async function save(patch: Record<string, string>) {
     try { await post("/api/settings", patch, "PATCH"); reload(); }
     catch (e) { notifications.show({ color: "red", radius: "lg", message: (e as Error).message }); }
@@ -78,10 +84,19 @@ export function PrivacySimple({ advancedHref }: { advancedHref?: string }) {
           ))}
         </Group>
         <div className="privacy-sample">
-          <Text size="xs" className="faint">聊天原话</Text>
-          <Text size="sm">{SAMPLE}</Text>
-          <Text size="xs" className="faint" mt={8}>AI 收到的</Text>
-          <Text size="sm" fw={550}>{after}</Text>
+          <Text size="xs" className="faint" mb={8}>每个选项的例子：灰字是聊天原话，→ 后面是 AI 收到的</Text>
+          <Stack gap={10}>
+            {RULE_GROUPS.map((g) => {
+              const on = rules.includes(g.id), out = outbound(SAMPLES[g.id], cfg).text;
+              return (
+                <div key={g.id} className="privacy-pair" data-on={on || undefined}>
+                  <Text size="xs" className="faint" fw={600}>{g.label}{on ? "" : "（没勾选，原样发送）"}</Text>
+                  <Text size="sm" lh={1.5} className="privacy-before">{SAMPLES[g.id]}</Text>
+                  <Text size="sm" lh={1.5} fw={550} className="privacy-after">→ {out}</Text>
+                </div>
+              );
+            })}
+          </Stack>
         </div>
       </Stack>
 

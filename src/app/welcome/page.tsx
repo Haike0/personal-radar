@@ -13,7 +13,7 @@ const POINTS = [
 
 // Demo scenarios. Each one is a fictional circle of people, so you can see what Radar does in that part of life.
 const SCENES = [
-  { id: "love", icon: IconHeart, color: "pink", title: "恋人与朋友", text: "女朋友、朋友、家人：约会和见家长、她的喜好、你答应过的事、生日" },
+  { id: "love", icon: IconHeart, color: "pink", title: "生活", text: "恋人、朋友、家人：约会和见家长、TA 们的喜好、你答应过的事、生日" },
   { id: "work", icon: IconBriefcase, color: "cyan", title: "职场", text: "上司、同事、客户：截止日期、改了的会、谁答应了什么、尾款" },
   { id: "night", icon: IconGlassFull, color: "violet", title: "夜场接客", text: "常客的喜好、来店和同伴、生日、上次聊到哪" },
 ];

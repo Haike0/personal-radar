@@ -6,7 +6,7 @@
 //   node scripts/demo-gen-wechat.mjs love analyze   每个人的「分析」页
 //   node scripts/demo-gen-wechat.mjs love dedupe    合并整理时同一件事被记了两次的记录（和 App 里整理后的查重同一套规则）
 //   node scripts/demo-gen-wechat.mjs love spice     按真实比例补表情包和小表情（模型写得太少），整理出的事项引用的消息编号会一起对齐
-// 场景：love（恋人与朋友）、work（职场）。产物：demo/<场景>/chats.json、items.json、analysis.json（日期都用相对天数，导入时按当天换算）
+// 场景：love（生活：恋人、朋友、家人）、work（职场）。产物：demo/<场景>/chats.json、items.json、analysis.json（日期都用相对天数，导入时按当天换算）
 import fs from "node:fs";
 import path from "node:path";
 import { AI, extraBody, requireKey } from "./lib/env.mjs";
