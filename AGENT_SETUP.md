@@ -21,13 +21,13 @@ Verify: `node -e "require('node:sqlite')"` exits without error.
 ```bash
 git clone https://github.com/Ikarishinji00/personal-radar.git ~/personal-radar
 cd ~/personal-radar
-npm ci
+npm ci                 # also builds the app (the prepare step)
 npx next build
 ```
 
 ## 3. First start and check
 ```bash
-npm run start          # serves http://localhost:3210
+npm run serve          # serves http://localhost:3210 (npm start does the same and also opens the browser)
 curl -s http://localhost:3210/api/health   # expect JSON
 ```
 Stop it again before phase 4.
@@ -55,7 +55,7 @@ Tell the user: if the Mac sleeps, reminders wait until it wakes (System Settings
 
 **Linux** — a user unit `~/.config/systemd/user/personal-radar.service` with `WorkingDirectory=<repo>`, `ExecStart=<node> node_modules/next/dist/bin/next start -p 3210`, `Environment=NODE_ENV=production`, `Restart=always`; then `systemctl --user enable --now personal-radar`.
 
-**Windows** — `schtasks /Create /SC ONLOGON /TN PersonalRadar /TR "cmd /c cd /d <repo> && npm run start"`.
+**Windows** — `schtasks /Create /SC ONLOGON /TN PersonalRadar /TR "cmd /c cd /d <repo> && npm run serve"`.
 
 **Docker (any OS, if Docker is installed)** — `docker compose up -d` in the repo; data goes to `./radar-data`.
 

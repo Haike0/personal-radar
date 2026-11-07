@@ -388,7 +388,9 @@ export function read(input, filename = "", opts = {}) {
   const wa = parseWhatsApp(text, name, opts);
   const tl = parseTextLog(text, name);
   const real = (chats) => (chats ? chats[0].messages.filter((m) => m.type !== T.system).length : 0);
-  if (tl && real(tl) > real(wa)) return { format: "text", chats: tl };
+  // both can read "2026-11-01 21:03:12 名字: 内容"; on a tie it's WhatsApp only with its own marks ([date…], "date," or "time - ")
+  const waMark = /^(\[\d|\d{1,4}[/.-]\d{1,2}[/.-]\d{1,4},|.{6,24}\d{1,2}:\d{2}(:\d{2})?\s*([AaPp]\.?\s?[Mm]\.?)?\s+-\s)/m.test(head);
+  if (tl && (real(tl) > real(wa) || (real(tl) === real(wa) && !waMark))) return { format: "text", chats: tl };
   if (wa && wa[0].messages.length) return { format: "whatsapp", chats: wa };
   throw new Error("认不出这个文件的格式。支持：LINE / WhatsApp / QQ 的导出，带时间和发送人的 Markdown 或文本记录，Google Chat 的 .zip，以及通用聊天格式、Telegram、Discord、Instagram 的 JSON。");
 }

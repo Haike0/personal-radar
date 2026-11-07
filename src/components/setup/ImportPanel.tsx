@@ -1,9 +1,12 @@
 "use client";
 import { Anchor, Badge, Button, Checkbox, Group, Paper, Select, SimpleGrid, Stack, Text, TextInput, UnstyledButton } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconFileImport, IconUpload } from "@tabler/icons-react";
+import { IconChevronRight, IconFileImport, IconUpload } from "@tabler/icons-react";
+import Link from "next/link";
 import { useRef, useState } from "react";
-import { post, refreshAll } from "@/lib/client";
+import { post, refreshAll, useApi } from "@/lib/client";
+
+type Done = { id: string; name: string; added: number; total: number };
 
 type Person = { id: string; name: string; messages: number };
 type Plan =
@@ -71,6 +74,7 @@ export function ImportPanel({ onImported }: { onImported?: () => void }) {
   const [drag, setDrag] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
   const [pv, setPv] = useState<Preview | null>(null);
+  const [done, setDone] = useState<Done[] | null>(null);
   const [choice, setChoice] = useState<Record<string, Choice>>({});
 
   async function upload(files: FileList | File[]) {
@@ -100,16 +104,17 @@ export function ImportPanel({ onImported }: { onImported?: () => void }) {
     const picks = pv.chats.filter((c) => choice[c.key]?.include).map((c) => ({ key: c.key, me: choice[c.key].me, name: choice[c.key].name }));
     setBusy("commit");
     try {
-      const r = await post<{ done: { name: string; added: number }[]; failed: { error: string }[] }>("/api/import/commit", { token: pv.token, choices: picks });
+      const r = await post<{ done: Done[]; failed: { error: string }[] }>("/api/import/commit", { token: pv.token, choices: picks });
       refreshAll();
       notifications.show({ radius: "lg", color: r.failed.length ? "orange" : undefined,
         message: `导入了 ${r.done.length} 个聊天，共新增 ${r.done.reduce((a, d) => a + d.added, 0)} 条消息${r.failed.length ? `；${r.failed.length} 个失败：${r.failed[0].error}` : ""}` });
-      if (r.done.length) { setPv(null); onImported?.(); }
+      if (r.done.length) { setPv(null); setDone(r.done); onImported?.(); }
     } catch (e) {
       notifications.show({ color: "red", radius: "lg", message: (e as Error).message });
     } finally { setBusy(null); }
   }
   const picked = pv?.chats.filter((c) => choice[c.key]?.include).length ?? 0;
+  const { data: ai } = useApi<{ deepseekKey: boolean }>(done ? "/api/settings" : null);
 
   return (
     <Stack gap="sm">
@@ -160,6 +165,30 @@ export function ImportPanel({ onImported }: { onImported?: () => void }) {
             <Button radius="md" variant="subtle" color="gray" onClick={() => setPv(null)}>取消</Button>
           </Group>
         </Stack>
+      )}
+
+      {/* right after an import: the numbers are ready now, no AI needed */}
+      {done && !pv && (
+        <Paper className="surface" radius="lg" p="md">
+          <Group justify="space-between" mb={6}>
+            <Text size="sm" fw={650}>导入好了，先看看聊天分析</Text>
+            <UnstyledButton onClick={() => setDone(null)}><Text size="xs" className="faint">收起</Text></UnstyledButton>
+          </Group>
+          <Text size="xs" className="faint" mb="sm">回复速度、谁先开口、口头禅、什么时候聊得多，都在你电脑上算好了，不用 AI 密钥。</Text>
+          <Stack gap={6}>
+            {done.map((d) => (
+              <Paper key={d.id} component={Link} href={`/people/${encodeURIComponent(d.id)}/report`} className="surface pressable" radius="md" px="sm" py={10}>
+                <Group justify="space-between" wrap="nowrap">
+                  <div style={{ minWidth: 0 }}><Text size="sm" fw={600} truncate>{d.name}</Text><Text size="xs" className="faint">{d.total.toLocaleString()} 条消息{d.added < d.total ? ` · 新增 ${d.added.toLocaleString()}` : ""}</Text></div>
+                  <Group gap={2} wrap="nowrap" style={{ flex: "none" }}><Text size="sm" c="radar" fw={600}>看分析</Text><IconChevronRight size={15} /></Group>
+                </Group>
+              </Paper>
+            ))}
+          </Stack>
+          {ai && !ai.deepseekKey && (
+            <Text size="xs" className="muted" mt="sm">想让它从聊天里找出约好的事、答应过的事，再 <Anchor component={Link} href="/settings/ai" size="xs">填上 AI 密钥</Anchor>。</Text>
+          )}
+        </Paper>
       )}
 
       {!pv && <ExportSteps />}

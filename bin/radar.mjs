@@ -22,16 +22,25 @@ if (maj < 22 || (maj === 22 && min < 13)) {
 }
 
 const next = createRequire(path.join(ROOT, "package.json")).resolve("next/dist/bin/next");
-const built = fs.existsSync(path.join(ROOT, ".next", "BUILD_ID"));
+const inPackage = ROOT.split(path.sep).includes("node_modules");
+const BUILD_ID = path.join(ROOT, ".next", "BUILD_ID");
+// in a clone, rebuild after `git pull` changed the code
+const newest = (dir) => fs.readdirSync(dir, { withFileTypes: true }).reduce((t, e) => {
+  const p = path.join(dir, e.name);
+  return Math.max(t, e.isDirectory() ? newest(p) : fs.statSync(p).mtimeMs);
+}, 0);
+const stale = !inPackage && fs.existsSync(BUILD_ID) && newest(path.join(ROOT, "src")) > fs.statSync(BUILD_ID).mtimeMs;
+const built = fs.existsSync(BUILD_ID) && !stale;
 if (!built || args.includes("--rebuild")) {
   // Next.js can't compile source that sits inside node_modules, so an installed copy must come prebuilt
-  if (ROOT.split(path.sep).includes("node_modules")) {
+  if (inPackage) {
     console.error("这个安装包里缺少构建好的程序。请重新安装：npx github:Ikarishinji00/personal-radar ，还不行就到 GitHub 提 issue。");
     process.exit(1);
   }
-  console.log("第一次运行，正在准备（大约一分钟）…");
-  const b = spawnSync(process.execPath, [next, "build"], { cwd: ROOT, stdio: ["ignore", "ignore", "inherit"], env: { ...process.env, NEXT_TELEMETRY_DISABLED: "1" } });
-  if (b.status !== 0) { console.error("准备失败，上面是出错信息。可以到 GitHub 提 issue。"); process.exit(1); }
+  console.log(stale ? "代码有更新，正在重新准备（大约一分钟）…" : "第一次运行，正在准备（大约一分钟）…");
+  // build output (and its harmless warnings) only shows when the build fails
+  const b = spawnSync(process.execPath, [next, "build"], { cwd: ROOT, encoding: "utf8", maxBuffer: 64 * 1024 * 1024, env: { ...process.env, NEXT_TELEMETRY_DISABLED: "1" } });
+  if (b.status !== 0) { console.error(`${b.stdout ?? ""}${b.stderr ?? ""}\n准备失败，上面是出错信息。可以到 GitHub 提 issue。`); process.exit(1); }
 }
 
 const url = `http://localhost:${PORT}`;

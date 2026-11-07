@@ -183,3 +183,10 @@ test("Zip of several Markdown files → one chat each", () => {
   assert.equal(format, "text");
   assert.deepEqual(chats.map((c) => c.name).sort(), ["老周", "阿杰"].sort());
 });
+
+test("'2026-11-01 21:03:00 名字: 内容' is a text log, not WhatsApp", () => {
+  const txt = "# 与 小周 的聊天记录\n\n2026-11-01 21:03:00 小周: 周六有空吗\n2026-11-01 21:05:00 我: 有\n2026-11-01 21:06:00 小周: 那去看展\n";
+  const { format, chats } = read(Buffer.from(txt), "小周.txt");
+  assert.equal(format, "text");
+  assert.equal(chats[0].messages.length, 3);
+});

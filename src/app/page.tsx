@@ -1,5 +1,5 @@
 "use client";
-import { Alert, Badge, Box, Collapse, Group, Paper, SimpleGrid, Skeleton, Stack, Text, Title, UnstyledButton } from "@mantine/core";
+import { Alert, Badge, Box, Button, Collapse, Group, Paper, SimpleGrid, Skeleton, Stack, Text, Title, UnstyledButton } from "@mantine/core";
 import { IconChevronDown, IconChevronRight, IconCloudOff, IconFlask, IconInbox } from "@tabler/icons-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -142,6 +142,7 @@ export default function Home() {
   const q = person ? `?person=${encodeURIComponent(person.key)}` : null;
   const { data, error, loading } = useApi<Data>(q && `/api/items${q}`);
   const { data: health } = useApi<Health>(q && `/api/health${q}`);
+  const { data: aiCfg } = useApi<{ deepseekKey: boolean }>(data?.mode === "real" && !data.items.length ? "/api/settings" : null);
   const [showRest, setShowRest] = useState(true); // open by default (user preference)
   const [showDone, setShowDone] = useState(false);
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -186,6 +187,18 @@ export default function Home() {
               <Text size="xs" className="muted">{demoOnly ? "装到自己电脑上，就能导入你的 LINE / WhatsApp / Telegram 聊天" : "导入你自己的 LINE / WhatsApp / Telegram 聊天，四步就能用"}</Text>
             </div>
             <Group gap={4} wrap="nowrap" style={{ flex: "none" }}><Text size="sm" fw={600} c="radar">{demoOnly ? "去下载" : "开始设置"}</Text><IconChevronRight size={16} /></Group>
+          </Group>
+        </Paper>
+      )}
+
+      {/* real chats imported, nothing organized yet: the local analysis is already there, no AI needed */}
+      {d.mode === "real" && !d.items.length && (
+        <Paper className="surface" radius="xl" p="md">
+          <Text size="sm" fw={650}>{person!.name}的聊天导入好了，还没用 AI 整理</Text>
+          <Text size="xs" className="muted" mt={2}>聊天分析已经在你电脑上算好了：谁回得快、谁先开口、口头禅、什么时候聊得多。</Text>
+          <Group gap="xs" mt="sm">
+            <Button component={Link} href={`/people/${encodeURIComponent(pk)}/report`} radius="xl" size="xs">看聊天分析（不用 AI）</Button>
+            <Button component={Link} href={aiCfg?.deepseekKey ? "/settings/organize" : "/settings/ai"} radius="xl" size="xs" variant="light">{aiCfg?.deepseekKey ? "开始整理" : "填 AI 密钥，找出约定和答应的事"}</Button>
           </Group>
         </Paper>
       )}
