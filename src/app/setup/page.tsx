@@ -5,9 +5,9 @@ import Link from "next/link";
 import { useState } from "react";
 import { usePageContext } from "@/components/Shell";
 import { AiService } from "@/components/setup/AiService";
+import { OrganizeCard } from "@/components/OrganizeCard";
 import { ChatLabConnect } from "@/components/setup/ChatLabConnect";
 import { ImportPanel } from "@/components/setup/ImportPanel";
-import { OrganizePanel } from "@/components/setup/OrganizePanel";
 import { PrivacyPanel } from "@/components/setup/PrivacyPanel";
 import { post, refreshAll } from "@/lib/client";
 
@@ -32,7 +32,7 @@ export default function SetupPage() {
     <Stack key="import" gap="md"><ImportPanel onImported={() => setStep(1)} /><Paper className="surface" radius="lg" p="md"><ChatLabConnect /></Paper></Stack>,
     <AiService key="ai" onReady={() => setStep(2)} />,
     <PrivacyPanel key="privacy" />,
-    <OrganizePanel key="organize" />,
+    <OrganizeCard key="organize" />,
   ][step];
 
   return (

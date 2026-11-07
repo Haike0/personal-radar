@@ -1,18 +1,20 @@
 import { connection } from "next/server";
 import { db, getSettings, nowStr, setDemoSet, setSettings } from "@/lib/db";
 import { deepseekKey } from "@/lib/ai/deepseek";
+import { modelLabel, resolve } from "@/lib/ai/model";
 import { syncStatus } from "@/lib/sync";
 
-const SECRET = ["bark_key", "bark_encrypt_key", "ai_key", "chatlab_api_token"];
+// AI keys are not in this table at all (they live in keys.json); these are the other secrets it holds.
+const SECRET = ["bark_key", "bark_encrypt_key", "chatlab_api_token"];
 
 export async function GET() {
   await connection();
   const s = getSettings();
-  for (const k of SECRET) s[k] = s[k] ? "已设置" : "";
-  return Response.json({ settings: s, sync: syncStatus(), deepseekKey: Boolean(await deepseekKey()), aiUsage: usage() });
+  for (const k of SECRET) if (k in s) s[k] = s[k] ? "已设置" : "";
+  return Response.json({ settings: s, sync: syncStatus(), deepseekKey: Boolean(await deepseekKey()), chatModel: modelLabel(resolve("chat")), aiUsage: usage() });
 }
 
-/** This month's DeepSeek usage. Cost uses the peak price (upper bound): input $0.3/M, cache hit $0.006/M, output $1.2/M. */
+/** This month's AI usage (all services). Cost uses the peak price (upper bound): input $0.3/M, cache hit $0.006/M, output $1.2/M. */
 function usage() {
   try {
     const r = db().prepare("SELECT COUNT(*) n, SUM(prompt) p, SUM(cache_hit) h, SUM(completion) c FROM ai_calls WHERE substr(at,1,7)=?")
@@ -27,6 +29,7 @@ function usage() {
 export async function PATCH(req: Request) {
   const patch = await req.json();
   for (const k of SECRET) if (patch[k] === "已设置") delete patch[k];
+  for (const k of ["ai_chat", "ai_fast"]) if (k in patch && patch[k] !== "" && !/^[\w-]+\|\S+/.test(String(patch[k]))) return Response.json({ error: "模型格式不对" }, { status: 400 });
   const prevSet = getSettings().demo_set;
   setSettings(patch);
   if ((patch.demo_set === "life" || patch.demo_set === "night") && patch.demo_set !== prevSet) setDemoSet(patch.demo_set);

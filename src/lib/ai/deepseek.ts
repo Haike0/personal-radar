@@ -1,18 +1,19 @@
 import "server-only";
-import { aiConfig, extraBody, isExcluded, scrub } from "@/lib/ai-config";
+import { isExcluded, scrub } from "@/lib/ai-config";
 import * as chatlab from "@/lib/chatlab";
 import { db, getAnalysis, getItem, getSetting, listItems, listPeople, nowStr, todayStr } from "@/lib/db";
 import type { Item } from "@/lib/types";
 import { assistantOf } from "./assistants";
+import { body, modelLabel, resolve, type Role } from "./model";
 import type { Citation, CompanionContext, CompanionProvider, Proposal, StreamEvent } from "./types";
 
-// Real Q&A through an OpenAI-compatible API (DeepSeek by default). The key comes from RADAR_AI_KEY
-// (.env.local) on the machine running the server and never reaches the browser. Each question sends only a small,
-// question-specific slice: organized items + a few key quotes (+ latest lines for "最近" questions).
-const cfg = () => aiConfig();
-
+// Real Q&A through the model service chosen in 设置 → AI 设置 (any OpenAI-compatible API; DeepSeek by default).
+// Keys stay on the machine running the server (src/lib/ai/model.ts) and never reach the browser. Each question sends
+// only a small, question-specific slice: organized items + a few key quotes (+ latest lines for "最近" questions).
+let lastModel = "";
+/** Is there a key for the Q&A service? (kept for the settings page) */
 export async function deepseekKey(): Promise<string | null> {
-  return cfg().key;
+  return resolve("chat").key;
 }
 
 // ---------- picking what to send ----------
@@ -217,7 +218,7 @@ function logUsage(u: { prompt_tokens?: number; completion_tokens?: number; promp
     const d = db();
     d.exec("CREATE TABLE IF NOT EXISTS ai_calls(id INTEGER PRIMARY KEY, at TEXT, model TEXT, prompt INTEGER, completion INTEGER, cache_hit INTEGER, ms INTEGER)");
     d.prepare("INSERT INTO ai_calls(at,model,prompt,completion,cache_hit,ms) VALUES(?,?,?,?,?,?)")
-      .run(nowStr(), cfg().model, u?.prompt_tokens ?? null, u?.completion_tokens ?? null, u?.prompt_cache_hit_tokens ?? null, ms);
+      .run(nowStr(), lastModel, u?.prompt_tokens ?? null, u?.completion_tokens ?? null, u?.prompt_cache_hit_tokens ?? null, ms);
   } catch { /* usage log is best-effort */ }
 }
 
@@ -225,10 +226,10 @@ export const deepseekProvider: CompanionProvider = {
   name: "AI",
   simulated: false,
   async *respond(history, ctx, assistant): AsyncGenerator<StreamEvent> {
-    const c = cfg();
-    yield { type: "meta", provider: this.name, simulated: false, model: c.model };
-    const key = await deepseekKey();
-    if (!key) { yield { type: "text", delta: "还没有设置 AI 服务：到「设置 → AI 服务」填上密钥并点「测试」。" }; yield { type: "done" }; return; }
+    const r = resolve("chat");
+    yield { type: "meta", provider: r.service.name, simulated: false, model: modelLabel(r) };
+    const key = r.key;
+    if (!key) { yield { type: "text", delta: `还没有 ${r.service.name} 的密钥，所以没法回答。到「设置 → AI 设置 → 模型服务」里填上。` }; yield { type: "done" }; return; }
     const question = history.filter((h) => h.role === "user").at(-1)?.content ?? "";
     const m = material(question, ctx);
     const messages = [
@@ -237,15 +238,16 @@ export const deepseekProvider: CompanionProvider = {
       ...history.slice(-8).map((h) => ({ role: h.role, content: h.content })),
     ];
     const t0 = Date.now();
-    const res = await fetch(`${c.baseUrl}/chat/completions`, {
+    lastModel = r.model;
+    const res = await fetch(r.url, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
-      body: JSON.stringify({ model: c.model, messages, stream: true, stream_options: { include_usage: true },
-        ...extraBody(c.baseUrl), temperature: 0.3, max_tokens: 1500 }),
+      body: body(r, { messages, stream: true, stream_options: { include_usage: true }, temperature: 0.3, max_tokens: 1500 }),
       signal: AbortSignal.timeout(90_000),
-    });
-    if (!res.ok || !res.body) {
-      yield { type: "text", delta: res.status === 401 ? "AI 服务说密钥无效：检查 .env.local 里的 RADAR_AI_KEY。" : `AI 服务暂时没有响应（HTTP ${res.status}），稍后再试。` };
+    }).catch(() => null);
+    if (!res || !res.ok || !res.body) {
+      const st = res?.status ?? 0;
+      yield { type: "text", delta: st === 401 ? `${r.service.name} 说密钥无效，请到「设置 → AI 设置」里重新填。` : `${r.service.name} 暂时没有响应（${st ? `HTTP ${st}` : "连不上"}），稍后再试。` };
       yield { type: "done" };
       return;
     }
@@ -291,18 +293,17 @@ export const deepseekProvider: CompanionProvider = {
   },
 };
 
-/** One non-streaming DeepSeek call (day summaries etc.). Returns null when there's no key or the call fails. */
-export async function complete(system: string, user: string, maxTokens = 400): Promise<string | null> {
-  const c = cfg();
-  const key = c.key;
-  if (!key) return null;
+/** One non-streaming call (day summaries etc.) on the "fast" model. Returns null when there's no key or the call fails. */
+export async function complete(system: string, user: string, maxTokens = 400, role: Role = "fast"): Promise<string | null> {
+  const r = resolve(role);
+  if (!r.key) return null;
   const t0 = Date.now();
   try {
-    const res = await fetch(`${c.baseUrl}/chat/completions`, {
+    lastModel = r.model;
+    const res = await fetch(r.url, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
-      body: JSON.stringify({ model: c.model, messages: [{ role: "system", content: system }, { role: "user", content: scrub(user) }],
-        ...extraBody(c.baseUrl), temperature: 0.2, max_tokens: maxTokens }),
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${r.key}` },
+      body: body(r, { messages: [{ role: "system", content: system }, { role: "user", content: scrub(user) }], temperature: 0.2, max_tokens: maxTokens }),
       signal: AbortSignal.timeout(60_000),
     });
     if (!res.ok) return null;

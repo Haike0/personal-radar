@@ -1,22 +1,21 @@
 "use client";
 import { Badge, Button, Divider, Group, NumberInput, Paper, SegmentedControl, Skeleton, Stack, Switch, Text, TextInput, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconActivityHeartbeat, IconBell, IconDatabase, IconFileImport, IconLock, IconPalette, IconPlayerPlay, IconSparkles, IconWand } from "@tabler/icons-react";
+import { IconActivityHeartbeat, IconBell, IconChevronRight, IconDatabase, IconFileImport, IconLock, IconPalette, IconPlayerPlay, IconSparkles, IconWand } from "@tabler/icons-react";
 import Link from "next/link";
 import { useState } from "react";
+import { OrganizeCard } from "@/components/OrganizeCard";
 import { AppearanceControl, DataHealth, PushControl } from "@/components/SettingsExtras";
 import { usePageContext } from "@/components/Shell";
 import { SyncLine } from "@/components/SyncLine";
-import { AiService } from "@/components/setup/AiService";
 import { ChatLabConnect } from "@/components/setup/ChatLabConnect";
 import { ImportPanel } from "@/components/setup/ImportPanel";
-import { OrganizePanel } from "@/components/setup/OrganizePanel";
 import { PrivacyPanel } from "@/components/setup/PrivacyPanel";
 import { post, refreshAll, useApi } from "@/lib/client";
 import type { SyncStatus } from "@/lib/sync";
 
 type S = Record<string, string>;
-type Data = { settings: S; sync: SyncStatus; deepseekKey: boolean; aiUsage?: { calls: number; usd: number } };
+type Data = { settings: S; sync: SyncStatus; deepseekKey: boolean; chatModel: string; aiUsage?: { calls: number; usd: number } };
 
 function Card({ icon: Icon, title, children, id }: { icon: typeof IconBell; title: string; children: React.ReactNode; id?: string }) {
   return (
@@ -105,7 +104,7 @@ export default function SettingsPage() {
       </Card>
 
       <Card icon={IconPlayerPlay} title="整理" id="organize">
-        <OrganizePanel />
+        <OrganizeCard />
       </Card>
 
       <Card icon={IconPalette} title="外观">
@@ -136,37 +135,28 @@ export default function SettingsPage() {
         <Text size="xs" className="faint">通知由运行服务的电脑直接发给你的手机，内容端到端加密，苹果的推送服务器看不到正文。不想在锁屏上被别人看到，可以在 iPhone「设置 → 通知 → Radar → 显示预览」改成「解锁时」。</Text>
       </Card>
 
-      <Card icon={IconSparkles} title="AI 服务" id="ai">
+      <Card icon={IconSparkles} title="AI" id="ai">
         <Line label="问答用哪个" hint="「演示」用写好的示例回答，不联网">
           <SegmentedControl size="xs" radius="xl" value={s.ai_provider === "deepseek" ? "deepseek" : "mock"} onChange={(v) => save({ ai_provider: v })}
-            data={[{ value: "mock", label: "演示" }, { value: "deepseek", label: "真实 AI" }]} />
+            data={[{ value: "mock", label: "演示" }, { value: "deepseek", label: "真实模型" }]} />
         </Line>
-        <AiService />
-        <Divider />
-        {data.aiUsage && <Line label="本月用量" hint="按 DeepSeek 高峰价估算，换了服务就只看次数"><Text size="sm">{data.aiUsage.calls} 次 · 约 ${data.aiUsage.usd.toFixed(3)}</Text></Line>}
-        <Line label="记录的原话" hint="引用整理过的记录时，只带关键那句，还是连前后几句一起">
-          <SegmentedControl size="xs" radius="xl" value={s.ai_share_evidence} onChange={(v) => save({ ai_share_evidence: v })}
-            data={[{ value: "minimal", label: "只带关键句" }, { value: "context", label: "含前后文" }]} />
-        </Line>
-        <Stack gap={4} className="hint-box">
-          <Text size="sm" fw={600}>每次提问，AI 服务会收到什么</Text>
-          <Text size="xs" className="muted" lh={1.75}>
-            ① 和问题最相关的整理记录：只发标题和说明，一个人最多 60 条（不限定人时每人 25 条），以及这个人分析报告的摘要<br />
-            ② 其中最相关的最多 10 条记录的原话（按上面的设置，每条 1 句或连前后文 3 句）<br />
-            ③ 用问题里的词直接在聊天里搜到的原话，最多 14 条<br />
-            ④ 问题里有「最近、这几天、现在」之类的词时，再加最近 50 条聊天<br />
-            ⑤ 从某件事打开 AI 时，加上这件事的全部字段、原话，以及之后聊天里提到它的话（最多 8 条）<br />
-            ⑥ 这次对话里最近 8 条问答
-          </Text>
-          <Text size="xs" className="faint" lh={1.6}>上面的设置只管第 ② 和第 ⑤ 项，③ 和 ④ 不受它限制。默认用 DeepSeek（服务器在中国），可以在 .env.local 换成任何兼容 OpenAI 接口的服务。想确认某个问题具体会发出哪些内容，在 AI 对话框里点「发送内容预览」，看到的就是实际要发出的内容，不会发送。</Text>
-        </Stack>
+        <Link href="/settings/ai" className="set-link">
+          <div style={{ minWidth: 0 }}>
+            <Text size="sm">AI 设置</Text>
+            <Text size="xs" className="faint" truncate>模型服务、问答和整理用的模型、发送内容、用量 · 现在问答用 {data.chatModel}{data.aiUsage ? ` · 本月 ${data.aiUsage.calls} 次` : ""}</Text>
+          </div>
+          <Group gap={6} wrap="nowrap" style={{ flex: "none" }}>
+            {!data.deepseekKey && <Badge color="orange" variant="light">缺密钥</Badge>}
+            <IconChevronRight size={18} className="faint" />
+          </Group>
+        </Link>
       </Card>
 
       <Card icon={IconLock} title="隐私" id="privacy">
         <PrivacyPanel />
         <Divider />
         <Text size="sm" className="muted" lh={1.7}>
-          聊天原文只在你自己电脑上的数据库里（默认 ~/.personal-radar），这个 App 只读取、不修改。它另外保存事项、状态、原话引用和你的修改，也都在本机。服务默认只在本机监听。AI 提出的修改都要你点确认才生效，也不会替你给任何人发消息。只有两种时候会把内容发给你配置的 AI 服务：整理聊天时（一段段过滤、脱敏过的聊天），和你在 App 里提问时（上面「AI」里列出的内容）。
+          聊天原文只在你自己电脑上的数据库里（默认 ~/.personal-radar），这个 App 只读取、不修改。它另外保存事项、状态、原话引用和你的修改，也都在本机。服务默认只在本机监听。AI 提出的修改都要你点确认才生效，也不会替你给任何人发消息。只有两种时候会把内容发给你在「AI 设置」里选的模型服务：整理聊天时（一段段过滤、脱敏过的聊天），和你在 App 里提问时（「AI 设置 → 发送内容」里列出的内容）。API 密钥存在数据目录的 keys.json 里，只有你的账户能读，不会发给浏览器。
         </Text>
       </Card>
     </Stack>

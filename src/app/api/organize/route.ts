@@ -1,21 +1,31 @@
 import { connection } from "next/server";
-import { preview, start, status } from "@/lib/organizer";
 import { setSettings } from "@/lib/db";
+import { preview, start, status } from "@/lib/organizer";
 
 export async function GET() {
   await connection();
   return Response.json(status());
 }
 
-// {action:"start"} · {action:"preview", session} · {action:"auto", on, time}
+// {action:"start"} = 立即整理 · {action:"preview", session} · {action:"schedule", auto?, times?}
 export async function POST(req: Request) {
-  const b = (await req.json()) as { action?: string; session?: string; on?: boolean; time?: string };
+  const b = (await req.json().catch(() => ({}))) as { action?: string; session?: string; auto?: boolean; times?: string[] };
   try {
-    if (b.action === "start") return Response.json({ ok: true, run: start("manual") });
+    if (!b.action || b.action === "start") {
+      const r = start("manual");
+      return r.started ? Response.json(r) : Response.json({ error: r.reason }, { status: 409 });
+    }
     if (b.action === "preview" && b.session) return Response.json(preview(b.session));
-    if (b.action === "auto") {
-      if (b.time && !/^\d{2}:\d{2}$/.test(b.time)) throw new Error("时间格式是 HH:MM");
-      setSettings({ ...(b.on !== undefined ? { auto_organize: b.on ? "on" : "off" } : {}), ...(b.time ? { auto_organize_time: b.time } : {}) });
+    if (b.action === "schedule") {
+      const patch: Record<string, string> = {};
+      if (b.auto !== undefined) patch.organize_auto = b.auto ? "on" : "off";
+      if (b.times) {
+        const ts = [...new Set(b.times.map((t) => String(t).trim()))].sort();
+        if (ts.some((t) => !/^([01]\d|2[0-3]):[0-5]\d$/.test(t))) throw new Error("时间格式是 HH:MM");
+        if (ts.length > 6) throw new Error("最多 6 个时间");
+        patch.organize_times = ts.join(",");
+      }
+      setSettings(patch);
       return Response.json({ ok: true });
     }
     throw new Error("unknown action");

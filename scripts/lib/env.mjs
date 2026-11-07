@@ -18,32 +18,31 @@ export const ROOT_DIR = ROOT;
 export const DATA_DIR = process.env.RADAR_DATA_DIR ?? path.join(os.homedir(), ".personal-radar");
 export const CHATS_DIR = path.join(DATA_DIR, "chats");
 export const RADAR_DB = path.join(DATA_DIR, "radar.db");
-// Settings saved in the app (设置 → AI 服务 / 隐私) live in radar.db; environment variables override them.
+// Settings saved in the app (设置 → AI 设置 / 隐私) live in radar.db; keys live in keys.json next to it.
 import { DatabaseSync } from "node:sqlite";
 import { privacyConfig, outbound } from "./redact.mjs";
+import { migrateLegacy, resolveRole } from "./ai-services.mjs";
 function saved() {
   try {
-    const d = new DatabaseSync(RADAR_DB, { readOnly: true });
+    if (!fs.existsSync(RADAR_DB)) return {};
+    const d = new DatabaseSync(RADAR_DB);
+    migrateLegacy(d, DATA_DIR);
     const rows = d.prepare("SELECT key, value FROM settings").all();
     d.close();
     return Object.fromEntries(rows.map((r) => [r.key, r.value]));
   } catch { return {}; }
 }
 const S = saved();
-const baseUrl = (process.env.RADAR_AI_BASE_URL || S.ai_base_url || "https://api.deepseek.com").replace(/\/+$/, "");
-const isLocal = /^https?:\/\/(127\.0\.0\.1|localhost|\[::1\])(:\d+)?\//.test(baseUrl + "/");
-export const AI = {
-  key: (process.env.RADAR_AI_KEY || S.ai_key || "").trim() || (isLocal ? "local" : ""),
-  baseUrl,
-  model: process.env.RADAR_AI_MODEL || S.ai_model || "deepseek-flash",
-};
-export const extraBody = () => (/deepseek/i.test(AI.baseUrl) ? { thinking: { type: "disabled" } } : {});
+// Organizing uses the "整理模型" chosen in the app (the RADAR_AI_* service when nothing is chosen).
+const R = resolveRole((k) => S[k], process.env, DATA_DIR, "fast");
+export const AI = { key: R.key ?? "", baseUrl: R.service.baseUrl, model: R.model, service: R.service.name };
+export const extraBody = () => R.extra;
 export const PRIVACY = privacyConfig((k) => S[k]);
 /** Last step before a request leaves the computer: drop blacklisted lines, redact the rest. */
 export const scrub = (text) => outbound(text, PRIVACY).text;
 export function requireKey() {
   if (!AI.key) {
-    console.error("还没有设置 AI 服务：在 App 的「设置 → AI 服务」里填密钥，或在 .env.local 里设 RADAR_AI_KEY。");
+    console.error(`还没有 ${AI.service} 的密钥：在 App 的「设置 → AI 设置」里填，或在 .env.local 里设 RADAR_AI_KEY。`);
     process.exit(2);
   }
   return AI.key;

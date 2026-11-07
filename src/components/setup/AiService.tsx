@@ -2,42 +2,55 @@
 import { Anchor, Autocomplete, Badge, Button, Group, PasswordInput, Select, Stack, Text, TextInput } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconCheck, IconPlugConnected } from "@tabler/icons-react";
+import Link from "next/link";
 import { useState } from "react";
 import { post, refreshAll, useApi } from "@/lib/client";
 
-type Preset = { id: string; label: string; baseUrl: string; model: string; keyUrl: string };
-type Cfg = { presets: Preset[]; preset: string; baseUrl: string; model: string; hasKey: boolean; keyHint: string; fromEnv: boolean; enabled: boolean };
+type Svc = { id: string; name: string; baseUrl: string; models: string[]; builtin?: boolean; fromEnv?: boolean; hasKey: boolean };
+type Preset = { id: string; name: string; baseUrl: string; models: string[]; keyUrl: string };
+type Data = { services: Svc[]; presets: Preset[]; chat: { serviceId: string; model: string }; fast: { serviceId: string; model: string } };
 type Test = { ok: boolean; ms?: number; reply?: string; error?: string };
+const CUSTOM = "custom";
+const trim = (u: string) => u.trim().replace(/\/+$/, "");
+const isLocal = (u: string) => /^https?:\/\/(127\.0\.0\.1|localhost|\[::1\])/.test(u);
 
-/** Pick a service, paste a key, test, done. The key stays in the local database and is never shown again. */
+/**
+ * Quick setup (first-run wizard): pick a service, paste a key, test — it becomes the model for both Q&A and organizing.
+ * More services, or different models for the two jobs, are in 设置 → AI 设置.
+ */
 export function AiService({ onReady }: { onReady?: () => void }) {
-  const { data, reload } = useApi<Cfg>("/api/ai/config");
+  const { data, reload } = useApi<Data>("/api/ai/services");
   if (!data) return <Text size="xs" className="faint">读取中…</Text>;
   return <AiForm data={data} reload={reload} onReady={onReady} />;
 }
 
-function AiForm({ data, reload, onReady }: { data: Cfg; reload: () => void; onReady?: () => void }) {
-  const [preset, setPreset] = useState<string>(data.preset);
-  const [baseUrl, setBaseUrl] = useState(data.baseUrl);
-  const [model, setModel] = useState(data.model);
+function AiForm({ data, reload, onReady }: { data: Data; reload: () => void; onReady?: () => void }) {
+  const current = data.services.find((s) => s.id === data.fast.serviceId);
+  const start = data.presets.find((p) => p.baseUrl === current?.baseUrl)?.id ?? (current && !current.builtin ? CUSTOM : "deepseek");
+  const [preset, setPreset] = useState<string>(start);
+  const [baseUrl, setBaseUrl] = useState(current?.baseUrl ?? data.presets[0].baseUrl);
+  const [model, setModel] = useState(data.fast.model);
   const [key, setKey] = useState("");
   const [models, setModels] = useState<string[]>([]);
   const [test, setTest] = useState<Test | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
 
-  const p = data.presets.find((x) => x.id === preset) ?? data.presets[0];
-  const local = /^https?:\/\/(127\.0\.0\.1|localhost)/.test(baseUrl);
+  const p = data.presets.find((x) => x.id === preset);
+  const local = isLocal(baseUrl);
+  // the saved service this form edits: the built-in DeepSeek, or one added before with the same address
+  const match = preset === "deepseek" ? data.services.find((s) => s.id === "deepseek") : data.services.find((s) => !s.builtin && s.baseUrl === trim(baseUrl));
+  const ready = !!current?.hasKey && data.chat.serviceId === data.fast.serviceId;
 
   function choose(id: string | null) {
+    if (!id) return;
+    setPreset(id); setTest(null); setModels([]);
     const np = data.presets.find((x) => x.id === id);
-    if (!np) return;
-    setPreset(np.id); setTest(null); setModels([]);
-    if (np.id !== "custom") { setBaseUrl(np.baseUrl); setModel(np.model); }
+    if (np) { setBaseUrl(np.baseUrl); setModel(np.models[0] ?? ""); } else { setBaseUrl(""); setModel(""); }
   }
   async function loadModels() {
     setBusy("models");
     try {
-      const r = await post<{ models: string[]; error?: string }>("/api/ai/models", { baseUrl, key: key || undefined });
+      const r = await post<{ models: string[]; error?: string }>("/api/ai/models", { id: match?.id, baseUrl, key: key || undefined });
       setModels(r.models);
       if (r.error) notifications.show({ color: "orange", radius: "lg", message: r.error });
       else if (!model && r.models[0]) setModel(r.models[0]);
@@ -46,10 +59,11 @@ function AiForm({ data, reload, onReady }: { data: Cfg; reload: () => void; onRe
   async function runTest() {
     setBusy("test"); setTest(null);
     try {
-      const r = await post<Test>("/api/ai/test", { baseUrl, model, key: key || undefined });
+      const r = await post<Test>("/api/ai/services/test", { id: match?.id, baseUrl, model, key: key || undefined });
       setTest(r);
       if (r.ok) {
-        await post("/api/ai/config", { preset, baseUrl, model, key: key || undefined, enabled: true }, "PATCH");
+        const name = match?.name ?? p?.name ?? (() => { try { return new URL(baseUrl).host; } catch { return "我的服务"; } })();
+        await post("/api/ai/services", { id: match?.id, name, baseUrl, models: [model, ...(match?.models ?? p?.models ?? [])], key: key || undefined, use: ["chat", "fast"] });
         setKey(""); reload(); refreshAll(); onReady?.();
         notifications.show({ radius: "lg", message: "AI 服务已连通并保存" });
       }
@@ -58,33 +72,33 @@ function AiForm({ data, reload, onReady }: { data: Cfg; reload: () => void; onRe
     } finally { setBusy(null); }
   }
 
+  const options = [...data.presets.map((x) => ({ value: x.id, label: x.name })), { value: CUSTOM, label: "其他兼容 OpenAI 接口的服务" }];
   return (
     <Stack gap="sm">
       <Group justify="space-between" wrap="nowrap">
         <Text size="sm" fw={600}>当前</Text>
-        {data.hasKey && data.enabled
-          ? <Badge color="teal" leftSection={<IconCheck size={12} />}>已连通 · {data.model}</Badge>
-          : data.hasKey ? <Badge color="gray">已保存，未启用</Badge> : <Badge color="orange">还没设置</Badge>}
+        {current?.hasKey
+          ? <Badge color="teal" leftSection={<IconCheck size={12} />}>{ready ? `已连通 · ${current.name} · ${data.fast.model}` : `整理用 ${current.name}`}</Badge>
+          : <Badge color="orange">还没设置</Badge>}
       </Group>
-      {data.fromEnv && <Text size="xs" className="faint">.env.local 里设置了 RADAR_AI_KEY，它会优先于这里保存的密钥。</Text>}
-      <Select label="服务" data={data.presets.map((x) => ({ value: x.id, label: x.label }))} value={preset} onChange={choose} allowDeselect={false} radius="md" />
-      {(preset === "custom" || preset === "ollama") && (
+      {data.services.some((s) => s.fromEnv) && <Text size="xs" className="faint">.env.local 里设置了 RADAR_AI_*，它在 AI 设置里显示为「环境变量」服务，没另选时默认用它。</Text>}
+      <Select label="服务" data={options} value={preset} onChange={choose} allowDeselect={false} radius="md" />
+      {(preset === CUSTOM || preset === "ollama") && (
         <TextInput label="服务地址" description="兼容 OpenAI 接口的地址，一般以 /v1 结尾" placeholder="https://example.com/v1" value={baseUrl} onChange={(e) => setBaseUrl(e.currentTarget.value)} radius="md" />
       )}
       {!local && (
-        <PasswordInput label="API 密钥" radius="md" value={key} onChange={(e) => setKey(e.currentTarget.value)}
-          placeholder={data.hasKey && data.baseUrl === baseUrl ? `已保存（${data.keyHint}），不改就留空` : "粘贴你的密钥"}
-          description={p.keyUrl ? <>在 <Anchor href={p.keyUrl} target="_blank" size="xs">{p.label} 的控制台</Anchor> 创建。密钥只存在这台电脑上。</> : "密钥只存在这台电脑上。"} />
+        <PasswordInput label="API 密钥" radius="md" autoComplete="off" value={key} onChange={(e) => setKey(e.currentTarget.value)}
+          placeholder={match?.hasKey ? "已保存，不改就留空" : "粘贴你的密钥"}
+          description={p?.keyUrl ? <>在 <Anchor href={p.keyUrl} target="_blank" size="xs">{p.name} 的控制台</Anchor> 创建。密钥只存在这台电脑上。</> : "密钥只存在这台电脑上。"} />
       )}
       <Group align="flex-end" gap="xs" wrap="nowrap">
-        <Autocomplete label="模型" style={{ flex: 1 }} radius="md" value={model} onChange={setModel} data={models} placeholder="点右边读取，或直接输入模型名" />
-        <Button variant="light" radius="md" loading={busy === "models"} onClick={loadModels}>读取模型列表</Button>
+        <Autocomplete label="模型" style={{ flex: 1 }} radius="md" value={model} onChange={setModel} data={[...new Set([...(p?.models ?? []), ...models])]} placeholder="点右边读取，或直接输入模型名" />
+        <Button variant="light" radius="md" loading={busy === "models"} onClick={loadModels} disabled={!baseUrl}>读取模型列表</Button>
       </Group>
       <Group gap="xs">
-        <Button radius="md" leftSection={<IconPlugConnected size={16} />} loading={busy === "test"} onClick={runTest} disabled={!model || (!local && !key && !(data.hasKey && data.baseUrl === baseUrl))}>测试并保存</Button>
-        {data.hasKey && (
-          <Button variant="subtle" color="gray" radius="md" onClick={async () => { await fetch("/api/ai/config", { method: "DELETE" }); reload(); refreshAll(); }}>删除密钥</Button>
-        )}
+        <Button radius="md" leftSection={<IconPlugConnected size={16} />} loading={busy === "test"} onClick={runTest}
+          disabled={!model || !baseUrl || (!local && !key && !match?.hasKey)}>测试并保存</Button>
+        <Anchor component={Link} href="/settings/ai" size="xs">更多设置：多个服务、问答和整理分开选模型</Anchor>
       </Group>
       {test && (test.ok
         ? <Text size="xs" c="teal">连通了，用时 {((test.ms ?? 0) / 1000).toFixed(1)} 秒，模型回复「{test.reply}」。</Text>

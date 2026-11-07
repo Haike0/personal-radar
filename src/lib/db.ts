@@ -9,6 +9,7 @@ import * as chatlab from "./chatlab";
 // Business data only (events, status, evidence refs, edits). Raw chat history stays in the chat databases (see chatlab.ts).
 // Stored under DATA_DIR (default ~/.personal-radar).
 import { DATA_DIR } from "./config";
+import { migrateLegacy } from "../../scripts/lib/ai-services.mjs";
 const DB_PATH = path.join(DATA_DIR, "radar.db");
 
 const SCHEMA = `
@@ -54,20 +55,18 @@ const DEFAULT_SETTINGS: Record<string, string> = {
   bark_server: "https://api.day.app",
   bark_key: "",
   bark_encrypt_key: "",
-  // AI service (OpenAI-compatible). RADAR_AI_* environment variables override these.
-  ai_preset: "deepseek",
-  ai_base_url: "https://api.deepseek.com",
-  ai_model: "deepseek-flash",
-  ai_key: "",
+  // AI model services (OpenAI-compatible). Keys are never stored here: they live in <data folder>/keys.json.
+  ai_services: "[]",   // services you added: [{id, name, baseUrl, models}]
+  ai_chat: "",         // "serviceId|model" for Q&A; empty = default (RADAR_AI_* from .env.local if set, else DeepSeek)
+  ai_fast: "",         // "serviceId|model" for organizing chats and day summaries
   // what may leave the computer (see scripts/lib/redact.mjs)
   privacy_rules: '["secrets","contact","finance","ids","network"]',
   privacy_keywords: "[]",
   privacy_custom: "[]",
   ai_excluded: "[]",
-  // organizing
-  auto_organize: "off",
-  auto_organize_time: "21:50",
-  last_auto_organize: "",
+  // organizing: off until you turn it on (it spends your API credit); times are local, comma-separated
+  organize_auto: "off",
+  organize_times: "21:50",
   // ChatLab local API (optional)
   chatlab_api_url: "http://127.0.0.1:3110",
   chatlab_api_token: "",
@@ -84,6 +83,7 @@ export function db(): DatabaseSync {
     try { d.exec(`ALTER TABLE items ADD COLUMN ${col}`); } catch { /* already there */ }
   d.exec(`UPDATE items SET facet=CASE kind WHEN 'preference' THEN '喜好' WHEN 'need' THEN '明确需求' WHEN 'fact' THEN '近况' END WHERE mode='demo' AND facet IS NULL AND kind IN ('preference','need','fact')`);
   d.exec(`UPDATE items SET observed_at=(SELECT MAX(ts) FROM evidence e WHERE e.item_id=items.id AND e.is_key=1 AND e.ts<>'') WHERE observed_at IS NULL AND mode='demo'`);
+  migrateSettings(d);
   const ins = d.prepare("INSERT OR IGNORE INTO settings(key,value) VALUES(?,?)");
   for (const [k, v] of Object.entries(DEFAULT_SETTINGS)) ins.run(k, v);
   const has = d.prepare("SELECT 1 FROM items WHERE mode='demo' LIMIT 1").get();
@@ -93,6 +93,19 @@ export function db(): DatabaseSync {
   } catch {}
   _db = d;
   return d;
+}
+
+/** Settings renamed over time: carry old values over once, then drop the old rows. */
+function migrateSettings(d: DatabaseSync) {
+  migrateLegacy(d, DATA_DIR); // single AI endpoint (key in this database) → services + keys.json
+  const old = (k: string) => (d.prepare("SELECT value FROM settings WHERE key=?").get(k) as { value?: string } | undefined)?.value;
+  const on = old("auto_organize"), at = old("auto_organize_time");
+  if (on !== undefined || at !== undefined) {
+    const put = d.prepare("INSERT OR IGNORE INTO settings(key,value) VALUES(?,?)");
+    if (on !== undefined) put.run("organize_auto", on === "on" ? "on" : "off");
+    if (at && /^\d{2}:\d{2}$/.test(at)) put.run("organize_times", at);
+    d.exec("DELETE FROM settings WHERE key IN ('auto_organize','auto_organize_time','last_auto_organize')");
+  }
 }
 
 export const nowStr = () => {

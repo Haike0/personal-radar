@@ -217,3 +217,25 @@ a.apl-tl-title:hover { text-decoration: underline; text-underline-offset: 3px; }
 .setup-banner { display: block; text-decoration: none; color: inherit; border: 1px solid light-dark(rgba(0, 168, 145, .25), rgba(52, 204, 182, .25)); }
 .drop-zone { transition: background .15s, border-color .15s; }
 .drop-zone[data-active] { background: light-dark(rgba(0, 168, 145, .08), rgba(52, 204, 182, .12)); border-color: var(--mantine-color-radar-5); }
+
+/* AI 设置 (ChatLab-like): section list on the left at desktop width, a scrolling chip row on phones */
+.back-link { display: inline-flex; align-items: center; gap: 2px; font-size: 14px; color: var(--mantine-color-dimmed); margin-left: -4px; text-decoration: none; }
+.page-title { font-size: 28px; font-weight: 700; margin: 6px 0 16px; }
+.ai-set { display: flex; flex-direction: column; gap: 14px; }
+.ai-set-nav { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px; }
+.ai-set-nav::-webkit-scrollbar { display: none; }
+.ai-set-link { flex: none; padding: 6px 14px; border-radius: 999px; font-size: 14px; background: light-dark(#fff, var(--mantine-color-dark-6));
+  border: 1px solid light-dark(rgba(20, 24, 39, .08), rgba(255, 255, 255, .06)); }
+@media (min-width: 900px) {
+  .ai-set { flex-direction: row; align-items: flex-start; gap: 24px; }
+  .ai-set-nav { flex-direction: column; position: sticky; top: 16px; width: 150px; margin: 0; padding: 0; overflow: visible; }
+  .ai-set-link { background: none; border: 0; padding: 8px 12px; border-radius: 10px; color: var(--mantine-color-dimmed); }
+  .ai-set-link:hover { background: light-dark(rgba(20, 24, 39, .05), rgba(255, 255, 255, .06)); color: var(--mantine-color-text); }
+}
+.svc-row { padding: 10px 12px; border-radius: 14px; background: light-dark(#f7f8fb, rgba(255, 255, 255, .03)); }
+.rules-toggle { display: inline-flex; align-items: center; gap: 4px; align-self: flex-start; }
+.time-chip { padding: 0 2px 0 10px; border-radius: 999px; background: light-dark(#f1f3f7, rgba(255, 255, 255, .06)); }
+.set-link { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: inherit; text-decoration: none; }
+.model-pick { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+.model-pick > :first-child { grid-column: 1 / -1; }
+@media (min-width: 600px) { .model-pick { grid-template-columns: 160px minmax(0, 1fr) auto; } .model-pick > :first-child { grid-column: auto; } }
