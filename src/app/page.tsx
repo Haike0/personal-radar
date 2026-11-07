@@ -1,5 +1,5 @@
 "use client";
-import { Alert, Badge, Box, Button, Collapse, Group, Paper, SimpleGrid, Skeleton, Stack, Text, Title, UnstyledButton } from "@mantine/core";
+import { Alert, Badge, Box, Button, Collapse, Group, Paper, SimpleGrid, Skeleton, Stack, Text, Title, Tooltip, UnstyledButton } from "@mantine/core";
 import { IconChevronDown, IconChevronRight, IconCloudOff, IconFlask, IconInbox, IconShare2 } from "@tabler/icons-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -125,15 +125,37 @@ function DataState({ h }: { h: Health | null }) {
   );
 }
 
-/** 说话算数账本: who promised what and didn't do it, one tap to a card you can post. */
-function LedgerEntry({ personKey, name }: { personKey: string; name: string }) {
+/**
+ * 说话算数账本. Not an everyday thing, so it's a big card only until you've opened it once; then it moves up next to the
+ * 演示数据 badge as a small button (with a one-time hint), and stays out of the way of what you need to do today.
+ */
+type LedgerStage = "card" | "moved" | "pill";
+const STAGE_KEY = "radar.ledgerStage";
+function readStage(): LedgerStage {
+  try { const v = localStorage.getItem(STAGE_KEY); return v === "moved" || v === "pill" ? v : "card"; } catch { return "card"; }
+}
+function saveStage(v: LedgerStage) { try { localStorage.setItem(STAGE_KEY, v); } catch { /* private window */ } }
+
+function LedgerEntry({ personKey, name, stage, onStage }: { personKey: string; name: string; stage: LedgerStage; onStage: (v: LedgerStage) => void }) {
   const { data } = useApi<LedgerData>(`/api/people/${encodeURIComponent(personKey)}/ledger`);
   const [open, setOpen] = useState(false);
   if (!data?.rows.length) return null;
   const t = tally(data.rows);
+  const close = () => { setOpen(false); if (stage === "card") onStage("moved"); };
+  const share = <LedgerShare personKey={personKey} personName={name} opened={open} onClose={close} />;
+  if (stage !== "card") return (
+    <>
+      <Tooltip label="账本收到这里了，想晒随时点" opened={stage === "moved" || undefined} withArrow position="bottom-end" color="orange" radius="md">
+        <UnstyledButton onClick={() => { onStage("pill"); setOpen(true); }} className="ledger-pill" aria-label="说话算数账本，一键晒图">
+          <IconShare2 size={13} />晒账本{stage === "moved" && <span className="ledger-dot" />}
+        </UnstyledButton>
+      </Tooltip>
+      {share}
+    </>
+  );
   const sub = data.unchecked && data.aiReady ? `你们互相答应过 ${data.rows.length} 件事，看看谁没做到` : `我欠${name} ${t.me.owed} 件 · ${name}欠我 ${t.them.owed} 件`;
   return (
-    <>
+    <Box mt="sm">
       <UnstyledButton onClick={() => setOpen(true)} className="surface pressable ledger-entry" p="md" style={{ borderRadius: "var(--mantine-radius-xl)" }}>
         <Group justify="space-between" wrap="nowrap" gap="sm">
           <div style={{ minWidth: 0 }}>
@@ -143,8 +165,8 @@ function LedgerEntry({ personKey, name }: { personKey: string; name: string }) {
           <Group gap={6} wrap="nowrap" style={{ flex: "none" }} c="orange.6"><IconShare2 size={16} /><Text size="sm" fw={650}>一键晒图</Text></Group>
         </Group>
       </UnstyledButton>
-      <LedgerShare personKey={personKey} personName={name} opened={open} onClose={() => setOpen(false)} />
-    </>
+      {share}
+    </Box>
   );
 }
 
@@ -168,6 +190,8 @@ export default function Home() {
   const { data, error, loading } = useApi<Data>(q && `/api/items${q}`);
   const { data: health } = useApi<Health>(q && `/api/health${q}`);
   const { data: aiCfg } = useApi<{ deepseekKey: boolean }>(data?.mode === "real" && !data.items.length ? "/api/settings" : null);
+  const [ledgerStage, setLedgerStage] = useState<LedgerStage>(readStage);
+  const setStage = (v: LedgerStage) => { setLedgerStage(v); saveStage(v); };
   const [showRest, setShowRest] = useState(true); // open by default (user preference)
   const [showDone, setShowDone] = useState(false);
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -195,13 +219,16 @@ export default function Home() {
             <Text size="sm" className="faint">{weekdayLine()}</Text>
             <Title order={1} fz={30} mt={2}>{greeting()}</Title>
           </div>
-          {d.mode === "demo" ? <Badge color="yellow" variant="light" leftSection={<IconFlask size={12} />} mt={6}>演示数据</Badge>
-            : <Badge color="radar" variant="light" mt={6}>真实数据</Badge>}
+          <Group gap={6} mt={6} wrap="nowrap">
+            {ledgerStage !== "card" && <LedgerEntry personKey={pk} name={person!.name.replace(/^演示·/, "")} stage={ledgerStage} onStage={setStage} />}
+            {d.mode === "demo" ? <Badge color="yellow" variant="light" leftSection={<IconFlask size={12} />}>演示数据</Badge>
+              : <Badge color="radar" variant="light">真实数据</Badge>}
+          </Group>
         </Group>
         <Box mt="md">
           <PersonBar {...who} subtitle={focus.length ? `今天有 ${focus.length} 件值得你关注的事` : "今天没有需要你操心的事"} />
         </Box>
-        <Box mt="sm"><LedgerEntry personKey={pk} name={person!.name.replace(/^演示·/, "")} /></Box>
+        {ledgerStage === "card" && <LedgerEntry personKey={pk} name={person!.name.replace(/^演示·/, "")} stage="card" onStage={setStage} />}
       </div>
 
       <UpdateNotice />
