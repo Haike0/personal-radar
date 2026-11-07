@@ -68,6 +68,7 @@ export interface Person {
   key: string;
   name: string;
   isGroup: boolean;
+  tags?: string[];
   messages?: number;
   lastTs?: number | null;
   open: number;
@@ -129,6 +130,7 @@ export interface PersonProfile {
   chat: { messages: number; firstAt: string | null; lastAt: string | null; last30: number; mineShare: number | null } | null;
   items: Item[];
   analysis: PersonAnalysis | null;
+  tags?: string[];
 }
 export interface PersonAnalysis {
   summary: string;

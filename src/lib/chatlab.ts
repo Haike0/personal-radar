@@ -254,3 +254,75 @@ export function chatStats(sessionId: string) {
     peakHours: peak,
   };
 }
+
+// ---------- chat report (language & rhythm), computed locally; nothing is sent anywhere ----------
+const STOP = new Set(`的 了 是 我 你 他 她 它 们 这 那 就 都 也 还 又 在 有 和 跟 给 吗 呢 吧 啊 呀 哦 嗯 哈 嘿 噢 喔 么 啦 嘛 吧 着 过 去 来 到 说 要 会 能 好 不 没 很 太 想 看 让 把 被 对 一个 什么 怎么 这个 那个 我们 你们 他们 自己 现在 然后 因为 所以 但是 还是 就是 可以 知道 一下 已经 今天 明天 昨天 时候 感觉 觉得 真的 没有 不是 一样 一起 这样 那样 东西 应该 可能 起来 出来 一点 有点 the a an to and of is it you i me my in on for that this be are was so ok yeah
+の に は を た が で て と し れ さ ある いる も な い か から だ です ます こと よ ね ん う お よう それ これ あ そう まあ じゃ って けど でも した ない さん いい ます でした ください くれ くる する して いた なる なっ られ ちゃ もう ので のに たら たよ だよ だね ですね ますね ちょっと すごく 本当 今日は`.split(/\s+/));
+const EMOJI = /\p{Extended_Pictographic}/gu;
+const BRACKET = /^\[[^\]]{1,8}\]$/;
+
+export function chatReport(sessionId: string) {
+  const d = open(sessionId);
+  if (!d) return null;
+  const self = owner(d);
+  const rows = d.prepare(`SELECT m.ts, m.type, m.content, mb.platform_id spid FROM message m JOIN member mb ON mb.id = m.sender_id WHERE m.type NOT IN (80, 81) ORDER BY m.ts, m.id`).all() as Row[];
+  if (rows.length < 2) return null;
+  // Chinese and Japanese need different word rules; pick per message (any kana → Japanese)
+  const segZh = typeof Intl.Segmenter === "function" ? new Intl.Segmenter("zh", { granularity: "word" }) : null;
+  const segJa = typeof Intl.Segmenter === "function" ? new Intl.Segmenter("ja", { granularity: "word" }) : null;
+  const words = { me: new Map<string, number>(), them: new Map<string, number>() };
+  const shorts = { me: new Map<string, number>(), them: new Map<string, number>() };
+  const emoji = { me: new Map<string, number>(), them: new Map<string, number>() };
+  const len = { me: [0, 0], them: [0, 0] }; // [chars, text messages]
+  const heat = Array.from({ length: 7 }, () => new Array(24).fill(0));
+  const types: Record<string, number> = {};
+  const TYPE_NAME: Record<number, string> = { 0: "文字", 1: "图片", 2: "语音", 3: "视频", 4: "文件", 5: "表情", 7: "链接", 8: "位置", 23: "通话", 25: "回复", 26: "转发" };
+  const days = new Set<string>();
+  for (const r of rows) {
+    const who = r.spid === self ? "me" : "them";
+    const t = new Date(Number(r.ts) * 1000);
+    heat[t.getDay()][t.getHours()]++;
+    days.add(t.toLocaleDateString("sv-SE"));
+    const type = Number(r.type);
+    types[TYPE_NAME[type] ?? "其他"] = (types[TYPE_NAME[type] ?? "其他"] ?? 0) + 1;
+    const text = String(r.content ?? "").trim();
+    if (!text || BRACKET.test(text)) { if (BRACKET.test(text) && /表情|スタンプ|sticker/i.test(text)) types["表情"] = (types["表情"] ?? 0) + 0; continue; }
+    if (type !== 0 && type !== 25) continue;
+    len[who][0] += text.length; len[who][1]++;
+    for (const e of text.match(EMOJI) ?? []) emoji[who].set(e, (emoji[who].get(e) ?? 0) + 1);
+    const plain = text.replace(EMOJI, "").replace(/[\uFE0F\u200D]/g, "").trim();
+    if (plain && plain.length <= 6) shorts[who].set(plain, (shorts[who].get(plain) ?? 0) + 1);
+    const seg = /[\u3040-\u30ff]/.test(plain) ? segJa : segZh;
+    if (!seg || /^https?:\/\//.test(plain)) continue;
+    for (const s of seg.segment(plain.toLowerCase())) {
+      const w = s.segment.trim();
+      if (!s.isWordLike || w.length < 2 || w.length > 8 || STOP.has(w) || /^\d+$/.test(w)) continue;
+      if (/^[\u3040-\u309f]{1,3}$/.test(w)) continue; // short hiragana runs are grammar, not content
+      words[who].set(w, (words[who].get(w) ?? 0) + 1);
+    }
+  }
+  const top = (m: Map<string, number>, n: number) => [...m].sort((a, b) => b[1] - a[1]).slice(0, n).map(([w, c]) => ({ w, c }));
+  // catchphrases: what each side says a lot, and clearly more than the other side
+  const catch_ = (a: Map<string, number>, b: Map<string, number>, sa: Map<string, number>) => {
+    const scored = [...a].filter(([, c]) => c >= 3).map(([w, c]) => ({ w, c, s: c * Math.log((c + 1) / ((b.get(w) ?? 0) + 1) + 1) }));
+    const phrases = [...sa].filter(([, c]) => c >= 4).map(([w, c]) => ({ w, c, s: c * 1.2 }));
+    return [...phrases, ...scored].sort((x, y) => y.s - x.s).filter((x, i, arr) => arr.findIndex((z) => z.w === x.w) === i).slice(0, 8).map(({ w, c }) => ({ w, c }));
+  };
+  const all = new Map(words.me);
+  for (const [w, c] of words.them) all.set(w, (all.get(w) ?? 0) + c);
+  // longest run of consecutive days with messages, and the longest silence
+  const sorted = [...days].sort();
+  let run = 1, best = 1, gap = 0;
+  for (let i = 1; i < sorted.length; i++) {
+    const diff = Math.round((Date.parse(sorted[i]) - Date.parse(sorted[i - 1])) / 864e5);
+    run = diff === 1 ? run + 1 : 1; best = Math.max(best, run); gap = Math.max(gap, diff - 1);
+  }
+  return {
+    keywords: top(all, 24),
+    catchphrases: { me: catch_(words.me, words.them, shorts.me), them: catch_(words.them, words.me, shorts.them) },
+    emoji: { me: top(emoji.me, 6), them: top(emoji.them, 6) },
+    avgLen: { me: len.me[1] ? Math.round(len.me[0] / len.me[1]) : 0, them: len.them[1] ? Math.round(len.them[0] / len.them[1]) : 0 },
+    heat, types: Object.entries(types).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]),
+    activeDays: days.size, longestStreak: best, longestGap: gap,
+  };
+}

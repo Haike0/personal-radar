@@ -1,7 +1,7 @@
 "use client";
 import { Alert, Avatar, Badge, Box, Button, Collapse, Group, Paper, SimpleGrid, Skeleton, Stack, Tabs, Text, ThemeIcon, Timeline, Title, UnstyledButton } from "@mantine/core";
 import {
-  IconArrowLeft, IconBriefcase, IconBulb, IconCalendarEvent, IconChevronDown, IconChevronRight, IconClock, IconFlag, IconHeart,
+  IconArrowLeft, IconBriefcase, IconBulb, IconCalendarEvent, IconChartBar, IconChevronDown, IconChevronRight, IconClock, IconFlag, IconHeart,
   IconHeartHandshake, IconMessageHeart, IconSparkles, IconUser, IconUsersGroup,
 } from "@tabler/icons-react";
 import Link from "next/link";
@@ -9,7 +9,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useCurrentPerson } from "@/components/PersonSwitcher";
 import { ChatMemory } from "@/components/ChatMemory";
-import { ChatStats } from "@/components/ChatStats";
+import { TagEditor } from "@/components/TagEditor";
 import { useCompanion, usePageContext } from "@/components/Shell";
 import { useApi } from "@/lib/client";
 import { dayDiff, initial, relDate, sinceText } from "@/lib/format";
@@ -92,6 +92,7 @@ export default function PersonPage() {
             {p.isGroup ? <IconUsersGroup size={36} /> : initial(p.name)}
           </Avatar>
           <Title order={2} fz={24}>{p.name}</Title>
+          {!p.isGroup && <TagEditor personKey={p.key} tags={p.tags ?? []} />}
           <Text size="sm" className="muted" ta="center">
             {p.isGroup ? "群聊" : "联系人"}
             {p.chat?.firstAt ? ` · ${p.chat.firstAt.slice(0, 4)}年${Number(p.chat.firstAt.slice(5, 7))}月开始聊天` : ""}
@@ -142,6 +143,18 @@ export default function PersonPage() {
                 )) : <Text size="sm" className="faint" p="md">还没有记录到关于{short}的信息</Text>}
               </Paper>
             </Section>
+
+            {!p.isGroup && p.chat && (
+              <Paper component={Link} href={`/people/${encodeURIComponent(p.key)}/report`} className="surface report-entry pressable">
+                <Group justify="space-between" wrap="nowrap">
+                  <div style={{ minWidth: 0 }}>
+                    <Group gap={6}><IconChartBar size={16} color="var(--mantine-color-radar-6)" /><Text size="sm" fw={600}>聊天分析</Text></Group>
+                    <Text size="xs" className="faint" mt={2}>回复率、谁先开口、什么时候聊、口头禅、聊什么</Text>
+                  </div>
+                  <IconChevronRight size={18} className="faint" />
+                </Group>
+              </Paper>
+            )}
 
             {openActions.length > 0 && (
               <UnstyledButton onClick={() => { pick(key); router.push("/"); }}>
@@ -200,7 +213,6 @@ export default function PersonPage() {
         </Tabs.Panel>
 
         <Tabs.Panel value="analysis">
-          {!p.isGroup && <Box mb="lg"><Section title="聊天数据"><ChatStats personKey={p.key} name={short} /></Section></Box>}
           {p.analysis ? (
             <Stack gap="lg">
               <Text size="xs" className="faint">AI 根据 {p.analysis.basisItems} 条整理过的记录写的分析，{p.analysis.generatedAt.slice(0, 16)} 更新。

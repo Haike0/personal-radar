@@ -317,6 +317,25 @@ function getBrief(id: number): Item | null {
   return r ? toItem(r) : null;
 }
 
+/** People's tags (恋人 / 同事 / 同学…), set by you. Stored per mode so demo tags never mix with yours. */
+export const TAG_SUGGESTIONS = ["恋人", "家人", "朋友", "同学", "老师", "同事", "上司", "客户", "客人"];
+function tagTable() {
+  db().exec("CREATE TABLE IF NOT EXISTS person_tags(mode TEXT NOT NULL, person_key TEXT NOT NULL, tag TEXT NOT NULL, PRIMARY KEY(mode, person_key, tag))");
+  return db();
+}
+export function tagsOf(mode: Mode): Map<string, string[]> {
+  const m = new Map<string, string[]>();
+  for (const r of tagTable().prepare("SELECT person_key, tag FROM person_tags WHERE mode=? ORDER BY rowid").all(mode) as Row[])
+    m.set(String(r.person_key), [...(m.get(String(r.person_key)) ?? []), String(r.tag)]);
+  return m;
+}
+export function setTags(key: string, tags: string[], mode = currentMode()) {
+  const d = tagTable();
+  d.prepare("DELETE FROM person_tags WHERE mode=? AND person_key=?").run(mode, key);
+  const ins = d.prepare("INSERT OR IGNORE INTO person_tags(mode, person_key, tag) VALUES(?,?,?)");
+  for (const t of tags.map((x) => x.trim()).filter(Boolean).slice(0, 8)) ins.run(mode, key, t.slice(0, 12));
+}
+
 export function listPeople(mode?: Mode): Person[] {
   const md = mode ?? currentMode();
   const items = listItems({ mode: md });
@@ -333,6 +352,8 @@ export function listPeople(mode?: Mode): Person[] {
     if (i.eventDate && (!p.latest || i.eventDate > p.latest)) p.latest = i.eventDate;
     m.set(i.personKey, p);
   }
+  const tags = tagsOf(md);
+  for (const p of m.values()) p.tags = tags.get(p.key) ?? [];
   return [...m.values()].sort((a, b) => b.open - a.open || (b.latest ?? "").localeCompare(a.latest ?? ""));
 }
 
@@ -433,6 +454,7 @@ export function getProfile(key: string): PersonProfile | null {
     chat: session ? chatlab.sessionStats(key) : null,
     items,
     analysis: getAnalysis(key),
+    tags: tagsOf(currentMode()).get(key) ?? [],
   };
 }
 
