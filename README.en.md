@@ -68,7 +68,7 @@ The first screen asks whether you want to look at the demo (fictional data) or u
 Choosing your own chats starts four steps — no config files:
 
 1. **Import:** drag in your exports, check the preview (who is you, how many messages), confirm.
-2. **AI service:** pick DeepSeek, OpenAI, Gemini, OpenRouter, Kimi, Qwen, GLM, a local Ollama model, or any OpenAI-compatible endpoint; paste a key; *Test & save*.
+2. **AI service** (or your own agent: Claude Code, Codex and similar can import, organize and run on a schedule without an API key — see [agent/SKILL.md](agent/SKILL.md)): pick DeepSeek, OpenAI, Gemini, OpenRouter, Kimi, Qwen, GLM, a local Ollama model, or any OpenAI-compatible endpoint; paste a key; *Test & save*.
 3. **Privacy:** choose what is hidden before sending (keys, emails, phone numbers, card and ID numbers, links), add blocked keywords, or exclude a person entirely. *Try it* shows the result live.
 4. **Organize:** see exactly what the first chunk would send, then start. Turn on the daily run if you like.
 

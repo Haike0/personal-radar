@@ -50,6 +50,7 @@
   },
   "files": [
     "bin",
+    "agent",
     "src",
     "public",
     "scripts/*.mjs",

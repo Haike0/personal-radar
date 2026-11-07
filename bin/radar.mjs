@@ -4,6 +4,11 @@
 // The package ships the built app (npm runs `prepare` → next build when installing from GitHub), so it starts in seconds.
 // In a clone without a build, the first run builds it (about a minute).
 // Options: --port 3210   --rebuild   --no-open   --host 127.0.0.1
+// Commands for agents and scripts (no server needed):
+//   personal-radar import <files…>     import chat exports
+//   personal-radar ai status|next|submit|digest|analysis …   organize with your own agent (see agent/SKILL.md)
+//   personal-radar organize --yes      organize with the API key saved in Settings
+//   personal-radar guide extract|analysis|export   print the organizing rules / analysis rules / export guide
 // Listens on this computer only by default: anyone on the same Wi-Fi could otherwise read your chats.
 // For your phone, use Tailscale (`tailscale serve 3210`) instead of opening it to the network.
 import { spawn, spawnSync } from "node:child_process";
@@ -22,6 +27,20 @@ const [maj, min] = process.versions.node.split(".").map(Number);
 if (maj < 22 || (maj === 22 && min < 13)) {
   console.error(`Personal Radar 需要 Node.js 22.13 或更新版本（你现在是 ${process.versions.node}）。到 https://nodejs.org 下载 LTS 版本后再试。`);
   process.exit(1);
+}
+
+// subcommands run a script and exit; they read and write the same data folder as the app
+const SUB = { import: "import.mjs", ai: "radar-ai.mjs", organize: "organize.mjs" };
+const GUIDES = { extract: "ai-extract-guide.md", analysis: "ai-analysis-guide.md", export: "export-guide.md" };
+if (args[0] === "guide") {
+  const f = GUIDES[args[1]];
+  if (!f) { console.error("用法：personal-radar guide extract|analysis|export"); process.exit(1); }
+  process.stdout.write(fs.readFileSync(path.join(ROOT, "docs", f), "utf8"));
+  process.exit(0);
+}
+if (SUB[args[0]]) {
+  const r = spawnSync(process.execPath, [path.join(ROOT, "scripts", SUB[args[0]]), ...args.slice(1)], { stdio: "inherit", env: process.env });
+  process.exit(r.status ?? 1);
 }
 
 const next = createRequire(path.join(ROOT, "package.json")).resolve("next/dist/bin/next");

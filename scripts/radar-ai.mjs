@@ -19,7 +19,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-import { CHATS_DIR, RADAR_DB } from "./lib/env.mjs";
+import { CHATS_DIR, RADAR_DB, scrub } from "./lib/env.mjs";
 
 const HOME = os.homedir();
 // ChatLab is opt-in: only read when CHATLAB_DATA_DIR points at its data folder (usually ~/.chatlab/data).
@@ -77,7 +77,7 @@ const now = () => fmt(Math.floor(Date.now() / 1000)) + ":00";
 const today = () => now().slice(0, 10);
 
 function radar() {
-  if (!fs.existsSync(RADAR_DB)) die("radar.db not found — run `npm run dev` once first");
+  if (!fs.existsSync(RADAR_DB)) die("还没有 Radar 的数据库（radar.db）：先打开一次 Personal Radar（npx github:Ikarishinji00/personal-radar 或 npm start），再运行这个命令 / radar.db not found — start Personal Radar once first");
   const d = new DatabaseSync(RADAR_DB);
   d.exec(`CREATE TABLE IF NOT EXISTS ai_cursor(session_id TEXT PRIMARY KEY, last_ts INTEGER NOT NULL, last_id INTEGER NOT NULL, updated_at TEXT NOT NULL);
           CREATE TABLE IF NOT EXISTS person_analysis(session_id TEXT PRIMARY KEY, content TEXT NOT NULL, basis_items INTEGER NOT NULL, basis_until TEXT, generated_at TEXT NOT NULL);
@@ -207,7 +207,7 @@ function cmdNext() {
     shown++;
   });
   out[0] += `（实际给你看 ${shown} 条）`;
-  console.log(out.join("\n"));
+  console.log(scrub(out.join("\n"))); // the agent sees exactly what an API call would: privacy rules applied
 }
 
 // Voice has independent progress: processing old audio must never rewind/advance the text cursor.
@@ -256,7 +256,7 @@ function cmdNextVoice() {
   fs.writeFileSync(cf, JSON.stringify({ source: "voice", session: sid, map,
     voice_rows: rows.map((x) => ({ message_id: x.message_id, text_sha256: hash(x.text) })),
     chunk_end: { ts: rows.at(-1).ts, id: rows.at(-1).chatlab_id } }), { mode: 0o600 });
-  console.log(out.join("\n"));
+  console.log(scrub(out.join("\n"))); // the agent sees exactly what an API call would: privacy rules applied
 }
 
 function validItem(x, i) {
@@ -404,7 +404,7 @@ function cmdDigest() {
     const quote = m ? `${m.spid === meta.owner_id ? "我" : m.sender}：${String(content ?? "").replace(/\s+/g, " ").slice(0, 100)}` : "";
     out.push(`#${i.id} [${i.kind}${i.facet ? "/" + i.facet : ""}/${i.subject}/${i.certainty}${i.status !== "open" ? "/" + i.status : ""}] ${i.event_date ?? (i.observed_at ?? "").slice(0, 10)} ${i.title}${quote ? " —— " + quote : ""}`);
   }
-  console.log(out.join("\n"));
+  console.log(scrub(out.join("\n"))); // the agent sees exactly what an API call would: privacy rules applied
 }
 
 function cmdAnalysis() {

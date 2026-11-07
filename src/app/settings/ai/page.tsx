@@ -6,6 +6,7 @@ import { useBack } from "@/lib/nav";
 import { useState } from "react";
 import { usePageContext } from "@/components/Shell";
 import { post, refreshAll, useApi } from "@/lib/client";
+import { AgentCard } from "@/components/setup/AgentCard";
 
 // AI 设置: a section list on the left (top on phones), one card per section.
 type Svc = { id: string; name: string; baseUrl: string; models: string[]; builtin?: boolean; fromEnv?: boolean; keyUrl?: string; hasKey: boolean };
@@ -16,6 +17,7 @@ type Settings = { settings: Record<string, string> };
 
 const SECTIONS = [
   { id: "services", label: "模型服务" },
+  { id: "agent", label: "用 agent" },
   { id: "models", label: "默认模型" },
   { id: "sending", label: "发送内容" },
   { id: "usage", label: "用量" },
@@ -184,6 +186,10 @@ export default function AiSettingsPage() {
                 </Group>
               ))}
               <Button variant="light" radius="md" leftSection={<IconPlus size={16} />} onClick={() => setModal({ open: true, edit: null })}>添加新服务</Button>
+            </Section>
+
+            <Section id="agent" title="用你自己的 agent" hint="不填密钥也能整理：交给你已经在用的 AI 助手">
+              <AgentCard />
             </Section>
 
             <Section id="models" title="默认模型">

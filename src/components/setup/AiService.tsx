@@ -1,10 +1,11 @@
 "use client";
-import { Anchor, Autocomplete, Badge, Button, Group, PasswordInput, Select, Stack, Text, TextInput } from "@mantine/core";
+import { Anchor, Autocomplete, Badge, Button, Collapse, Group, Paper, PasswordInput, Select, Stack, Text, TextInput, UnstyledButton } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconCheck, IconPlugConnected } from "@tabler/icons-react";
+import { IconCheck, IconChevronDown, IconPlugConnected } from "@tabler/icons-react";
 import Link from "next/link";
 import { useState } from "react";
 import { post, refreshAll, useApi } from "@/lib/client";
+import { AgentCard } from "@/components/setup/AgentCard";
 
 type Svc = { id: string; name: string; baseUrl: string; models: string[]; builtin?: boolean; fromEnv?: boolean; hasKey: boolean };
 type Preset = { id: string; name: string; baseUrl: string; models: string[]; keyUrl: string };
@@ -28,6 +29,7 @@ function AiForm({ data, reload, onReady }: { data: Data; reload: () => void; onR
   const current = data.services.find((s) => s.id === data.fast.serviceId);
   const start = data.presets.find((p) => p.baseUrl === current?.baseUrl)?.id ?? (current && !current.builtin ? CUSTOM : "deepseek");
   const [preset, setPreset] = useState<string>(start);
+  const [agentOpen, setAgentOpen] = useState(false);
   const [baseUrl, setBaseUrl] = useState(current?.baseUrl ?? data.presets[0].baseUrl);
   const [model, setModel] = useState(data.fast.model);
   const [key, setKey] = useState("");
@@ -106,6 +108,10 @@ function AiForm({ data, reload, onReady }: { data: Data; reload: () => void; onR
       <Text size="xs" className="faint" lh={1.6}>
         费用按你的服务商计价：用 DeepSeek 整理 400 条聊天，大约几分钱人民币。想完全不联网，可以选 Ollama 用本机模型（效果取决于你装的模型）。
       </Text>
+      <UnstyledButton onClick={() => setAgentOpen((x) => !x)} mt={4}>
+        <Group gap={6}><Text size="sm" fw={600} c="violet">没有 API 密钥？用你自己的 agent</Text><IconChevronDown size={14} style={{ transform: agentOpen ? "rotate(180deg)" : undefined, transition: "transform 150ms" }} /></Group>
+      </UnstyledButton>
+      <Collapse expanded={agentOpen}><Paper className="hint-box" radius="lg" p="md"><AgentCard /></Paper></Collapse>
     </Stack>
   );
 }

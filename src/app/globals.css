@@ -286,3 +286,4 @@ a.apl-tl-title:hover { text-decoration: underline; text-underline-offset: 3px; }
   color: var(--mantine-color-dimmed); border: 1px solid light-dark(rgba(20,24,39,.12), rgba(255,255,255,.12)); }
 .privacy-chip.is-on { color: var(--mantine-color-radar-8); border-color: transparent; background: light-dark(rgba(0,168,145,.1), rgba(52,204,182,.16)); }
 .privacy-sample { padding: 12px 14px; border-radius: 14px; background: light-dark(#f7f8fa, rgba(255,255,255,.04)); }
+.agent-prompt { background: light-dark(#f5f3ff, rgba(132,94,247,.12)); border: 1px dashed light-dark(rgba(132,94,247,.35), rgba(132,94,247,.4)); }

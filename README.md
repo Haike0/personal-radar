@@ -56,7 +56,7 @@ AI 整理出的内容在你确认之前都标着「待核对」。它不会替�
 打开后点「用我自己的聊天」，四步，全程不用改配置文件：
 
 1. 导入：拖入导出的聊天文件，预览（哪个是你、多少条），确认。导入完马上能看聊天分析。
-2. AI 服务：选 DeepSeek、OpenAI、Gemini、OpenRouter、Kimi、通义千问、智谱，或本机 Ollama，或任何兼容 OpenAI 接口的服务；粘贴密钥，点「测试并保存」。
+2. AI 服务：选 DeepSeek、OpenAI、Gemini、OpenRouter、Kimi、通义千问、智谱，或本机 Ollama，或任何兼容 OpenAI 接口的服务；粘贴密钥，点「测试并保存」。已经在用 Claude Code、Codex、WorkBuddy、Hermes 这类 agent 的话，可以不填密钥：复制 App 里给的一句话发给它，它会替你导入新聊天、整理，还能每天定时做（见 [agent/SKILL.md](agent/SKILL.md)）。
 3. 隐私：选发出去之前要隐藏什么（密钥、邮箱、电话、卡号、证件号、链接），加屏蔽词，或者让某个人完全不发给 AI。
 4. 整理：先看第一段会发出去什么，再开始。可以打开每天自动整理。
 
