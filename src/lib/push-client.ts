@@ -14,7 +14,8 @@ const isIOS = () => typeof navigator !== "undefined" && /iPhone|iPad|iPod/.test(
 
 export async function registerSW() {
   if (!("serviceWorker" in navigator)) return null;
-  return navigator.serviceWorker.register("/sw.js", { scope: "/", updateViaCache: "none" });
+  // in development the build files are not content-hashed, so the worker must not cache them
+  return navigator.serviceWorker.register(process.env.NODE_ENV === "production" ? "/sw.js" : "/sw.js?dev=1", { scope: "/", updateViaCache: "none" });
 }
 
 async function reg() {

@@ -1,11 +1,17 @@
 "use client";
-import { Badge, Group, NumberInput, Paper, SegmentedControl, Skeleton, Stack, Switch, Text, TextInput, Title } from "@mantine/core";
+import { Badge, Button, Divider, Group, NumberInput, Paper, SegmentedControl, Skeleton, Stack, Switch, Text, TextInput, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconActivityHeartbeat, IconBell, IconDatabase, IconLock, IconPalette, IconSparkles } from "@tabler/icons-react";
+import { IconActivityHeartbeat, IconBell, IconDatabase, IconFileImport, IconLock, IconPalette, IconPlayerPlay, IconSparkles, IconWand } from "@tabler/icons-react";
+import Link from "next/link";
 import { useState } from "react";
 import { AppearanceControl, DataHealth, PushControl } from "@/components/SettingsExtras";
 import { usePageContext } from "@/components/Shell";
 import { SyncLine } from "@/components/SyncLine";
+import { AiService } from "@/components/setup/AiService";
+import { ChatLabConnect } from "@/components/setup/ChatLabConnect";
+import { ImportPanel } from "@/components/setup/ImportPanel";
+import { OrganizePanel } from "@/components/setup/OrganizePanel";
+import { PrivacyPanel } from "@/components/setup/PrivacyPanel";
 import { post, refreshAll, useApi } from "@/lib/client";
 import type { SyncStatus } from "@/lib/sync";
 
@@ -68,7 +74,10 @@ export default function SettingsPage() {
 
   return (
     <Stack gap="lg" className="fade-in">
-      <Title order={1} fz={28}>设置</Title>
+      <Group justify="space-between" align="center">
+        <Title order={1} fz={28}>设置</Title>
+        <Button component={Link} href="/setup" variant="light" radius="xl" size="xs" leftSection={<IconWand size={14} />}>设置向导</Button>
+      </Group>
 
       <Card icon={IconActivityHeartbeat} title="数据健康" id="health">
         <DataHealth />
@@ -87,6 +96,16 @@ export default function SettingsPage() {
         )}
         <ChatsLine />
         <SyncLine sync={data.sync} />
+      </Card>
+
+      <Card icon={IconFileImport} title="导入聊天" id="import">
+        <ImportPanel />
+        <Divider />
+        <ChatLabConnect />
+      </Card>
+
+      <Card icon={IconPlayerPlay} title="整理" id="organize">
+        <OrganizePanel />
       </Card>
 
       <Card icon={IconPalette} title="外观">
@@ -117,15 +136,13 @@ export default function SettingsPage() {
         <Text size="xs" className="faint">通知由运行服务的电脑直接发给你的手机，内容端到端加密，苹果的推送服务器看不到正文。不想在锁屏上被别人看到，可以在 iPhone「设置 → 通知 → Radar → 显示预览」改成「解锁时」。</Text>
       </Card>
 
-      <Card icon={IconSparkles} title="AI">
-        <Line label="AI 来源">
+      <Card icon={IconSparkles} title="AI 服务" id="ai">
+        <Line label="问答用哪个" hint="「演示」用写好的示例回答，不联网">
           <SegmentedControl size="xs" radius="xl" value={s.ai_provider === "deepseek" ? "deepseek" : "mock"} onChange={(v) => save({ ai_provider: v })}
             data={[{ value: "mock", label: "演示" }, { value: "deepseek", label: "真实 AI" }]} />
         </Line>
-        <Line label="API 密钥" hint="写在项目根目录的 .env.local（RADAR_AI_KEY），只留在运行服务的电脑上">
-          <Badge color={data.deepseekKey ? "teal" : "gray"}>{data.deepseekKey ? "已配置" : "未配置"}</Badge>
-        </Line>
-        {s.ai_provider === "deepseek" && !data.deepseekKey && <Text size="xs" c="orange">.env.local 里还没有 RADAR_AI_KEY，问答暂时用不了。填好后重启服务。</Text>}
+        <AiService />
+        <Divider />
         {data.aiUsage && <Line label="本月用量" hint="按 DeepSeek 高峰价估算，换了服务就只看次数"><Text size="sm">{data.aiUsage.calls} 次 · 约 ${data.aiUsage.usd.toFixed(3)}</Text></Line>}
         <Line label="记录的原话" hint="引用整理过的记录时，只带关键那句，还是连前后几句一起">
           <SegmentedControl size="xs" radius="xl" value={s.ai_share_evidence} onChange={(v) => save({ ai_share_evidence: v })}
@@ -145,9 +162,11 @@ export default function SettingsPage() {
         </Stack>
       </Card>
 
-      <Card icon={IconLock} title="隐私">
+      <Card icon={IconLock} title="隐私" id="privacy">
+        <PrivacyPanel />
+        <Divider />
         <Text size="sm" className="muted" lh={1.7}>
-          聊天原文只在你自己电脑上的数据库里（默认 ~/.personal-radar），这个 App 只读取、不修改。它另外保存事项、状态、原话引用和你的修改，也都在本机。服务默认只在本机监听。AI 提出的修改都要你点确认才生效，也不会替你给任何人发消息。只有两种时候会把内容发给你配置的 AI 服务：运行 npm run organize 整理聊天时（一段段过滤过的聊天），和你在 App 里提问时（上面「AI」里列出的内容）。
+          聊天原文只在你自己电脑上的数据库里（默认 ~/.personal-radar），这个 App 只读取、不修改。它另外保存事项、状态、原话引用和你的修改，也都在本机。服务默认只在本机监听。AI 提出的修改都要你点确认才生效，也不会替你给任何人发消息。只有两种时候会把内容发给你配置的 AI 服务：整理聊天时（一段段过滤、脱敏过的聊天），和你在 App 里提问时（上面「AI」里列出的内容）。
         </Text>
       </Card>
     </Stack>

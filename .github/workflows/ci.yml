@@ -1,0 +1,25 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Privacy check (no personal data in the repo)
+        run: sh scripts/check-privacy.sh
+      - name: Importer and redaction tests
+        run: npm test
+      - name: Build (also generates route types)
+        run: npx next build
+      - name: Type check
+        run: npx tsc --noEmit
+      - name: Lint
+        run: npx eslint src scripts

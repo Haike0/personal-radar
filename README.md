@@ -21,17 +21,21 @@ Nothing is decided for you: anything the AI writes is marked "to check" until yo
 ## How it works
 
 ```
-chat export (.txt / .json) ──npm run import──▶ local SQLite (~/.personal-radar)
-                                                    │
-                          npm run organize ◀────────┘  your own API key (DeepSeek by default)
-                                │
-                                ▼
-                      reminders + profiles ──▶ web app on localhost (phone: add to home screen)
+chat export ──drag into Settings → Import──▶ local SQLite (~/.personal-radar)
+                                                   │
+          Settings → Organize ◀────────────────────┘  your own AI key, redacted before sending
+                  │
+                  ▼
+        reminders + profiles ──▶ web app on localhost (phone: add to home screen)
 ```
 
-- **Import** reads LINE and WhatsApp text exports and ChatLab JSON. Re-importing a newer export only adds new messages.
-- **Organize** sends the new messages, in small chunks, to an OpenAI-compatible API you choose, and stores the results with message IDs (not copies of the text). It shows you which chats it will send and asks first.
-- **The app** is a Next.js PWA that listens on `localhost` only.
+| Supported exports | |
+|---|---|
+| LINE `.txt` (Japanese, Chinese, English UI) | WhatsApp `.txt` or `.zip` (iPhone and Android) |
+| Telegram Desktop `result.json` (one chat or the whole account) | Discord (DiscordChatExporter JSON) |
+| Instagram / Messenger `message_N.json` | ChatLab JSON / JSONL, or ChatLab's local API |
+
+WeChat, QQ, iMessage and others: Radar ships no decryption or scraping tools. If you use [ChatLab](https://chatlab.fun), connect it under *Import → ChatLab* and Radar reads what ChatLab already has. See the [export guide](docs/export-guide.md) for each app.
 
 ## Quick start
 
@@ -41,35 +45,19 @@ Requires **Node.js 22.13 or newer** (for the built-in `node:sqlite`).
 git clone https://github.com/Ikarishinji00/personal-radar.git
 cd personal-radar
 npm install
-npm run dev            # http://localhost:3210 — opens with fictional demo data
+npm run dev            # open http://localhost:3210
 ```
 
-Use your own chats:
+It opens with fictional demo data. Click **开始设置 (Get started)** and follow four steps — no config files:
 
-```bash
-cp .env.example .env.local        # put your API key in RADAR_AI_KEY
-npm run import -- "WhatsApp Chat with Alex.txt"
-npm run organize
-```
+1. **Import:** drag in your exports, check the preview (who is you, how many messages), confirm.
+2. **AI service:** pick DeepSeek, OpenAI, Gemini, OpenRouter, Kimi, Qwen, GLM, a local Ollama model, or any OpenAI-compatible endpoint; paste a key; *Test & save*.
+3. **Privacy:** choose what is hidden before sending (keys, emails, phone numbers, card and ID numbers, links), add blocked keywords, or exclude a person entirely. *Try it* shows the result live.
+4. **Organize:** see exactly what the first chunk would send, then start. Turn on the daily run if you like.
 
-Then open **设置 (Settings) → 数据 → 真实** to switch from demo data to your own.
+Prefer the terminal? `npm run import -- <files…>` and `npm run organize` do the same; settings can also come from `.env.local` (see `.env.example`). `examples/` has small fictional exports to try.
 
-Try it without real data first: `examples/` has small fictional exports in all three formats.
-
-### Exporting a chat
-
-- **WhatsApp:** open the chat → contact name → *Export Chat* → *Without Media*. Unzip and import the `.txt`.
-- **LINE:** open the chat → menu (≡) → *Settings / その他* → *Export chat history / トーク履歴を送信*. Import the `.txt`. (Menu names differ a little between LINE versions.)
-- **ChatLab JSON:** any file in ChatLab's JSON format (`meta` + `members` + `messages`). If you already use [ChatLab](https://chatlab.fun), you can instead set `CHATLAB_DATA_DIR=~/.chatlab/data` and Radar will read its databases (read-only).
-
-If the importer can't tell which participant is you, pass `--me "your name"`. WhatsApp dates are auto-detected; force with `--date-order dmy` or `mdy`.
-
-### Running it every day
-
-```bash
-# crontab -e   (21:50 every day; --yes skips the confirmation)
-50 21 * * * cd /path/to/personal-radar && /path/to/node scripts/organize.mjs --yes
-```
+Something not working? See [troubleshooting](docs/troubleshooting.md).
 
 ### Phone access (optional)
 
@@ -77,13 +65,15 @@ The server only listens on your computer. To use it from your phone, put both de
 
 ## Privacy
 
-- Chats, notes and keys stay in `~/.personal-radar` (override with `RADAR_DATA_DIR`). Nothing is uploaded except what `organize` and the in-app Q&A send to the AI provider you configured; in the AI panel, “发送内容预览” shows exactly what a question would send, without sending it.
-- The default provider is DeepSeek (servers in China). Any OpenAI-compatible endpoint works: set `RADAR_AI_BASE_URL` and `RADAR_AI_MODEL`.
-- Group chats are imported but not organized.
+- Chats, notes and keys stay in `~/.personal-radar` (override with `RADAR_DATA_DIR`). The original chat files are never modified.
+- Only two things send content to the AI service you chose: organizing (chunks of new messages) and questions you ask in the app. Both pass through the same redaction rules and keyword blacklist at the last step, and both have a preview that shows exactly what would be sent.
+- People you mark "不发给 AI" are never organized, analyzed, summarized or included in answers.
+- With a local Ollama model nothing leaves your computer.
+- Group chats are imported for reading but not organized.
 
 ## Contributing
 
-New importers (Telegram, KakaoTalk, Messenger, iMessage…) are the most useful contribution. Please read [CONTRIBUTING.md](CONTRIBUTING.md) and the [CLA](CLA.md) first, and never put real chat logs in issues.
+New importers (KakaoTalk, Signal, iMessage…) and fixes for real-world export variants are the most useful contributions; each format has fixtures and tests in `tests/`. Please read [CONTRIBUTING.md](CONTRIBUTING.md) and the [CLA](CLA.md) first, and never put real chat logs in issues.
 
 ## License
 
@@ -102,22 +92,22 @@ Copyright © 2026 Fu Haike. Released under the [GNU AGPL-3.0](LICENSE): you can 
 
 AI 整理出的内容在你确认之前都标着「待核对」；它不会替你给任何人发消息。
 
-### 三步用起来
+### 四步用起来
 需要 **Node.js 22.13 以上**。
 
 ```bash
 npm install
-npm run dev                      # 打开 http://localhost:3210，先看演示数据
-cp .env.example .env.local       # 填上你自己的 API 密钥（默认 DeepSeek）
-npm run import -- 导出的聊天.txt  # LINE / WhatsApp 导出的 .txt，或 ChatLab JSON
-npm run organize                 # 用你的密钥整理；发之前会列出要发哪些聊天并让你确认
+npm run dev        # 打开 http://localhost:3210，先看演示数据
 ```
 
-然后在「设置 → 数据」里切到「真实」。
+点首页的「开始设置」：① 拖入导出的聊天文件，预览后确认；② 选 AI 服务、粘贴密钥、点「测试并保存」；③ 设置发出去前要隐藏什么；④ 先看「会发什么」，再开始整理。全程不用改配置文件。
+
+支持 LINE、WhatsApp（.txt / .zip）、Telegram、Discord、Instagram / Messenger、ChatLab。微信、QQ 等可以通过 ChatLab 接进来。各 App 怎么导出见 [导出指南](docs/export-guide.md)，遇到问题看 [常见问题](docs/troubleshooting.md)。
 
 ### 隐私
 - 聊天、整理结果、密钥都在 `~/.personal-radar`，App 只在本机监听。
-- 只有两种时候会把内容发出去：运行 `organize` 时（一段段过滤过的新消息），和你在 App 里提问时（AI 对话框里的「发送内容预览」能看到具体会发什么）。都只发给你自己配置的 AI 服务。
+- 只有两种时候会把内容发出去：整理聊天时，和你在 App 里提问时。发出前都会按你的规则脱敏（密钥、邮箱、电话、卡号、证件号、链接），黑名单关键词所在的消息整条不发；两处都能先预览具体发什么。
+- 可以把某个人设成「不发给 AI」；用本机 Ollama 模型则完全不联网。
 - 默认用 DeepSeek（服务器在中国），可以换成任何兼容 OpenAI 接口的服务。
 
 ### 许可

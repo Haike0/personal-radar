@@ -212,3 +212,8 @@ a.apl-tl-title:hover { text-decoration: underline; text-underline-offset: 3px; }
 .mem-msg.is-me { align-self: flex-end; border-radius: 14px 14px 4px 14px; background: light-dark(#dcf5f0, rgba(52, 204, 182, .16)); border-color: transparent; }
 .mem-msg.is-focus { outline: 2px solid var(--mantine-color-yellow-5); }
 .quote-text { -webkit-user-select: text; user-select: text; }
+
+/* setup */
+.setup-banner { display: block; text-decoration: none; color: inherit; border: 1px solid light-dark(rgba(0, 168, 145, .25), rgba(52, 204, 182, .25)); }
+.drop-zone { transition: background .15s, border-color .15s; }
+.drop-zone[data-active] { background: light-dark(rgba(0, 168, 145, .08), rgba(52, 204, 182, .12)); border-color: var(--mantine-color-radar-5); }

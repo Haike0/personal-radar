@@ -128,7 +128,7 @@ async function organize(K, sid) {
 
 // Person analysis: once a chat is fully organized (and again after enough new items), the model reads the digest
 // (organized items + one key quote each + plain interaction counts) and writes a sourced analysis.
-async function analyze(K, sid) {
+async function analyze(K, sid, name = sid) {
   const dig = radarAi("digest", "--session", sid);
   if (dig.status !== 0) { log(`${sid} digest failed: ${dig.stderr.trim()}`); return; }
   if (DRY) { log(`[dry-run] analysis ${sid} · ${dig.stdout.length} chars`); return; }
@@ -142,10 +142,10 @@ async function analyze(K, sid) {
     res.session = sid;
     fs.writeFileSync(RESULT, JSON.stringify(res), { mode: 0o600 });
     const sub = radarAi("analysis", "--file", RESULT);
-    if (sub.status === 0) { log(`${sid} 人物分析已更新`); return; }
+    if (sub.status === 0) { log(`${name}：人物分析已更新`); return; }
     messages.push({ role: "user", content: `提交被拒：${sub.stderr.trim()}\n请修正后重新输出完整 JSON。` });
   }
-  log(`${sid} 人物分析 3 次都没通过校验，下次再试`);
+  log(`${name}：人物分析 3 次都没通过校验，下次再试`);
 }
 
 function sessionsStatus() {
@@ -169,7 +169,7 @@ try {
     if (!ok) { console.log("已取消，什么都没发。"); process.exit(0); }
   }
   for (const s of todo) await organize(K, s.session);
-  for (const s of sessionsStatus()) if (s.analysisDue) await analyze(K, s.session);
+  for (const s of sessionsStatus()) if (s.analysisDue) await analyze(K, s.session, s.name);
   if (usage.calls) log(`${MODEL}：${usage.calls} 次调用，输入 ${usage.in}（缓存命中 ${usage.hit}）/ 输出 ${usage.out} tokens`);
   for (const s of sessionsStatus()) log(`${s.name}：还剩 ${s.remainingTextMessages} 条没整理，已有 ${s.aiItems} 条记录${s.analysisAt ? `，分析 ${s.analysisAt.slice(0, 10)}` : ""}`);
 } catch (e) {

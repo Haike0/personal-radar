@@ -163,6 +163,18 @@ export default function Home() {
         </Box>
       </div>
 
+      {d.mode === "demo" && (
+        <Paper component={Link} href="/setup" className="surface setup-banner" radius="xl" p="md">
+          <Group justify="space-between" wrap="nowrap" gap="sm">
+            <div style={{ minWidth: 0 }}>
+              <Text size="sm" fw={650}>现在看的是编出来的演示数据</Text>
+              <Text size="xs" className="muted">导入你自己的 LINE / WhatsApp / Telegram 聊天，四步就能用</Text>
+            </div>
+            <Group gap={4} wrap="nowrap" style={{ flex: "none" }}><Text size="sm" fw={600} c="radar">开始设置</Text><IconChevronRight size={16} /></Group>
+          </Group>
+        </Paper>
+      )}
+
       <SimpleGrid cols={3} spacing="sm">
         <Stat n={d.counts.action} label="需要行动" hint="近期有截止，或答应了还没做" color="red" onClick={() => scrollTo("sec-focus")} />
         <Stat n={d.counts.review} label="待你核对" hint="AI 整理的，你还没确认" color="violet" onClick={() => scrollTo("sec-review")} />

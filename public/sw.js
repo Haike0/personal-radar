@@ -2,18 +2,20 @@
 // and keeps the hashed build files (/_next/static) on the phone so the app opens instantly.
 // Pages and /api are never cached: the data is always live from the Mac.
 const STATIC = "radar-static-v1";
+// registered as /sw.js?dev=1 by `npm run dev`: dev build files keep the same names, so never cache them
+const DEV = new URL(self.location.href).searchParams.has("dev");
 
 self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", (e) => {
   e.waitUntil((async () => {
-    for (const k of await caches.keys()) if (k !== STATIC) await caches.delete(k);
+    for (const k of await caches.keys()) if (DEV || k !== STATIC) await caches.delete(k);
     await self.clients.claim();
   })());
 });
 
 self.addEventListener("fetch", (e) => {
   const url = new URL(e.request.url);
-  if (e.request.method !== "GET" || url.origin !== location.origin) return;
+  if (DEV || e.request.method !== "GET" || url.origin !== location.origin) return;
   // build files have content hashes in their names, so a cached copy is always correct
   if (url.pathname.startsWith("/_next/static/") || url.pathname.startsWith("/icons/")) {
     e.respondWith((async () => {

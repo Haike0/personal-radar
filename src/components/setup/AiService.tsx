@@ -2,7 +2,7 @@
 import { Anchor, Autocomplete, Badge, Button, Group, PasswordInput, Select, Stack, Text, TextInput } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconCheck, IconPlugConnected } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { post, refreshAll, useApi } from "@/lib/client";
 
 type Preset = { id: string; label: string; baseUrl: string; model: string; keyUrl: string };
@@ -12,24 +12,24 @@ type Test = { ok: boolean; ms?: number; reply?: string; error?: string };
 /** Pick a service, paste a key, test, done. The key stays in the local database and is never shown again. */
 export function AiService({ onReady }: { onReady?: () => void }) {
   const { data, reload } = useApi<Cfg>("/api/ai/config");
-  const [preset, setPreset] = useState<string | null>(null);
-  const [baseUrl, setBaseUrl] = useState("");
-  const [model, setModel] = useState("");
+  if (!data) return <Text size="xs" className="faint">读取中…</Text>;
+  return <AiForm data={data} reload={reload} onReady={onReady} />;
+}
+
+function AiForm({ data, reload, onReady }: { data: Cfg; reload: () => void; onReady?: () => void }) {
+  const [preset, setPreset] = useState<string>(data.preset);
+  const [baseUrl, setBaseUrl] = useState(data.baseUrl);
+  const [model, setModel] = useState(data.model);
   const [key, setKey] = useState("");
   const [models, setModels] = useState<string[]>([]);
   const [test, setTest] = useState<Test | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!data || preset !== null) return;
-    setPreset(data.preset); setBaseUrl(data.baseUrl); setModel(data.model);
-  }, [data, preset]);
-  if (!data || preset === null) return <Text size="xs" className="faint">读取中…</Text>;
   const p = data.presets.find((x) => x.id === preset) ?? data.presets[0];
   const local = /^https?:\/\/(127\.0\.0\.1|localhost)/.test(baseUrl);
 
   function choose(id: string | null) {
-    const np = data!.presets.find((x) => x.id === id);
+    const np = data.presets.find((x) => x.id === id);
     if (!np) return;
     setPreset(np.id); setTest(null); setModels([]);
     if (np.id !== "custom") { setBaseUrl(np.baseUrl); setModel(np.model); }
