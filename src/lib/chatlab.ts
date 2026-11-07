@@ -286,11 +286,14 @@ export function chatReport(sessionId: string) {
     const type = Number(r.type);
     types[TYPE_NAME[type] ?? "其他"] = (types[TYPE_NAME[type] ?? "其他"] ?? 0) + 1;
     const text = String(r.content ?? "").trim();
-    if (!text || BRACKET.test(text)) { if (BRACKET.test(text) && /表情|スタンプ|sticker/i.test(text)) types["表情"] = (types["表情"] ?? 0) + 0; continue; }
+    if (!text || BRACKET.test(text)) continue;
     if (type !== 0 && type !== 25) continue;
     len[who][0] += text.length; len[who][1]++;
     for (const e of text.match(EMOJI) ?? []) emoji[who].set(e, (emoji[who].get(e) ?? 0) + 1);
-    const plain = text.replace(EMOJI, "").replace(/[\uFE0F\u200D]/g, "").trim();
+    // [表情] / [图片] placeholders inside a message count as stickers/images, not as words
+    const marks = text.match(/\[[^\]]{1,6}\]/g) ?? [];
+    for (const m of marks) if (/表情|スタンプ|sticker/i.test(m)) types["表情"] = (types["表情"] ?? 0) + 1;
+    const plain = text.replace(/\[[^\]]{1,6}\]/g, "").replace(EMOJI, "").replace(/[\uFE0F\u200D]/g, "").trim();
     if (plain && plain.length <= 6) shorts[who].set(plain, (shorts[who].get(plain) ?? 0) + 1);
     const seg = /[\u3040-\u30ff]/.test(plain) ? segJa : segZh;
     if (!seg || /^https?:\/\//.test(plain)) continue;
