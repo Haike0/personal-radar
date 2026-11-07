@@ -50,3 +50,4 @@ __pycache__/
 .private-words
 .privacy-hits
 !.env.example
+radar-data/

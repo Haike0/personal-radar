@@ -1,14 +1,15 @@
 "use client";
 import { Badge, Button, Divider, Group, NumberInput, Paper, SegmentedControl, Skeleton, Stack, Switch, Text, TextInput, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconActivityHeartbeat, IconBell, IconChevronRight, IconDatabase, IconFileImport, IconLock, IconPalette, IconPlayerPlay, IconSparkles, IconWand } from "@tabler/icons-react";
+import { IconActivityHeartbeat, IconBell, IconChevronRight, IconInfoCircle, IconDatabase, IconFileImport, IconLock, IconPalette, IconPlayerPlay, IconSparkles, IconWand } from "@tabler/icons-react";
 import Link from "next/link";
 import { useState } from "react";
+import { About, DataControls } from "@/components/DataAbout";
 import { OrganizeCard } from "@/components/OrganizeCard";
 import { AppearanceControl, DataHealth, PushControl } from "@/components/SettingsExtras";
 import { usePageContext } from "@/components/Shell";
 import { SyncLine } from "@/components/SyncLine";
-import { ChatLabConnect } from "@/components/setup/ChatLabConnect";
+import { ConnectApps } from "@/components/setup/ConnectApps";
 import { ImportPanel } from "@/components/setup/ImportPanel";
 import { PrivacyPanel } from "@/components/setup/PrivacyPanel";
 import { post, refreshAll, useApi } from "@/lib/client";
@@ -90,17 +91,18 @@ export default function SettingsPage() {
         {s.mode === "demo" && (
           <Line label="演示内容" hint="夜间接客：陪酒女和她的常客（全部是编的）">
             <SegmentedControl size="xs" radius="xl" value={s.demo_set || "life"} onChange={(v) => save({ demo_set: v }, v === "night" ? "已换成夜间接客演示" : "已换成生活演示")}
-              data={[{ value: "life", label: "生活" }, { value: "night", label: "夜间接客" }]} />
+              data={[{ value: "life", label: "生活" }, { value: "night", label: "夜场" }]} />
           </Line>
         )}
         <ChatsLine />
         <SyncLine sync={data.sync} />
+        <DataControls />
       </Card>
 
       <Card icon={IconFileImport} title="导入聊天" id="import">
         <ImportPanel />
         <Divider />
-        <ChatLabConnect />
+        <ConnectApps />
       </Card>
 
       <Card icon={IconPlayerPlay} title="整理" id="organize">
@@ -155,9 +157,11 @@ export default function SettingsPage() {
       <Card icon={IconLock} title="隐私" id="privacy">
         <PrivacyPanel />
         <Divider />
-        <Text size="sm" className="muted" lh={1.7}>
-          聊天原文只在你自己电脑上的数据库里（默认 ~/.personal-radar），这个 App 只读取、不修改。它另外保存事项、状态、原话引用和你的修改，也都在本机。服务默认只在本机监听。AI 提出的修改都要你点确认才生效，也不会替你给任何人发消息。只有两种时候会把内容发给你在「AI 设置」里选的模型服务：整理聊天时（一段段过滤、脱敏过的聊天），和你在 App 里提问时（「AI 设置 → 发送内容」里列出的内容）。API 密钥存在数据目录的 keys.json 里，只有你的账户能读，不会发给浏览器。
-        </Text>
+        <Text size="xs" className="faint" lh={1.7}>聊天和记录都在你自己的电脑上（默认 ~/.personal-radar），只有整理和提问时，脱敏后的内容会发给你选的模型服务。AI 不会替你发消息。</Text>
+      </Card>
+
+      <Card icon={IconInfoCircle} title="关于" id="about">
+        <About />
       </Card>
     </Stack>
   );

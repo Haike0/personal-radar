@@ -1,3 +1,4 @@
+import { DEMO_ONLY } from "@/lib/config";
 import { connection } from "next/server";
 import { db, getSettings, nowStr, setDemoSet, setSettings } from "@/lib/db";
 import { deepseekKey } from "@/lib/ai/deepseek";
@@ -28,6 +29,7 @@ function usage() {
 
 export async function PATCH(req: Request) {
   const patch = await req.json();
+  if (DEMO_ONLY) { for (const k of Object.keys(patch)) if (k !== "demo_set") delete patch[k]; }
   for (const k of SECRET) if (patch[k] === "已设置") delete patch[k];
   for (const k of ["ai_chat", "ai_fast"]) if (k in patch && patch[k] !== "" && !/^[\w-]+\|\S+/.test(String(patch[k]))) return Response.json({ error: "模型格式不对" }, { status: 400 });
   const prevSet = getSettings().demo_set;

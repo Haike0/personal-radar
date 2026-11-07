@@ -1,3 +1,4 @@
+import { DEMO_ONLY, demoOnlyResponse } from "@/lib/config";
 import { connection } from "next/server";
 import { db, nowStr, setSettings } from "@/lib/db";
 import { choice, deleteKey, keyOf, PRESETS, roleSetting, saveServices, services, setKey, type Role, type Service } from "@/lib/ai/model";
@@ -26,6 +27,7 @@ export async function GET() {
  * `use` also makes it the model for those roles (the quick setup does this) and turns real AI on.
  */
 export async function POST(req: Request) {
+  if (DEMO_ONLY) return demoOnlyResponse();
   const b = (await req.json()) as Partial<Service> & { key?: string; use?: Role[] };
   const list = services();
   const old = b.id ? list.find((s) => s.id === b.id) : undefined;
@@ -46,6 +48,7 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+  if (DEMO_ONLY) return demoOnlyResponse();
   const id = new URL(req.url).searchParams.get("id") ?? "";
   const s = services().find((x) => x.id === id);
   if (!s) return Response.json({ error: "没有这个服务" }, { status: 404 });

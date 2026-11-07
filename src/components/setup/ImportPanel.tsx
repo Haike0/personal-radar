@@ -1,5 +1,5 @@
 "use client";
-import { Accordion, Badge, Button, Checkbox, Group, Paper, Select, Stack, Text, TextInput } from "@mantine/core";
+import { Badge, Button, Checkbox, Group, Paper, Select, SimpleGrid, Stack, Text, TextInput, UnstyledButton } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconFileImport, IconUpload } from "@tabler/icons-react";
 import { useRef, useState } from "react";
@@ -16,14 +16,49 @@ type Choice = { include: boolean; me?: string; name?: string };
 const day = (s: number) => new Date(s * 1000).toLocaleDateString("sv-SE");
 const FORMAT: Record<string, string> = { line: "LINE", whatsapp: "WhatsApp", telegram: "Telegram", discord: "Discord", instagram: "Instagram / Messenger", chatlab: "ChatLab" };
 
-export const EXPORT_GUIDE: { label: string; steps: string }[] = [
-  { label: "LINE", steps: "打开聊天 → 右上角「≡」→「设置 / その他」→「发送聊天记录 / トーク履歴を送信」，存成 .txt。电脑版只会存屏幕上已经加载的消息。" },
-  { label: "WhatsApp", steps: "打开聊天 → 点对方名字（Android 是右上角 ⋮ → 更多）→「导出聊天」→「不含媒体」。iPhone 会得到一个 .zip，直接拖进来就行。" },
-  { label: "Telegram", steps: "用 Telegram Desktop：打开聊天 → 右上角 ⋮ →「导出聊天记录」，格式选 JSON，得到 result.json。也可以在「设置 → 高级 → 导出数据」导出全部聊天。" },
-  { label: "Discord", steps: "用开源工具 DiscordChatExporter 导出，格式选 JSON。它是第三方工具，使用前请自己确认安全性。" },
-  { label: "Instagram / Messenger", steps: "在 Meta 账户中心「下载你的信息」，选「消息」、格式 JSON。每个聊天在 messages/inbox/对方名字/message_1.json；分成多个文件时一起拖进来。" },
-  { label: "微信、QQ、iMessage 等", steps: "Radar 不提供解密或抓取工具。如果你在用 ChatLab，可以在下面「从 ChatLab 读取」里连接它，直接用 ChatLab 里已经导入的聊天；或者把 ChatLab 导出的 JSON / JSONL 拖进来。" },
+// Where the chat comes from → three short steps. Shown only for the app you pick.
+export const SOURCES: { id: string; name: string; color: string; file: string; steps: string[]; note?: string }[] = [
+  { id: "line", name: "LINE", color: "#06C755", file: ".txt", steps: ["打开要导入的聊天", "右上角 ≡ →「设置 / その他」", "「发送聊天记录 / トーク履歴を送信」→ 存成文件"], note: "用手机导出更完整，电脑版只存已加载的消息" },
+  { id: "whatsapp", name: "WhatsApp", color: "#25D366", file: ".zip 或 .txt", steps: ["打开聊天，点对方名字", "「导出聊天」", "选「不含媒体」，保存"], note: "iPhone 得到 .zip，不用解压" },
+  { id: "telegram", name: "Telegram", color: "#2AABEE", file: "result.json", steps: ["在电脑上打开 Telegram Desktop", "聊天右上角 ⋮ →「导出聊天记录」", "格式选 JSON"] },
+  { id: "instagram", name: "Instagram", color: "#E1306C", file: "message_1.json", steps: ["账户中心 →「下载你的信息」", "只选「消息」，格式选 JSON", "解压，找到 inbox/对方/message_1.json"], note: "Messenger 的导出也是这样" },
+  { id: "discord", name: "Discord", color: "#5865F2", file: ".json", steps: ["安装开源工具 DiscordChatExporter", "选要导出的私信", "格式选 JSON"], note: "第三方工具，用之前自己判断" },
+  { id: "chatlab", name: "ChatLab", color: "#7C5CFF", file: ".json / .jsonl", steps: ["在 ChatLab 打开会话", "导出为 ChatLab 格式", "拖到上面"], note: "也可以在下面直接连接 ChatLab" },
 ];
+
+function ExportSteps() {
+  const [pick, setPick] = useState<string | null>(null);
+  const src = SOURCES.find((x) => x.id === pick);
+  return (
+    <Stack gap="sm">
+      <Text size="sm" fw={600}>不知道怎么导出？选一下来源</Text>
+      <SimpleGrid cols={{ base: 3, sm: 6 }} spacing="xs">
+        {SOURCES.map((x) => (
+          <UnstyledButton key={x.id} className="source-tile" data-active={pick === x.id || undefined} onClick={() => setPick(pick === x.id ? null : x.id)}>
+            <span className="source-dot" style={{ background: x.color }}>{x.name[0]}</span>
+            <Text size="xs" fw={500} mt={6}>{x.name}</Text>
+          </UnstyledButton>
+        ))}
+      </SimpleGrid>
+      {src && (
+        <Paper className="hint-box fade-in" radius="lg" p="md">
+          <Stack gap={10}>
+            {src.steps.map((t, i) => (
+              <Group key={i} gap="sm" wrap="nowrap">
+                <span className="step-num">{i + 1}</span>
+                <Text size="sm">{t}</Text>
+              </Group>
+            ))}
+            <Group gap={6} mt={2}>
+              <Badge variant="white" color="gray" radius="sm" tt="none">得到 {src.file}</Badge>
+              {src.note && <Text size="xs" className="faint">{src.note}</Text>}
+            </Group>
+          </Stack>
+        </Paper>
+      )}
+    </Stack>
+  );
+}
 
 /** Drag exports in → see what each one contains → pick who you are → import. Nothing is written before the last click. */
 export function ImportPanel({ onImported }: { onImported?: () => void }) {
@@ -82,8 +117,7 @@ export function ImportPanel({ onImported }: { onImported?: () => void }) {
         <Stack gap={6} align="center">
           <IconUpload size={22} />
           <Text size="sm" fw={600}>{busy === "preview" ? "读取中…" : "把导出的聊天文件拖到这里，或点一下选择"}</Text>
-          <Text size="xs" className="faint">LINE / WhatsApp（.txt 或 .zip）· Telegram · Discord · Instagram · ChatLab JSON / JSONL。可以一次选多个。</Text>
-          <Text size="xs" className="faint">先预览，确认后才写入；文件只在这台电脑上读取。</Text>
+          <Text size="xs" className="faint">可以一次选多个 · 先预览，确认后才导入</Text>
         </Stack>
       </Paper>
 
@@ -123,18 +157,7 @@ export function ImportPanel({ onImported }: { onImported?: () => void }) {
         </Stack>
       )}
 
-      <Accordion variant="contained" radius="lg" chevronPosition="right">
-        <Accordion.Item value="guide">
-          <Accordion.Control><Text size="sm">怎么从各个 App 导出聊天</Text></Accordion.Control>
-          <Accordion.Panel>
-            <Stack gap="xs">
-              {EXPORT_GUIDE.map((g) => (
-                <div key={g.label}><Text size="xs" fw={600}>{g.label}</Text><Text size="xs" className="muted" lh={1.6}>{g.steps}</Text></div>
-              ))}
-            </Stack>
-          </Accordion.Panel>
-        </Accordion.Item>
-      </Accordion>
+      {!pv && <ExportSteps />}
     </Stack>
   );
 }

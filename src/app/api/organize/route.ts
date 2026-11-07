@@ -1,3 +1,4 @@
+import { DEMO_ONLY, demoOnlyResponse } from "@/lib/config";
 import { connection } from "next/server";
 import { setSettings } from "@/lib/db";
 import { preview, start, status } from "@/lib/organizer";
@@ -9,6 +10,7 @@ export async function GET() {
 
 // {action:"start"} = 立即整理 · {action:"preview", session} · {action:"schedule", auto?, times?}
 export async function POST(req: Request) {
+  if (DEMO_ONLY) return demoOnlyResponse();
   const b = (await req.json().catch(() => ({}))) as { action?: string; session?: string; auto?: boolean; times?: string[] };
   try {
     if (!b.action || b.action === "start") {

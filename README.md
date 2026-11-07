@@ -2,7 +2,7 @@
 
 **Turn your chat history into a memory of the people you care about** — what you promised, what they told you, plans that changed, and what is coming up this week. Local-first: your chats stay on your own computer.
 
-[中文说明](#中文说明) · AGPL-3.0 · early preview (v0.1), UI in Chinese for now
+[中文说明](#中文说明) · AGPL-3.0 · early preview, UI in Chinese for now
 
 | Today | A person |
 |---|---|
@@ -14,7 +14,8 @@
 
 - **Reminders from your chats.** "Saturday 7 pm at the ramen place", "I'll bring the book back", "my interview is next Friday" — found in the conversation, dated, and shown on the day they matter. If a plan changes later, the old one is replaced.
 - **A sourced profile of each person.** Likes, dislikes, work, family, things they asked of you. Every line links back to the exact messages it came from, so you can check it.
-- **Ask about someone.** "What did she say about her new job?" — answered from your own notes and the original messages, with citations.
+- **Chat numbers at a glance.** Reply rate, how fast they answer, who writes more, how the conversation's pace changed over time — straight from the messages, right after import. No "interest score": Radar only shows facts.
+- **Ask about someone.** "What did she say about her new job?" — answered from your own notes and the original messages, with citations. Five assistants: general, relationship, reply drafts, memory lookup, views.
 
 Nothing is decided for you: anything the AI writes is marked "to check" until you accept it, and it never sends messages to anyone.
 
@@ -35,20 +36,26 @@ chat export ──drag into Settings → Import──▶ local SQLite (~/.person
 | Telegram Desktop `result.json` (one chat or the whole account) | Discord (DiscordChatExporter JSON) |
 | Instagram / Messenger `message_N.json` | ChatLab JSON / JSONL, or ChatLab's local API |
 
-WeChat, QQ, iMessage and others: Radar ships no decryption or scraping tools. If you use [ChatLab](https://chatlab.fun), connect it under *Import → ChatLab* and Radar reads what ChatLab already has. See the [export guide](docs/export-guide.md) for each app.
+**One-tap connections (no export files):** if you already use [Beeper](https://www.beeper.com) (one app for WhatsApp, Telegram, Signal, Instagram, iMessage and more) or [ChatLab](https://chatlab.fun), connect it with a token from its local API and pick which chats to bring in. Both are read-only and stay on your computer. *These two connections are new and not yet tested against the real apps — reports welcome.*
 
-## Quick start
+Radar ships no decryption or scraping tools. See the [export guide](docs/export-guide.md) for each app.
 
-Requires **Node.js 22.13 or newer** (for the built-in `node:sqlite`).
+## Install
 
-```bash
-git clone https://github.com/Ikarishinji00/personal-radar.git
-cd personal-radar
-npm install
-npm run dev            # open http://localhost:3210
-```
+Three ways, pick one:
 
-It opens with fictional demo data. Click **开始设置 (Get started)** and follow four steps — no config files:
+- **Let your AI assistant do it.** Tell Claude Code, Codex or Cursor: *"Read AGENT_SETUP.md and set up Personal Radar on this computer."* It installs, makes it start at login, and opens the page. ([AGENT_SETUP.md](AGENT_SETUP.md))
+- **Docker:** `docker compose up -d`, then open http://localhost:3210. Data goes to `./radar-data`. *(Not yet tested.)*
+- **By hand** (Node.js 22.13+):
+  ```bash
+  git clone https://github.com/Ikarishinji00/personal-radar.git
+  cd personal-radar
+  npm install
+  npm run dev            # open http://localhost:3210
+  ```
+
+The first screen asks whether you want to look at the demo (fictional data) or use your own chats.
+Choosing your own chats starts four steps — no config files:
 
 1. **Import:** drag in your exports, check the preview (who is you, how many messages), confirm.
 2. **AI service:** pick DeepSeek, OpenAI, Gemini, OpenRouter, Kimi, Qwen, GLM, a local Ollama model, or any OpenAI-compatible endpoint; paste a key; *Test & save*.
@@ -69,7 +76,21 @@ The server only listens on your computer. To use it from your phone, put both de
 - Only two things send content to the AI service you chose: organizing (chunks of new messages) and questions you ask in the app. Both pass through the same redaction rules and keyword blacklist at the last step, and both have a preview that shows exactly what would be sent.
 - People you mark "不发给 AI" are never organized, analyzed, summarized or included in answers.
 - With a local Ollama model nothing leaves your computer.
+- Settings → Data: export everything Radar wrote as JSON, or delete everything (cannot be undone).
 - Group chats are imported for reading but not organized.
+
+## Compared with
+
+| | Personal Radar | [Monica](https://github.com/monicahq/monica) | [PingCRM](https://github.com/sneg55/pingcrm) | [ChatLab](https://github.com/ChatLab/ChatLab) |
+|---|---|---|---|---|
+| Main job | Reminders and per-person memory from your chats | Personal CRM you fill in by hand | Networking CRM synced from your accounts | Analyze and explore chat history |
+| Gets chats from | Export files, or Beeper / ChatLab locally | — | Logs into Gmail, Telegram, WhatsApp… | Export files |
+| AI extracts promises & plans with dates | ✅ with sources | — | Life events, follow-ups | Q&A and summaries |
+| Phone + push reminders | ✅ (home-screen web app) | Email reminders | Web app | Desktop app |
+| AI provider | Your own key, any OpenAI-compatible, or local Ollama | — | Anthropic | Your own key |
+| Runs | On your computer | Self-host or paid cloud | Self-host or cloud | Desktop / CLI / Docker |
+
+Radar reads exports instead of logging into your messaging accounts: less automatic, but no account-ban risk and nothing to hand over.
 
 ## Contributing
 
@@ -102,7 +123,7 @@ npm run dev        # 打开 http://localhost:3210，先看演示数据
 
 点首页的「开始设置」：① 拖入导出的聊天文件，预览后确认；② 选 AI 服务、粘贴密钥、点「测试并保存」；③ 设置发出去前要隐藏什么；④ 先看「会发什么」，再开始整理。全程不用改配置文件。
 
-支持 LINE、WhatsApp（.txt / .zip）、Telegram、Discord、Instagram / Messenger、ChatLab。微信、QQ 等可以通过 ChatLab 接进来。各 App 怎么导出见 [导出指南](docs/export-guide.md)，遇到问题看 [常见问题](docs/troubleshooting.md)。
+支持 LINE、WhatsApp（.txt / .zip）、Telegram、Discord、Instagram / Messenger、ChatLab。也可以一键连接 Beeper 或 ChatLab，不用导出文件（这两项还没用真实软件测过）。不会装的话，把 [AGENT_SETUP.md](AGENT_SETUP.md) 交给你的 AI 编程助手，让它帮你装。各 App 怎么导出见 [导出指南](docs/export-guide.md)，遇到问题看 [常见问题](docs/troubleshooting.md)。
 
 ### 隐私
 - 聊天、整理结果、密钥都在 `~/.personal-radar`，App 只在本机监听。

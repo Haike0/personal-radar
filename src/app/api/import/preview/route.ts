@@ -1,7 +1,9 @@
+import { DEMO_ONLY, demoOnlyResponse } from "@/lib/config";
 import { preview, replan } from "@/lib/importer";
 
 /** multipart/form-data with one or more `file` fields → what each chat would import (nothing is written). */
 export async function POST(req: Request) {
+  if (DEMO_ONLY) return demoOnlyResponse();
   try {
     if ((req.headers.get("content-type") ?? "").includes("application/json")) {
       const b = (await req.json()) as { token: string; key: string; me?: string; name?: string };

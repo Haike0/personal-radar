@@ -71,11 +71,18 @@ const DEFAULT_SETTINGS: Record<string, string> = {
   chatlab_api_url: "http://127.0.0.1:3110",
   chatlab_api_token: "",
   chatlab_sessions: "[]",
+  // Beeper Desktop local API (optional): one app that connects WhatsApp, Telegram, Signal, iMessage…
+  beeper_api_url: "http://localhost:23373",
+  beeper_api_token: "",
+  beeper_chats: "[]",
   // first run: "" → show the welcome page; "demo" = chose to look around; "done" = finished setup
   onboarded: "",
+  update_check: "on",
 };
 
 let _db: DatabaseSync | null = null;
+/** Close the database handle (before deleting the data files); the next db() call starts fresh. */
+export function closeDb() { try { _db?.close(); } catch {} _db = null; }
 export function db(): DatabaseSync {
   if (_db) return _db;
   fs.mkdirSync(DATA_DIR, { recursive: true, mode: 0o700 });

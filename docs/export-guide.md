@@ -10,7 +10,8 @@ Radar 只读取你自己导出的文件，不提供解密、抓取或登录别�
 | **Discord** | 第三方开源工具 [DiscordChatExporter](https://github.com/Tyrrrz/DiscordChatExporter)，格式选 **JSON**（使用前自行判断安全性） | `.json` | ⚠️ 同上 |
 | **Instagram / Messenger** | Meta 账户中心 →「下载你的信息」→ 只选「消息」、格式 **JSON** | `messages/inbox/对方/message_1.json`（分成多个时一起拖） | ⚠️ 同上 |
 | **ChatLab** | ChatLab 里导出 JSON / JSONL；或在「设置 → 导入聊天 → 从 ChatLab 读取」连接 ChatLab 本地接口 | `.json` / `.jsonl` | 文件 ✅；本地接口 ⚠️ 未实测 |
-| **微信 / QQ / iMessage 等** | Radar 不直接支持。如果你在用 [ChatLab](https://chatlab.fun)，它通过第三方导出工具支持这些平台，再用上面一行接进 Radar | — | — |
+| **Beeper（一键连接）** | 装 [Beeper Desktop](https://www.beeper.com) 并登录聊天账号 → 设置 → Developers 打开 Desktop API → 设置 → Integrations →「Approved connections」+ 复制令牌 → 在 Radar「导入聊天 → 一键连接 → Beeper」粘贴 | 不用文件 | ⚠️ 按官方 API 文档实现，未实测 |
+| **微信 / QQ / iMessage 等** | 用 Beeper 连接（它的官网列出支持 iMessage、LINE、WeChat 等，实际可用范围以 Beeper 为准），或在 ChatLab 里导入后连接 ChatLab | — | — |
 
 **注意**
 - LINE 电脑版只保存窗口里已经加载出来的消息；想要完整记录，用手机导出。

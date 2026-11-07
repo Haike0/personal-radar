@@ -244,7 +244,8 @@ export function plan(chat, opts = {}, chatsDir) {
   const people = [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([id, n]) => ({ id, name: names.get(id) ?? id, messages: n }));
   const isGroup = chat.group ?? people.length > 2;
   let me = opts.me ?? chat.ownerId ?? null;
-  if (me && !counts.has(me)) me = people.find((p) => p.name === me)?.id ?? (counts.has(me) ? me : null);
+  // the owner id from the source (ChatLab / Beeper) is trusted even if "me" sent nothing in this batch
+  if (me && !counts.has(me)) me = people.find((p) => p.name === me)?.id ?? (chat.ownerId === me ? me : null);
   if (opts.me && !me) return { ok: false, needMe: true, people, error: `聊天里没有叫「${opts.me}」的人` };
   if (!me && !isGroup && chat.name) me = people.find((p) => p.name !== chat.name && p.id !== chat.name)?.id ?? null;
   if (!me && !isGroup && chat.participants?.length === 2 && chat.name) me = people.find((p) => p.name !== chat.name)?.id ?? null;

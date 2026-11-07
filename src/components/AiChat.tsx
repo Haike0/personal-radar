@@ -2,7 +2,7 @@
 import { ActionIcon, Box, Button, Collapse, CopyButton, Group, Menu, Modal, Paper, ScrollArea, Stack, Text, Textarea, TextInput, Title, Tooltip, UnstyledButton } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useMediaQuery } from "@mantine/hooks";
-import { IconArrowUp, IconBolt, IconCheck, IconChevronDown, IconCopy, IconEye, IconHistory, IconLock, IconPlus, IconSearch, IconSparkles, IconTrash, IconUserCircle, IconWand } from "@tabler/icons-react";
+import { IconArrowUp, IconCheck, IconChevronDown, IconChevronRight, IconCopy, IconDots, IconEye, IconHistory, IconLock, IconPlus, IconSearch, IconSparkles, IconTrash, IconWand } from "@tabler/icons-react";
 import Link from "next/link";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { ASSISTANTS, assistantOf, briefFor, DAY_QUICK, ITEM_QUICK, quickFor } from "@/lib/ai/assistants";
@@ -161,16 +161,19 @@ export function AiChat({ context, layout, seedPrompt, onNavigate, picker }: {
   );
 
   const empty = (
-    <Stack align="center" gap="md" py={desktop ? 64 : 28} px="sm">
+    <Stack align="center" gap="md" py={desktop ? 56 : 24} px="xs">
       <Box className="ai-orb"><IconSparkles size={24} /></Box>
-      <Title order={3} ta="center" fz={desktop ? 24 : 19}>使用 <span className="accent">{a.name}</span> 开始对话</Title>
-      <Text size="sm" className="muted" ta="center" maw={560}>{a.intro}</Text>
+      <Title order={3} ta="center" fz={desktop ? 24 : 20}>{who ? `想知道${who}的什么？` : "想问什么，直接问"}</Title>
       {pills}
-      <Box className="quick-grid" w="100%" maw={620}>
+      <Text size="xs" className="faint" ta="center" maw={520}>{a.intro}</Text>
+      <Stack gap={8} w="100%" maw={560}>
         {quick(a).slice(0, 4).map((q) => (
-          <UnstyledButton key={q} className="quick-q pressable" onClick={() => send(q)}><Text size="sm">{qLabel(q)}</Text></UnstyledButton>
+          <UnstyledButton key={q} className="quick-row pressable" onClick={() => send(q)}>
+            <Text size="sm" style={{ flex: 1 }}>{qLabel(q)}</Text>
+            <IconChevronRight size={16} className="faint" />
+          </UnstyledButton>
         ))}
-      </Box>
+      </Stack>
     </Stack>
   );
 
@@ -193,27 +196,14 @@ export function AiChat({ context, layout, seedPrompt, onNavigate, picker }: {
 
   const composer = (
     <Box pt="xs" pb={layout === "drawer" ? 8 : 0}>
-      <ScrollArea type="never" mb={8}><Group gap={6} wrap="nowrap">
-        <Menu position="top-start" withinPortal>
-          <Menu.Target><UnstyledButton className="chip"><IconUserCircle size={14} />{a.name}<IconChevronDown size={12} /></UnstyledButton></Menu.Target>
-          <Menu.Dropdown>{ASSISTANTS.map((x) => <Menu.Item key={x.id} onClick={() => setAssistant(x.id)} leftSection={x.id === assistant ? <IconCheck size={14} /> : <span style={{ width: 14 }} />}>{x.name}</Menu.Item>)}</Menu.Dropdown>
-        </Menu>
-        <Menu position="top-start" withinPortal>
-          <Menu.Target><UnstyledButton className="chip"><IconBolt size={14} />快捷提问</UnstyledButton></Menu.Target>
-          <Menu.Dropdown maw={320}>{quick(a).map((q) => <Menu.Item key={q} onClick={() => send(q)}>{qLabel(q)}</Menu.Item>)}</Menu.Dropdown>
-        </Menu>
-        <UnstyledButton className="chip" onClick={showPreview} style={{ flex: "none" }}><IconEye size={14} />发送内容预览</UnstyledButton>
-      </Group></ScrollArea>
-      <Paper className="composer" radius="lg" p={8} pl={12}>
-        <Textarea variant="unstyled" placeholder={ctx.page === "day" ? "问问这一天的事…" : itemTitle ? "问问这件事…" : who ? `问问关于${who}的事…` : "问点什么…"} autosize minRows={desktop ? 2 : 1} maxRows={6} value={input}
-          onChange={(e) => setInput(e.currentTarget.value)}
-          onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); void send(input); } }} />
-        <Group justify="space-between" mt={2}>
-          <Text size="xs" className="faint">◎ {model}</Text>
-          <ActionIcon size={32} radius="xl" variant="filled" color="violet" loading={busy} disabled={!input.trim()} onClick={() => send(input)} aria-label="发送"><IconArrowUp size={16} /></ActionIcon>
+      <Paper className="composer" radius="xl" p={6} pl={16}>
+        <Group gap={8} wrap="nowrap" align="flex-end">
+          <Textarea variant="unstyled" style={{ flex: 1 }} placeholder={ctx.page === "day" ? "问问这一天的事…" : itemTitle ? "问问这件事…" : who ? `问问关于${who}的事…` : "问点什么…"} autosize minRows={1} maxRows={6} value={input}
+            onChange={(e) => setInput(e.currentTarget.value)}
+            onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); void send(input); } }} />
+          <ActionIcon size={36} radius="xl" variant="filled" loading={busy} disabled={!input.trim()} onClick={() => send(input)} aria-label="发送" mb={2}><IconArrowUp size={18} /></ActionIcon>
         </Group>
       </Paper>
-      <Text size="11px" className="faint" ta="center" mt={6}>只读上面锁定的范围 · 不会替你发消息</Text>
     </Box>
   );
 
@@ -234,11 +224,21 @@ export function AiChat({ context, layout, seedPrompt, onNavigate, picker }: {
       </Menu.Dropdown>
     </Menu>
   );
-  const header = !sidebar && (
+  const header = (
     <Group justify="space-between" wrap="nowrap" gap={6} pb={8}>
-      <Box style={{ flex: 1, minWidth: 0 }}>{scopeChip}</Box>
-      <ActionIcon variant="subtle" onClick={() => setHistoryOpen(true)} aria-label="历史对话"><IconHistory size={18} /></ActionIcon>
-      <ActionIcon variant="subtle" onClick={fresh} aria-label="新对话"><IconPlus size={18} /></ActionIcon>
+      <Box style={{ flex: 1, minWidth: 0 }}>{picker ? null : scopeChip}</Box>
+      {msgs.length > 0 && <ActionIcon variant="subtle" onClick={fresh} aria-label="新对话"><IconPlus size={18} /></ActionIcon>}
+      <Menu position="bottom-end" withinPortal zIndex={600}>
+        <Menu.Target><ActionIcon variant="subtle" aria-label="更多"><IconDots size={18} /></ActionIcon></Menu.Target>
+        <Menu.Dropdown>
+          <Menu.Label>{a.name} · {model}</Menu.Label>
+          {!sidebar && <Menu.Item leftSection={<IconHistory size={14} />} onClick={() => setHistoryOpen(true)}>历史对话</Menu.Item>}
+          <Menu.Item leftSection={<IconPlus size={14} />} onClick={fresh}>新对话</Menu.Item>
+          <Menu.Item leftSection={<IconEye size={14} />} onClick={showPreview}>看看这次会发出去什么</Menu.Item>
+          {msgs.length > 0 && <Menu.Divider />}
+          {msgs.length > 0 && ASSISTANTS.map((x) => <Menu.Item key={x.id} onClick={() => setAssistant(x.id)} leftSection={x.id === assistant ? <IconCheck size={14} /> : <span style={{ width: 14 }} />}>{x.name}</Menu.Item>)}
+        </Menu.Dropdown>
+      </Menu>
     </Group>
   );
 

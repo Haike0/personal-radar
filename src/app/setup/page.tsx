@@ -1,5 +1,5 @@
 "use client";
-import { Accordion, Button, Group, Paper, Stack, Stepper, Text, Title } from "@mantine/core";
+import { Button, Group, Paper, Stack, Stepper, Text, Title } from "@mantine/core";
 import { IconArrowRight, IconCheck } from "@tabler/icons-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -7,7 +7,7 @@ import { useState } from "react";
 import { usePageContext } from "@/components/Shell";
 import { AiService } from "@/components/setup/AiService";
 import { OrganizeCard } from "@/components/OrganizeCard";
-import { ChatLabConnect } from "@/components/setup/ChatLabConnect";
+import { ConnectApps } from "@/components/setup/ConnectApps";
 import { ImportPanel } from "@/components/setup/ImportPanel";
 import { PrivacyPanel } from "@/components/setup/PrivacyPanel";
 import { post, refreshAll } from "@/lib/client";
@@ -39,12 +39,7 @@ export default function SetupPage() {
   const body = [
     <Stack key="import" gap="md">
       <ImportPanel onImported={() => setStep(1)} />
-      <Accordion variant="contained" radius="lg">
-        <Accordion.Item value="chatlab">
-          <Accordion.Control><Text size="sm">已经在用 ChatLab？直接读取它里面的聊天</Text></Accordion.Control>
-          <Accordion.Panel><ChatLabConnect /></Accordion.Panel>
-        </Accordion.Item>
-      </Accordion>
+      <ConnectApps />
     </Stack>,
     <AiService key="ai" onReady={() => setStep(2)} />,
     <PrivacyPanel key="privacy" />,

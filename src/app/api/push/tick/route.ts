@@ -1,6 +1,13 @@
 import { tick } from "@/lib/notifier";
 import { tick as organizeTick } from "@/lib/organizer";
-import { selected, sync } from "@/lib/chatlab-api";
+import * as chatlabApi from "@/lib/chatlab-api";
+import * as beeperApi from "@/lib/beeper-api";
+
+// before a scheduled run, pull new messages from connected apps (errors are ignored: organize what is already here)
+const pullConnected = async () => {
+  if (chatlabApi.selected().length) await chatlabApi.sync().catch(() => null);
+  if (beeperApi.selected().length) await beeperApi.sync().catch(() => null);
+};
 
 // Called every minute by the in-process scheduler (src/instrumentation.ts). Requests through Tailscale Serve also come
 // from 127.0.0.1, so the address can't tell them apart: a per-process random token is required instead.
@@ -9,7 +16,7 @@ export async function POST(req: Request) {
   if (!token || req.headers.get("x-radar-tick") !== token) return Response.json({ error: "forbidden" }, { status: 403 });
   // scheduled 整理 rides on the same minute tick; its failures are recorded in organize_runs and never block reminders
   let auto = null;
-  try { auto = await organizeTick(() => (selected().length ? sync() : Promise.resolve())); }
+  try { auto = await organizeTick(pullConnected); }
   catch (e) { console.warn(`[organize] tick error: ${(e as Error).message}`); }
   try {
     return Response.json({ ...(await tick()), ...(auto ? { autoOrganize: auto } : {}) });

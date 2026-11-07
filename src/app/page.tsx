@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CAT_COLOR, ItemCard, ReviewButtons } from "@/components/ItemCard";
+import { UpdateNotice } from "@/components/DataAbout";
 import { PersonBar, useCurrentPerson } from "@/components/PersonSwitcher";
 import { usePageContext } from "@/components/Shell";
 import { useApi } from "@/lib/client";
@@ -126,10 +127,11 @@ export default function Home() {
   const router = useRouter();
   // always ask fresh (a cached "not set up yet" would bounce you back to the welcome page right after choosing)
   const [ready, setReady] = useState(false);
+  const [demoOnly, setDemoOnly] = useState(false);
   useEffect(() => {
     let alive = true;
     fetch("/api/onboarding", { cache: "no-store" }).then((r) => r.json())
-      .then((j: { onboarded: boolean }) => { if (!alive) return; if (j.onboarded) setReady(true); else router.replace("/welcome"); })
+      .then((j: { onboarded: boolean; demoOnly?: boolean }) => { if (!alive) return; setDemoOnly(Boolean(j.demoOnly)); if (j.onboarded) setReady(true); else router.replace("/welcome"); })
       .catch(() => alive && setReady(true));
     return () => { alive = false; };
   }, [router]);
@@ -175,14 +177,15 @@ export default function Home() {
         </Box>
       </div>
 
+      <UpdateNotice />
       {d.mode === "demo" && (
-        <Paper component={Link} href="/setup" className="surface setup-banner" radius="xl" p="md">
+        <Paper component={Link} href={demoOnly ? "https://github.com/Ikarishinji00/personal-radar" : "/setup"} className="surface setup-banner" radius="xl" p="md">
           <Group justify="space-between" wrap="nowrap" gap="sm">
             <div style={{ minWidth: 0 }}>
-              <Text size="sm" fw={650}>现在看的是编出来的演示数据</Text>
-              <Text size="xs" className="muted">导入你自己的 LINE / WhatsApp / Telegram 聊天，四步就能用</Text>
+              <Text size="sm" fw={650}>{demoOnly ? "这是在线演示，数据全是编的" : "现在看的是编出来的演示数据"}</Text>
+              <Text size="xs" className="muted">{demoOnly ? "装到自己电脑上，就能导入你的 LINE / WhatsApp / Telegram 聊天" : "导入你自己的 LINE / WhatsApp / Telegram 聊天，四步就能用"}</Text>
             </div>
-            <Group gap={4} wrap="nowrap" style={{ flex: "none" }}><Text size="sm" fw={600} c="radar">开始设置</Text><IconChevronRight size={16} /></Group>
+            <Group gap={4} wrap="nowrap" style={{ flex: "none" }}><Text size="sm" fw={600} c="radar">{demoOnly ? "去下载" : "开始设置"}</Text><IconChevronRight size={16} /></Group>
           </Group>
         </Paper>
       )}

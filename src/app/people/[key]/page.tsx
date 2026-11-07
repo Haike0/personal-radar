@@ -9,6 +9,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useCurrentPerson } from "@/components/PersonSwitcher";
 import { ChatMemory } from "@/components/ChatMemory";
+import { ChatStats } from "@/components/ChatStats";
 import { useCompanion, usePageContext } from "@/components/Shell";
 import { useApi } from "@/lib/client";
 import { dayDiff, initial, relDate, sinceText } from "@/lib/format";
@@ -197,6 +198,7 @@ export default function PersonPage() {
         </Tabs.Panel>
 
         <Tabs.Panel value="analysis">
+          {!p.isGroup && <Box mb="lg"><Section title="聊天数据"><ChatStats personKey={p.key} name={short} /></Section></Box>}
           {p.analysis ? (
             <Stack gap="lg">
               <Text size="xs" className="faint">AI 根据 {p.analysis.basisItems} 条整理过的记录写的分析，{p.analysis.generatedAt.slice(0, 16)} 更新。

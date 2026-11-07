@@ -1,0 +1,16 @@
+# docker compose up -d   → open http://localhost:3210
+# Your chats and records stay in ./radar-data on this computer.
+services:
+  radar:
+    build: .
+    ports:
+      - "127.0.0.1:3210:3210"   # only this computer; use Tailscale for your phone (see README)
+    volumes:
+      - ./radar-data:/data
+    environment:
+      # Optional: set the AI service here instead of in the app
+      # RADAR_AI_KEY: ""
+      # Public read-only demo:
+      # RADAR_DEMO_ONLY: "1"
+      # TZ: Asia/Shanghai   # your time zone, so reminders fire at local time
+    restart: unless-stopped

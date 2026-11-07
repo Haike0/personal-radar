@@ -1,3 +1,4 @@
+import { DEMO_ONLY, demoOnlyResponse } from "@/lib/config";
 import { connection } from "next/server";
 import { selected, status, sync } from "@/lib/chatlab-api";
 import { getSetting, setSettings } from "@/lib/db";
@@ -16,6 +17,7 @@ export async function GET() {
 
 // PATCH {url?, token?} → test, then save   ·   POST {ids} → copy those conversations now
 export async function PATCH(req: Request) {
+  if (DEMO_ONLY) return demoOnlyResponse();
   const b = (await req.json()) as { url?: string; token?: string };
   try {
     const s = await status({ url: b.url?.trim(), token: b.token?.trim() });
@@ -27,6 +29,7 @@ export async function PATCH(req: Request) {
 }
 
 export async function POST(req: Request) {
+  if (DEMO_ONLY) return demoOnlyResponse();
   const b = (await req.json()) as { ids?: string[] };
   return Response.json({ results: await sync(Array.isArray(b.ids) ? b.ids.map(String) : undefined) });
 }

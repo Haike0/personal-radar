@@ -71,7 +71,7 @@ function toMsg(r: Row, self: string | null): ChatMessage {
 
 export function status(): { ok: boolean; dir: string; sessions: number; error?: string } {
   const sessions = listSessions("real").length;
-  return { ok: sessions > 0, dir: realDirs().join(" + "), sessions, error: sessions ? undefined : "还没有导入聊天：运行 npm run import -- <导出文件>" };
+  return { ok: sessions > 0, dir: realDirs().join(" + "), sessions, error: sessions ? undefined : "还没有导入聊天，在下面「导入聊天」里把导出文件拖进来" };
 }
 
 /** Drop cached handles of imported chats (after an import, so the next read sees the new file state). */
@@ -199,4 +199,58 @@ export function dayMessages(sessionId: string, date: string, cap = 3000): ChatMe
   const self = owner(d);
   const rows = d.prepare(`${SELECT} WHERE m.type <> 80 AND date(m.ts,'unixepoch','localtime') = ? ORDER BY m.ts, m.id LIMIT ?`).all(date, cap) as Row[];
   return rows.map((r) => toMsg(r, self));
+}
+
+/**
+ * Plain facts about how a conversation goes (no "interest" score): who writes how much, how quickly the other
+ * person answers, how often they answer at all, who opens the day, and how busy each period was.
+ * A "turn" is a run of consecutive messages from one side; system messages (type 80/81) are ignored.
+ */
+export function chatStats(sessionId: string) {
+  const d = open(sessionId);
+  if (!d) return null;
+  const self = owner(d);
+  const rows = d.prepare(`SELECT m.ts, mb.platform_id spid FROM message m JOIN member mb ON mb.id = m.sender_id WHERE m.type NOT IN (80, 81) ORDER BY m.ts, m.id`).all() as Row[];
+  if (rows.length < 2) return null;
+  const msgs = rows.map((r) => ({ ts: Number(r.ts), me: r.spid === self }));
+  const mine = msgs.filter((m) => m.me).length, theirs = msgs.length - mine;
+  // turns
+  const turns: { me: boolean; start: number; end: number }[] = [];
+  for (const m of msgs) {
+    const t = turns[turns.length - 1];
+    if (t && t.me === m.me) t.end = m.ts; else turns.push({ me: m.me, start: m.ts, end: m.ts });
+  }
+  const DAY = 86400;
+  const replyTimes = (fromMe: boolean) => {
+    const out: number[] = [];
+    for (let i = 0; i + 1 < turns.length; i++) if (turns[i].me === fromMe && turns[i + 1].start - turns[i].end <= DAY) out.push(turns[i + 1].start - turns[i].end);
+    return out;
+  };
+  const median = (a: number[]) => { if (!a.length) return null; const s = [...a].sort((x, y) => x - y); return s[Math.floor(s.length / 2)]; };
+  const myTurns = turns.filter((t, i) => t.me && i < turns.length - 1).length;
+  const theyReplied = replyTimes(true);
+  // who sends the first message of each local day
+  const openers = { me: 0, them: 0 };
+  let lastDay = "";
+  for (const m of msgs) {
+    const day = new Date(m.ts * 1000).toLocaleDateString("sv-SE");
+    if (day !== lastDay) { openers[m.me ? "me" : "them"]++; lastDay = day; }
+  }
+  // 8 equal periods from first to last message
+  const first = msgs[0].ts, last = msgs[msgs.length - 1].ts, span = Math.max(1, last - first);
+  const periods = Array.from({ length: 8 }, (_, i) => ({ from: first + (span * i) / 8, to: first + (span * (i + 1)) / 8, count: 0 }));
+  for (const m of msgs) periods[Math.min(7, Math.floor(((m.ts - first) / span) * 8))].count++;
+  const hours = new Array(24).fill(0);
+  for (const m of msgs) hours[new Date(m.ts * 1000).getHours()]++;
+  const peak = hours.map((n, h) => ({ h, n })).sort((a, b) => b.n - a.n).slice(0, 2).map((x) => x.h).sort((a, b) => a - b);
+  return {
+    total: msgs.length, mine, theirs,
+    days: Math.max(1, Math.round(span / DAY)),
+    replyRate: myTurns ? theyReplied.length / myTurns : null,             // their answers within 24 h to your turns
+    theirReplyMin: median(theyReplied) == null ? null : Math.round(median(theyReplied)! / 60),
+    myReplyMin: median(replyTimes(false)) == null ? null : Math.round(median(replyTimes(false))! / 60),
+    openers,
+    periods: periods.map((p) => ({ from: fmt(Math.round(p.from)).slice(0, 10), to: fmt(Math.round(p.to)).slice(0, 10), count: p.count })),
+    peakHours: peak,
+  };
 }
