@@ -5,7 +5,7 @@ import { resolve } from "./ai/model";
 import { isExcluded } from "./ai-config";
 import { db, getItem, listItems, nowStr } from "./db";
 import { LEDGER_SQL } from "./ledger-schema";
-import { LEDGER_SYSTEM, ledgerInput, parseLedger } from "../../scripts/lib/ledger.mjs";
+import { keywords, LEDGER_SYSTEM, ledgerInput, parseLedger, pickWindow } from "../../scripts/lib/ledger.mjs";
 import type { Item } from "./types";
 
 export type Who = "me" | "them" | "both";
@@ -70,8 +70,13 @@ export async function check(key: string, name: string, batch = 24) {
   let checked = 0, failed = 0;
   const one = async (i: Item) => {
     const q = quoteOf(i, guess(i));
-    const after = q?.last.messageId ? chatlab.after(key, q.last.messageId, 160).filter((m) => m.text.trim()) : [];
-    const shown = after.map((m) => ({ who: m.isSelf ? "我" : name, text: m.text, ts: m.ts }));
+    const all = q?.last.messageId ? chatlab.after(key, q.last.messageId, 20000).filter((m) => m.text.trim()) : [];
+    // the days around the promised date, if it has one
+    const due = i.eventDate ? new Date(i.eventDate + "T00:00:00").getTime() / 1000 : null;
+    const nearDue = (k: number) => due != null && all[k].epoch >= due - 86400 && all[k].epoch < due + 3 * 86400;
+    const idx = pickWindow(all, keywords(i.title, name), nearDue);
+    const after = idx.map((k) => all[k]);
+    const shown = idx.map((k, n) => ({ who: all[k].isSelf ? "我" : name, text: all[k].text, ts: all[k].ts, gap: n > 0 && k !== idx[n - 1] + 1 }));
     const quotes = (getItem(i.id)?.evidence ?? []).filter((e) => e.isKey).slice(-4).map((e) => `${e.sender === "我" ? "我" : name}：${e.text.slice(0, 100)}`);
     const raw = await complete(LEDGER_SYSTEM, ledgerInput({ title: i.title, summary: i.summary, whoGuess: i.subject ?? "them", quotes, name }, shown), 200);
     const r = parseLedger(raw, shown.length);

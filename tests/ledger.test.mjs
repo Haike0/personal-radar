@@ -26,3 +26,14 @@ test("the prompt numbers the later messages and says when there are none", () =>
   assert.match(t, /整理时认为是 我 答应的/);
   assert.match(ledgerInput(p, []), /之后没有聊天/);
 });
+
+test("keeping a promise weeks later is still found by its words", async () => {
+  const { keywords, pickWindow } = await import("../scripts/lib/ledger.mjs");
+  const terms = keywords("我答应这周末把照片洗出来", "");
+  assert.ok(terms.includes("照片"));
+  const all = Array.from({ length: 600 }, (_, i) => ({ text: i === 450 ? "照片洗好了 明天给你" : "今天好累" }));
+  const idx = pickWindow(all, terms);
+  assert.ok(idx.includes(450) && idx.includes(0) && !idx.includes(300));
+  // the days around the promised date are included too
+  assert.ok(pickWindow(all, [], (i) => i === 520).includes(520));
+});

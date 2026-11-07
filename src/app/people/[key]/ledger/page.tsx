@@ -79,7 +79,7 @@ export default function LedgerPage() {
             <Group justify="space-between" wrap="nowrap" align="flex-end">
               <div>
                 <Text size="xs" className="muted">我欠{name} <b>{t.me.owed}</b> 件 · {name}欠我 <b>{t.them.owed}</b> 件</Text>
-                <Text fw={700} mt={4}>{punchline(t.me.owed, t.them.owed, name)}</Text>
+                <Text fw={700} mt={4}>{punchline(t.me.owed, t.them.owed, name, t.me.proven, t.them.proven)}</Text>
               </div>
               <Button radius="xl" color="orange" leftSection={<IconShare2 size={16} />} onClick={() => setOpen(true)} style={{ flex: "none" }}>晒图</Button>
             </Group>

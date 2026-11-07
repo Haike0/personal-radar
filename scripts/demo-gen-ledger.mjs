@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 // 给演示场景预先算好「说话算数账本」：每条承诺后来做没做到。用的是 App 里同一套判断规则（scripts/lib/ledger.mjs），
 // 模型必须指出证明的那条消息，指不出就记成「没下文」。打开演示就能直接晒图，不用等 AI。
-//   node scripts/demo-gen-ledger.mjs love|work|night        产物：demo/<场景>/ledger.json（按事项的 tmp 编号）
+//   node scripts/demo-gen-ledger.mjs love|work|night [--redo]   产物：demo/<场景>/ledger.json（按事项的 tmp 编号；--redo 全部重判）
 import fs from "node:fs";
 import path from "node:path";
 import { AI, extraBody, requireKey } from "./lib/env.mjs";
-import { LEDGER_SYSTEM, ledgerInput, parseLedger } from "./lib/ledger.mjs";
+import { keywords, LEDGER_SYSTEM, ledgerInput, parseLedger, pickWindow } from "./lib/ledger.mjs";
 
 const SET = process.argv[2];
 const ROOT = path.join(path.dirname(new URL(import.meta.url).pathname), "..");
@@ -15,7 +15,7 @@ const K = requireKey();
 const { sessions } = JSON.parse(fs.readFileSync(path.join(DIR, "chats.json"), "utf8"));
 const items = JSON.parse(fs.readFileSync(path.join(DIR, "items.json"), "utf8"));
 const OUT = path.join(DIR, "ledger.json");
-const out = fs.existsSync(OUT) ? JSON.parse(fs.readFileSync(OUT, "utf8")) : {};
+const out = fs.existsSync(OUT) && !process.argv.includes("--redo") ? JSON.parse(fs.readFileSync(OUT, "utf8")) : {};
 
 async function ds(system, user) {
   for (let attempt = 0; attempt < 3; attempt++) {
@@ -40,13 +40,15 @@ for (const s of sessions) {
     const refs = [...new Set(x.refs)].filter((r) => s.messages[r - 1]).sort((a, b) => a - b);
     if (!refs.length) continue;
     const last = refs[refs.length - 1];
-    const after = s.messages.slice(last, last + 160).map(([off, hm, from, text]) => ({ who: who(from), text, ts: `0000-D${off} ${hm}`.padEnd(16, " ") })); // ledgerInput shows chars 5–16: "D-120 21:03"
+    const all = s.messages.slice(last).map(([off, hm, from, text], k) => ({ who: who(from), text, off, abs: last + k + 1, ts: `0000-D${off} ${hm}`.padEnd(16, " ") })); // ledgerInput shows chars 5–16: "D-120 21:03"
+    const idx = pickWindow(all, keywords(x.title, s.name), (k) => x.event_day != null && all[k].off >= x.event_day - 1 && all[k].off <= x.event_day + 2);
+    const after = idx.map((k, n) => ({ ...all[k], gap: n > 0 && k !== idx[n - 1] + 1 }));
     const quotes = refs.slice(-4).map((r) => `${who(s.messages[r - 1][2])}：${s.messages[r - 1][3].slice(0, 100)}`);
     tasks.push(async () => {
       const shown = after;
       const r = parseLedger(await ds(LEDGER_SYSTEM, ledgerInput({ title: x.title, summary: x.summary, whoGuess: x.subject, quotes, name: s.name }, shown)), shown.length);
       if (!r) { console.log(`  ✗ ${x.tmp}`); return; }
-      out[x.tmp] = { who: r.who ?? (x.subject === "self" ? "me" : x.subject === "both" ? "both" : "them"), result: r.result, proof: r.proof ? last + r.proof : null, reason: r.reason };
+      out[x.tmp] = { who: r.who ?? (x.subject === "self" ? "me" : x.subject === "both" ? "both" : "them"), result: r.result, proof: r.proof ? after[r.proof - 1].abs : null, reason: r.reason };
       console.log(`  ${x.tmp} ${out[x.tmp].who} ${r.result} ${r.reason ?? ""}`);
     });
   }

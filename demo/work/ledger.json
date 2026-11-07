@@ -1,21 +1,21 @@
 {
- "demo_xiaolin:25": {
-  "who": "them",
-  "result": "unclear",
-  "proof": null,
-  "reason": "后面没再提火锅的事"
- },
- "demo_xiaolin:3": {
-  "who": "them",
-  "result": "unclear",
-  "proof": null,
-  "reason": "后面没再提请吃饭的事"
- },
  "demo_zhoujie:2": {
   "who": "them",
   "result": "unclear",
   "proof": null,
   "reason": "后面没再提调薪的事"
+ },
+ "demo_xiaolin:25": {
+  "who": "them",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面聊天没再提火锅"
+ },
+ "demo_xiaolin:20": {
+  "who": "them",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没提这杯奶茶兑没兑"
  },
  "demo_xiaolin:17": {
   "who": "me",
@@ -23,17 +23,29 @@
   "proof": null,
   "reason": "后面没提跟张姐说的事"
  },
- "demo_xiaolin:20": {
-  "who": "them",
-  "result": "unclear",
-  "proof": null,
-  "reason": "后面没再提奶茶谁付钱"
- },
  "demo_heboss:1": {
   "who": "me",
   "result": "unclear",
   "proof": null,
-  "reason": "后面没提粗算版发没发"
+  "reason": "后面没提粗算发邮箱的事"
+ },
+ "demo_xiaolin:3": {
+  "who": "them",
+  "result": "done",
+  "proof": 2576,
+  "reason": "她主动约饭并请了，说到了在门口"
+ },
+ "demo_xiaolin:47": {
+  "who": "them",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没提作品集发没发"
+ },
+ "demo_xiaolin:48": {
+  "who": "them",
+  "result": "done",
+  "proof": 2767,
+  "reason": "她说材料都理好了"
  },
  "demo_xiaolin:41": {
   "who": "me",
@@ -41,17 +53,11 @@
   "proof": 2018,
   "reason": "她改完发来，我说这版好多了"
  },
- "demo_xiaolin:47": {
-  "who": "them",
-  "result": "unclear",
-  "proof": null,
-  "reason": "后面没提发作品集的事"
- },
  "demo_daliu:10": {
   "who": "me",
   "result": "unclear",
   "proof": null,
-  "reason": "后面没提奶茶的事"
+  "reason": "后面没再提奶茶的事"
  },
  "demo_xiaolin:54": {
   "who": "them",
@@ -59,23 +65,23 @@
   "proof": null,
   "reason": "后面没再提奶茶的事"
  },
- "demo_xiaolin:48": {
-  "who": "them",
-  "result": "done",
-  "proof": 2783,
-  "reason": "小林发来周一开会版材料，我说收到"
- },
  "demo_daliu:15": {
   "who": "them",
-  "result": "not",
-  "proof": 1350,
-  "reason": "周四当天说可能弄不完，推到周一"
+  "result": "unclear",
+  "proof": null,
+  "reason": "周四下午还在弄，没提修完"
+ },
+ "demo_daliu:21": {
+  "who": "them",
+  "result": "unclear",
+  "proof": null,
+  "reason": "原话里大刘说做完了，我确认测试过了"
  },
  "demo_daliu:23": {
   "who": "them",
   "result": "unclear",
   "proof": null,
-  "reason": "之后只提醒同步，没提是否交付"
+  "reason": "周一前只提醒，没提结果"
  },
  "demo_amy:2": {
   "who": "them",
@@ -83,16 +89,10 @@
   "proof": 340,
   "reason": "她说手册拿到了终稿"
  },
- "demo_daliu:21": {
-  "who": "them",
-  "result": "done",
-  "proof": 1367,
-  "reason": "大刘说本地修好了，之前承诺下周做"
- },
  "demo_amy:7": {
-  "who": "them",
-  "result": "unclear",
-  "proof": null,
-  "reason": "后续没再提倒计时收费或提前说的事"
+  "who": "me",
+  "result": "done",
+  "proof": 523,
+  "reason": "我说能做加一天，没提收费"
  }
 }

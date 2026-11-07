@@ -1,11 +1,11 @@
 "use client";
-import { Button, Group, Loader, Modal, Stack, Text, TextInput } from "@mantine/core";
+import { Button, Group, Loader, Modal, Stack, Switch, Text, TextInput } from "@mantine/core";
 import { IconDownload, IconShare2 } from "@tabler/icons-react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { daysAgo, punchline, shortTitle, tally, type LedgerData, type LedgerState } from "@/lib/ledger-view";
 
-const W = 1080, H = 1440, PAD = 72;
+const W = 1080, PAD = 72;
 const FONT = `"PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif`;
 const C = { bg: "#FFF7EF", ink: "#1E1B26", muted: "#8C8596", line: "#F0E3D6", orange: "#FF6A3D", pink: "#FF4F86", green: "#1FA971", card: "#FFFFFF" };
 const MARK: Record<LedgerState, [string, string]> = { done: ["✓", C.green], not: ["✗", C.orange], silent: ["…", C.pink], waiting: ["⏳", C.muted], skip: ["", C.muted] };
@@ -20,11 +20,18 @@ function round(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h
   ctx.beginPath(); ctx.roundRect(x, y, w, h, r); ctx.fillStyle = fill; ctx.fill();
 }
 
-/** Draw the card. Rows that weren't kept go first: that's what people want to see. */
-function draw(cv: HTMLCanvasElement, data: LedgerData, name: string) {
+/** Draw the card. Rows that weren't kept go first: that's what people want to see. The first rows carry the original words. */
+function draw(cv: HTMLCanvasElement, data: LedgerData, name: string, quotes: number) {
   const ctx = cv.getContext("2d")!;
-  cv.width = W; cv.height = H;
   const t = tally(data.rows);
+  const order: LedgerState[] = ["not", "silent", "done", "waiting"];
+  const pick = (s: typeof t.me) => [...s.list].sort((a, b) => order.indexOf(a.state) - order.indexOf(b.state)).slice(0, 4)
+    .map((r, i) => ({ ...r, said: i < quotes && r.quote ? r.quote.text.replace(/\s+/g, " ") : null }));
+  const lists = [pick(t.them), pick(t.me)];
+  const rowH = (r: { said: string | null }) => (r.said ? 116 : 72);
+  const boxH = (l: { said: string | null }[]) => (l.length ? l.reduce((a, r) => a + rowH(r), 0) : 72) + 16;
+  const H = Math.max(1440, 568 + 24 + boxH(lists[0]) + 70 + 24 + boxH(lists[1]) + 150);
+  cv.width = W; cv.height = H;
   ctx.fillStyle = C.bg; ctx.fillRect(0, 0, W, H);
   // soft color blobs, top right and bottom left
   const g1 = ctx.createRadialGradient(W - 80, 60, 10, W - 80, 60, 420); g1.addColorStop(0, "rgba(255,106,61,.28)"); g1.addColorStop(1, "rgba(255,106,61,0)");
@@ -46,19 +53,17 @@ function draw(cv: HTMLCanvasElement, data: LedgerData, name: string) {
     const nw = ctx.measureText(String(n)).width;
     ctx.fillStyle = C.ink; ctx.font = `700 40px ${FONT}`; ctx.fillText("件", x + 48 + nw, by + 190);
   });
-  ctx.fillStyle = C.ink; ctx.font = `800 46px ${FONT}`; ctx.fillText(fit(ctx, punchline(t.me.owed, t.them.owed, name), W - PAD * 2), PAD, 482);
+  ctx.fillStyle = C.ink; ctx.font = `800 46px ${FONT}`; ctx.fillText(fit(ctx, punchline(t.me.owed, t.them.owed, name, t.me.proven, t.them.proven), W - PAD * 2), PAD, 482);
 
   // the two lists
-  const order: LedgerState[] = ["not", "silent", "done", "waiting"];
-  const section = (y: number, title: string, s: typeof t.me, rows: number) => {
+  const section = (y: number, title: string, s: typeof t.me, list: ReturnType<typeof pick>) => {
     ctx.fillStyle = C.ink; ctx.font = `700 36px ${FONT}`; ctx.fillText(title, PAD, y);
     ctx.fillStyle = C.muted; ctx.font = `500 26px ${FONT}`; ctx.textAlign = "right";
     ctx.fillText(`做到 ${s.kept} · 欠着 ${s.owed}`, W - PAD, y); ctx.textAlign = "left";
-    const list = [...s.list].sort((a, b) => order.indexOf(a.state) - order.indexOf(b.state)).slice(0, rows);
-    round(ctx, PAD, y + 24, W - PAD * 2, Math.max(1, list.length) * 72 + 16, 28, C.card);
+    round(ctx, PAD, y + 24, W - PAD * 2, boxH(list), 28, C.card);
     if (!list.length) { ctx.fillStyle = C.muted; ctx.font = `500 28px ${FONT}`; ctx.fillText("一件都没有", PAD + 36, y + 86); }
+    let ry = y + 24 + 8;
     list.forEach((r, i) => {
-      const ry = y + 24 + 8 + i * 72;
       if (i) { ctx.fillStyle = C.line; ctx.fillRect(PAD + 32, ry, W - PAD * 2 - 64, 2); }
       const [mark, color] = MARK[r.state];
       ctx.beginPath(); ctx.arc(PAD + 52, ry + 36, 20, 0, Math.PI * 2); ctx.fillStyle = color; ctx.fill();
@@ -68,12 +73,16 @@ function draw(cv: HTMLCanvasElement, data: LedgerData, name: string) {
       ctx.fillStyle = r.state === "done" ? C.muted : color; ctx.textAlign = "right"; ctx.fillText(when, W - PAD - 32, ry + 45); ctx.textAlign = "left";
       ctx.fillStyle = C.ink; ctx.font = `500 31px ${FONT}`;
       ctx.fillText(fit(ctx, shortTitle(r.title, name), W - PAD * 2 - 140 - ww), PAD + 92, ry + 47);
+      if (r.said) {
+        ctx.fillStyle = C.muted; ctx.font = `500 26px ${FONT}`;
+        ctx.fillText(fit(ctx, `「${r.said}」`, W - PAD * 2 - 130), PAD + 86, ry + 90);
+      }
+      ry += rowH(r);
     });
-    return y + 24 + Math.max(1, list.length) * 72 + 16;
+    return y + 24 + boxH(list);
   };
-  const per = 4;
-  const end1 = section(568, `${name}答应我的`, t.them, per);
-  section(end1 + 70, `我答应${name}的`, t.me, per);
+  const end1 = section(568, `${name}答应我的`, t.them, lists[0]);
+  section(end1 + 70, `我答应${name}的`, t.me, lists[1]);
 
   ctx.fillStyle = C.muted; ctx.font = `500 24px ${FONT}`;
   ctx.fillText("从聊天记录里翻出来的 · Personal Radar", PAD, H - 64);
@@ -86,6 +95,7 @@ export function LedgerShare({ personKey, personName, opened, onClose }: { person
   const [busy, setBusy] = useState<string | null>(null);
   const [edited, setName] = useState<string | null>(null);
   const name = edited ?? personName;
+  const [withQuotes, setWithQuotes] = useState(true);
   const [url, setUrl] = useState<string | null>(null);
   const cv = useRef<HTMLCanvasElement | null>(null);
   const api = `/api/people/${encodeURIComponent(personKey)}/ledger`;
@@ -109,8 +119,8 @@ export function LedgerShare({ personKey, personName, opened, onClose }: { person
     if (!data) return;
     const c = cv.current ?? document.createElement("canvas");
     cv.current = c;
-    void document.fonts?.ready.then(() => { draw(c, data, name.trim() || "TA"); setUrl(c.toDataURL("image/png")); });
-  }, [data, name]);
+    void document.fonts?.ready.then(() => { draw(c, data, name.trim() || "TA", withQuotes ? 2 : 0); setUrl(c.toDataURL("image/png")); });
+  }, [data, name, withQuotes]);
 
   async function blob() { return new Promise<Blob | null>((r) => cv.current?.toBlob(r, "image/png")); }
   async function share() {
@@ -134,7 +144,10 @@ export function LedgerShare({ personKey, personName, opened, onClose }: { person
         <Stack gap="sm">
           {/* eslint-disable-next-line @next/next/no-img-element -- a canvas data URL, nothing to optimize */}
           {url && <img src={url} alt="说话算数账本卡片" style={{ width: "100%", borderRadius: 16, display: "block" }} />}
-          <TextInput size="xs" radius="md" label="卡片上怎么称呼 TA" value={name} onChange={(e) => setName(e.currentTarget.value)} maxLength={10} />
+          <Group gap="sm" align="flex-end" wrap="nowrap">
+            <TextInput size="xs" radius="md" label="卡片上怎么称呼 TA" value={name} onChange={(e) => setName(e.currentTarget.value)} maxLength={10} style={{ flex: 1 }} />
+            <Switch size="sm" color="orange" label="带上原话" checked={withQuotes} onChange={(e) => setWithQuotes(e.currentTarget.checked)} mb={4} />
+          </Group>
           <Group grow gap="xs">
             <Button radius="xl" color="orange" leftSection={<IconShare2 size={16} />} onClick={share}>分享</Button>
             <Button radius="xl" variant="light" color="orange" leftSection={<IconDownload size={16} />} onClick={save}>保存图片</Button>

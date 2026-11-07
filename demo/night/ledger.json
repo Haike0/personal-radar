@@ -1,21 +1,33 @@
 {
- "demo_tanaka:11": {
-  "who": "them",
-  "result": "done",
-  "proof": 567,
-  "reason": "他说和女儿吃了烤肉"
- },
- "demo_tanaka:4": {
-  "who": "them",
-  "result": "done",
-  "proof": 329,
-  "reason": "他说部下的事聊得很开心"
- },
  "demo_tanaka:38": {
   "who": "them",
   "result": "unclear",
   "proof": null,
   "reason": "后面没再提生日准备的事"
+ },
+ "demo_tanaka:11": {
+  "who": "them",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没再提烤肉的事"
+ },
+ "demo_tanaka:4": {
+  "who": "them",
+  "result": "done",
+  "proof": 310,
+  "reason": "他来了店里，聊了部下的事"
+ },
+ "demo_tanaka:7": {
+  "who": "them",
+  "result": "not",
+  "proof": 2885,
+  "reason": "他说休肝日没做到"
+ },
+ "demo_tanaka:17": {
+  "who": "them",
+  "result": "done",
+  "proof": 1468,
+  "reason": "他发了中奖消息，我恭喜了他"
  },
  "demo_tanaka:41": {
   "who": "them",
@@ -23,35 +35,35 @@
   "proof": null,
   "reason": "聊天只到赛前，赛后没再提报告"
  },
- "demo_tanaka:7": {
-  "who": "them",
-  "result": "not",
-  "proof": 933,
-  "reason": "水曜没提休肝，反而说酒好喝"
- },
- "demo_tanaka:17": {
-  "who": "them",
-  "result": "done",
-  "proof": 1467,
-  "reason": "他发了中奖照片，我道喜"
- },
- "demo_tanaka:52": {
-  "who": "them",
-  "result": "done",
-  "proof": 2562,
-  "reason": "他说在坚持休肝日，还忍住了手羽先"
- },
- "demo_tanaka:63": {
-  "who": "them",
-  "result": "unclear",
-  "proof": null,
-  "reason": "之后只回了句期待，没提来没来"
- },
  "demo_suzuki:32": {
   "who": "them",
   "result": "unclear",
   "proof": null,
   "reason": "后面没再提土产的事"
+ },
+ "demo_suzuki:68": {
+  "who": "them",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面只聊车，没提订位结果"
+ },
+ "demo_tanaka:63": {
+  "who": "them",
+  "result": "unclear",
+  "proof": null,
+  "reason": "之后只有我回等待，没提他来没来"
+ },
+ "demo_suzuki:2": {
+  "who": "them",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面只提寿司店，没提开酒"
+ },
+ "demo_tanaka:52": {
+  "who": "them",
+  "result": "unclear",
+  "proof": null,
+  "reason": "有几次做到，但饮酒会次日没做到，整体看不出来"
  },
  "demo_suzuki:16": {
   "who": "them",
@@ -59,143 +71,137 @@
   "proof": null,
   "reason": "后面没提开酒的事"
  },
- "demo_suzuki:2": {
-  "who": "them",
-  "result": "unclear",
-  "proof": null,
-  "reason": "后面只提了带红酒去寿司店，没提开酒"
- },
- "demo_suzuki:68": {
-  "who": "them",
-  "result": "unclear",
-  "proof": null,
-  "reason": "后面没提订位结果"
- },
- "demo_takahashi:7": {
-  "who": "them",
-  "result": "done",
-  "proof": 435,
-  "reason": "备注写他带限定纯米来了"
- },
- "demo_sato:3": {
-  "who": "them",
-  "result": "unclear",
-  "proof": null,
-  "reason": "最后只说想预约，没提面谈结果"
- },
- "demo_sato:13": {
-  "who": "them",
-  "result": "done",
-  "proof": 1103,
-  "reason": "他说申了，还感谢我推他一把"
- },
  "demo_takahashi:20": {
   "who": "them",
   "result": "done",
-  "proof": 867,
-  "reason": "备注说聊昔日银座时他笑了"
+  "proof": 772,
+  "reason": "他说今天聊得很开心，谢谢"
  },
  "demo_takahashi:21": {
   "who": "them",
   "result": "unclear",
   "proof": null,
-  "reason": "之后没再提箱根照片的事"
+  "reason": "后面没提箱根照片的事"
+ },
+ "demo_takahashi:7": {
+  "who": "them",
+  "result": "done",
+  "proof": 435,
+  "reason": "备注写他带来限定纯米，大家说好喝"
  },
  "demo_sato:8": {
   "who": "them",
   "result": "unclear",
   "proof": null,
-  "reason": "只发了制作中照片，没见完成照"
+  "reason": "后面没再提模型完成照片"
+ },
+ "demo_sato:13": {
+  "who": "them",
+  "result": "done",
+  "proof": 1115,
+  "reason": "他说申込了，面谈定在周六"
+ },
+ "demo_sato:3": {
+  "who": "them",
+  "result": "unclear",
+  "proof": null,
+  "reason": "之后没再提面谈结果"
  },
  "demo_sato:29": {
   "who": "them",
   "result": "unclear",
   "proof": null,
-  "reason": "后面只提到面谈紧张，没提报告结果"
- },
- "demo_sato:30": {
-  "who": "them",
-  "result": "unclear",
-  "proof": null,
-  "reason": "之后没再提沙扎比带来或照片"
+  "reason": "后面没再提面谈结果"
  },
  "demo_sato:40": {
   "who": "them",
   "result": "unclear",
   "proof": null,
-  "reason": "后面没再提高达照片的事"
+  "reason": "后面没再提高达模型照片"
+ },
+ "demo_sato:30": {
+  "who": "them",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没提沙扎比带来没"
  },
  "demo_sato:41": {
   "who": "them",
-  "result": "not",
-  "proof": 2990,
-  "reason": "他问拉面店约定还没兑现，我还没发"
+  "result": "unclear",
+  "proof": null,
+  "reason": "后来只提还没送，没见真发来"
  },
  "demo_ito:1": {
   "who": "me",
-  "result": "not",
-  "proof": 1788,
-  "reason": "对方说信用してない，一直没发"
+  "result": "unclear",
+  "proof": null,
+  "reason": "我答应做清单，后面没再提"
+ },
+ "demo_ito:13": {
+  "who": "them",
+  "result": "unclear",
+  "proof": null,
+  "reason": "他说「観た」并评价结尾"
+ },
+ "demo_ito:20": {
+  "who": "them",
+  "result": "unclear",
+  "proof": null,
+  "reason": "他说周末去看，之后没提感想"
  },
  "demo_ito:47": {
   "who": "them",
   "result": "not",
   "proof": 2304,
-  "reason": "备注说感想忘了问，之后也没给"
- },
- "demo_ito:20": {
-  "who": "both",
-  "result": "unclear",
-  "proof": null,
-  "reason": "之后只聊了パターソン感想，A24新作没再提"
+  "reason": "备注说感想忘问了，没听到"
  },
  "demo_ito:49": {
   "who": "them",
   "result": "unclear",
   "proof": null,
-  "reason": "原话已含汇报，之后无新证据"
- },
- "demo_ito:13": {
-  "who": "me",
-  "result": "unclear",
-  "proof": null,
-  "reason": "后续没提《パターソン》看没看"
- },
- "demo_ito:57": {
-  "who": "them",
-  "result": "done",
-  "proof": 2596,
-  "reason": "他当天主动说今天去并问时间"
+  "reason": "原话已含汇报内容，之后聊天未再提"
  },
  "demo_nakamura:1": {
   "who": "them",
   "result": "done",
   "proof": 99,
-  "reason": "他主动发消息说学会日程定了"
+  "reason": "他主动告知学会日程已定"
+ },
+ "demo_ito:57": {
+  "who": "them",
+  "result": "done",
+  "proof": 2596,
+  "reason": "他当天主动说今天去并约时间"
  },
  "demo_nakamura:9": {
   "who": "them",
   "result": "done",
-  "proof": 346,
-  "reason": "他说照我说的做了，睡得好"
+  "proof": 348,
+  "reason": "他说照做后睡得好，还道谢"
  },
  "demo_nakamura:26": {
   "who": "them",
   "result": "unclear",
   "proof": null,
-  "reason": "后面没再提带鱼的事"
+  "reason": "后面只聊约饭，没提带鱼"
+ },
+ "demo_watanabe:1": {
+  "who": "them",
+  "result": "done",
+  "proof": 226,
+  "reason": "他说现在过去，还带了笹かま"
  },
  "demo_watanabe:4": {
   "who": "them",
-  "result": "unclear",
-  "proof": null,
-  "reason": "只说到打包好，没提当天送到"
+  "result": "done",
+  "proof": 804,
+  "reason": "她说收到了，家人也说好吃"
  },
  "demo_watanabe:8": {
   "who": "them",
   "result": "done",
   "proof": 723,
-  "reason": "他说今天是通院日，被医生夸了"
+  "reason": "他说今天是通院日，被医生表扬了"
  },
  "demo_watanabe:7": {
   "who": "them",
@@ -203,59 +209,59 @@
   "proof": null,
   "reason": "只提到买了装包，没见送达确认"
  },
- "demo_watanabe:1": {
-  "who": "them",
-  "result": "done",
-  "proof": 230,
-  "reason": "备注写他来店了，笹かま也带了"
- },
- "demo_watanabe:14": {
-  "who": "them",
-  "result": "unclear",
-  "proof": null,
-  "reason": "之后没再提收到或没带"
- },
  "demo_watanabe:11": {
   "who": "them",
   "result": "unclear",
   "proof": null,
-  "reason": "邀约去仙台吃牛タン，后来只寄了牛タンせんべい，没提去仙台"
+  "reason": "后面只提牛タン屋和せんべい，没去仙台吃"
  },
  "demo_watanabe:21": {
-  "who": "both",
+  "who": "them",
   "result": "unclear",
   "proof": null,
-  "reason": "后来只寄了牛タン，没提一起去仙台"
+  "reason": "他说想一起去，但后来没提去仙台的事"
  },
  "demo_yamamoto:6": {
   "who": "them",
   "result": "unclear",
   "proof": null,
-  "reason": "后面没提请客的事，看不出来"
+  "reason": "后面没提请客这事，看不出"
  },
  "demo_kobayashi:3": {
   "who": "them",
   "result": "unclear",
   "proof": null,
-  "reason": "之后聊天没再提动画清单"
+  "reason": "后面没再提清单的事"
  },
  "demo_kobayashi:13": {
   "who": "them",
   "result": "done",
   "proof": 1067,
-  "reason": "我回他清单收到了谢谢"
+  "reason": "我回复说清单谢谢、之后看"
  },
- "demo_kobayashi:19": {
+ "demo_kobayashi:36": {
   "who": "them",
-  "result": "done",
-  "proof": 3110,
-  "reason": "备注写他每次来都带シュークリーム"
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面只聊见面，没提教游戏或发视频"
+ },
+ "demo_kobayashi:24": {
+  "who": "them",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没再提答复的事"
  },
  "demo_kobayashi:33": {
   "who": "them",
   "result": "done",
   "proof": 2001,
-  "reason": "她说布丁好吃，谢谢"
+  "reason": "她说布丁好吃，谢谢他带来"
+ },
+ "demo_kobayashi:19": {
+  "who": "them",
+  "result": "done",
+  "proof": 3120,
+  "reason": "他说今天买シュークリーム带过去，备注也证实了"
  },
  "demo_kobayashi:20": {
   "who": "them",
@@ -263,71 +269,65 @@
   "proof": null,
   "reason": "只聊了怪物猎人话题，没提教玩"
  },
- "demo_kobayashi:24": {
+ "demo_kobayashi:57": {
   "who": "them",
-  "result": "unclear",
-  "proof": null,
-  "reason": "之后没再提答复的事，看不出等没等"
- },
- "demo_kobayashi:36": {
-  "who": "them",
-  "result": "unclear",
-  "proof": null,
-  "reason": "后面没再提教玩或送视频的事"
+  "result": "done",
+  "proof": 2833,
+  "reason": "他说差入的蛋糕对方很开心，我夸好吃"
  },
  "demo_kobayashi:56": {
   "who": "both",
   "result": "unclear",
   "proof": null,
-  "reason": "后面只提他自己玩，没一起玩"
- },
- "demo_kobayashi:57": {
-  "who": "them",
-  "result": "done",
-  "proof": 2834,
-  "reason": "她说蛋糕很好吃还道谢"
- },
- "demo_kobayashi:95": {
-  "who": "them",
-  "result": "done",
-  "proof": 4866,
-  "reason": "他说芝士蛋糕你吃得开心，你也夸好吃"
+  "reason": "后来只说他自己在玩，没提一起玩"
  },
  "demo_kobayashi:70": {
   "who": "them",
   "result": "unclear",
   "proof": null,
-  "reason": "之后没再提带甜食来店的事"
+  "reason": "后来只说今度持ってく，没见真带来"
  },
  "demo_kobayashi:83": {
   "who": "them",
   "result": "unclear",
   "proof": null,
-  "reason": "提过周末教但没约成，之后没再提"
- },
- "demo_kobayashi:110": {
-  "who": "them",
-  "result": "unclear",
-  "proof": null,
-  "reason": "后面只带了布丁，没提芝士蛋糕"
+  "reason": "后来只提周末通话说空下再联系，没下文"
  },
  "demo_kobayashi:89": {
   "who": "them",
   "result": "done",
-  "proof": 4873,
-  "reason": "她说芝士蛋糕好吃，他带来并收到了"
- },
- "demo_kobayashi:97": {
-  "who": "them",
-  "result": "unclear",
-  "proof": null,
-  "reason": "之后没提答复的事，看不出等没等"
+  "proof": 4846,
+  "reason": "备注写他带芝士蛋糕来店，她很高兴"
  },
  "demo_kobayashi:108": {
   "who": "them",
   "result": "unclear",
   "proof": null,
-  "reason": "后面没再提答复的事，看不出等没等"
+  "reason": "后面没提答复的事，看不出来"
+ },
+ "demo_kobayashi:97": {
+  "who": "them",
+  "result": "done",
+  "proof": 4634,
+  "reason": "他问烧果子合口味吗，她夸好吃"
+ },
+ "demo_kobayashi:95": {
+  "who": "them",
+  "result": "done",
+  "proof": 4866,
+  "reason": "他说芝士蛋糕你爱吃就好，你也夸好吃"
+ },
+ "demo_kobayashi:110": {
+  "who": "them",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没再提芝士蛋糕的事"
+ },
+ "demo_kimura:4": {
+  "who": "them",
+  "result": "done",
+  "proof": 356,
+  "reason": "他说入門書持ってきました，我还惊讶确认"
  },
  "demo_kimura:6": {
   "who": "them",
@@ -339,42 +339,42 @@
   "who": "them",
   "result": "unclear",
   "proof": null,
-  "reason": "后面只提看球会，没真约成"
- },
- "demo_kimura:4": {
-  "who": "them",
-  "result": "done",
-  "proof": 356,
-  "reason": "他说入門書持ってきました，我还惊讶确认"
- },
- "demo_yoshida:14": {
-  "who": "both",
-  "result": "unclear",
-  "proof": null,
-  "reason": "之后没再提明年万圣节的事"
+  "reason": "后面没再提约看球的事"
  },
  "demo_yoshida:7": {
   "who": "them",
   "result": "unclear",
   "proof": null,
-  "reason": "一直说去取角，最后也没取成"
+  "reason": "后来只提保管和来取，没见真送出"
  },
- "demo_matsumoto:14": {
-  "who": "them",
-  "result": "done",
-  "proof": 1042,
-  "reason": "我夸獺祭好喝，说明他带来了"
- },
- "demo_matsumoto:5": {
-  "who": "them",
+ "demo_yoshida:14": {
+  "who": "both",
   "result": "unclear",
   "proof": null,
-  "reason": "后面没提报纸，只聊了赛马预测"
+  "reason": "后面没再提明年万圣节的事"
  },
  "demo_matsumoto:15": {
   "who": "them",
   "result": "unclear",
   "proof": null,
-  "reason": "之后没再提教押注的事"
+  "reason": "后面没再提教押注的事"
+ },
+ "demo_matsumoto:5": {
+  "who": "them",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后来没提报纸，只聊了赛马预测"
+ },
+ "demo_matsumoto:14": {
+  "who": "them",
+  "result": "done",
+  "proof": 1042,
+  "reason": "我说獭祭好喝，说明他带来了"
+ },
+ "demo_watanabe:14": {
+  "who": "them",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面只聊休息和期待，没提收到"
  }
 }

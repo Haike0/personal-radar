@@ -2,7 +2,7 @@
 // at the message that proves it was done. Shared by the app and the demo generator so both use the same guardrails.
 
 export const LEDGER_SYSTEM = `你在帮用户翻旧账：判断聊天里一句承诺后来有没有兑现。
-你会收到：一条承诺（谁答应的、答应了什么、当时的原话），和这句话之后的聊天，每条前面有编号 [n]。
+你会收到：一条承诺（谁答应的、答应了什么、当时的原话），和这句话之后的聊天，每条前面有编号 [n]。聊天是挑出来的片段：紧接着的一段、后来提到相关字眼的几段、约定日期前后几天，中间省略的地方标了「……」。
 
 只看给你的聊天，不猜、不脑补。判断三件事：
 1. who：这件事是谁答应要做的。"me" = 用户（聊天里的"我"），"them" = 对方，"both" = 两人一起约定、分不出谁。
@@ -15,13 +15,60 @@ reason：一句话说依据，15 字以内，口语，比如"她说收到了，�
 
 只输出一个 JSON 对象，不要别的文字：{"who":"me|them|both","result":"done|not|unclear","proof":n或null,"reason":"…"}`;
 
+const STOP = new Set("我你她他它们的了吗呢吧啊呀哦嗯是在有就都也还要会能把给和跟去来说好答应保证承诺下次一定到时候这那个些点".split(""));
+
+/**
+ * Words to look for later in the chat: two-character pieces of the promise ("新店", "照片"), minus names and filler.
+ * @param {string} title @param {string} name
+ */
+export function keywords(title, name) {
+  const t = name ? title.split(name).join(" ") : title;
+  const out = new Set();
+  for (const run of t.match(/[\u4e00-\u9fff]+|[A-Za-z0-9]{3,}/g) ?? []) {
+    if (/^[A-Za-z0-9]+$/.test(run)) { out.add(run.toLowerCase()); continue; }
+    for (let i = 0; i + 1 < run.length; i++) { const b = run.slice(i, i + 2); if (!STOP.has(b[0]) && !STOP.has(b[1])) out.add(b); }
+  }
+  return [...out].slice(0, 10);
+}
+
+/**
+ * Which later messages the model gets to see. Keeping a promise often happens weeks later ("去了那家新店"), long after
+ * the next 160 messages, so besides the messages right after the promise we add every later stretch that mentions the
+ * promise's words, and the days around its date.
+ * @param {{text:string}[]} all  every message after the promise, oldest first
+ * @param {string[]} terms  from keywords()
+ * @param {(i:number)=>boolean} [nearDue]  true for messages within a few days of the promised date
+ * @returns {number[]} indexes into `all`, in order
+ */
+export function pickWindow(all, terms, nearDue = () => false, { head = 80, cap = 240 } = {}) {
+  const keep = new Set();
+  for (let i = 0; i < Math.min(head, all.length); i++) keep.add(i);
+  const need = terms.length > 3 ? 2 : terms.length ? 1 : 0;
+  const hits = [];
+  if (need) all.forEach((m, i) => {
+    const t = m.text.toLowerCase();
+    const n = terms.reduce((a, w) => a + (t.includes(w) ? 1 : 0), 0);
+    if (n >= need && i >= head) hits.push([i, n]);
+  });
+  // the stretches that mention the most of the promise's words
+  const best = hits.sort((a, b) => b[1] - a[1] || a[0] - b[0]).slice(0, 8).map(([i]) => i);
+  for (const i of best) for (let j = Math.max(0, i - 3); j <= Math.min(all.length - 1, i + 12); j++) keep.add(j);
+  all.forEach((_, i) => { if (keep.size < cap && nearDue(i)) keep.add(i); });
+  return [...keep].sort((a, b) => a - b).slice(0, cap);
+}
+
 /**
  * @param {{title:string, summary?:string|null, whoGuess:string, quotes:string[], name:string}} p
- * @param {{who:string, text:string, ts:string}[]} after  messages after the promise, oldest first
+ * @param {{who:string, text:string, ts:string, gap?:boolean}[]} after  messages after the promise, oldest first (gap = some were skipped before this one)
  */
 export function ledgerInput(p, after) {
+  // gaps in the numbering are fine; a "…" line marks skipped stretches so the model doesn't read them as one talk
   const guess = p.whoGuess === "self" ? "我" : p.whoGuess === "them" ? p.name : "两人";
-  const lines = after.map((m, i) => `[${i + 1}] ${m.ts.slice(5, 16)} ${m.who}：${m.text.replace(/\s+/g, " ").slice(0, 100)}`);
+  const lines = [];
+  after.forEach((m, i) => {
+    if (m.gap) lines.push("……");
+    lines.push(`[${i + 1}] ${m.ts.slice(5, 16)} ${m.who}：${m.text.replace(/\s+/g, " ").slice(0, 100)}`);
+  });
   return [
     `承诺：${p.title}`,
     p.summary ? `说明：${p.summary}` : "",

@@ -23,17 +23,18 @@ export const owed = (s: LedgerState) => s === "not" || s === "silent";
 export function tally(rows: LedgerRowView[]) {
   const side = (who: LedgerWho) => {
     const list = rows.filter((r) => r.who === who).map((r) => ({ ...r, state: stateOf(r) })).filter((r) => r.state !== "skip");
-    return { list, owed: list.filter((r) => owed(r.state)).length, kept: list.filter((r) => r.state === "done").length };
+    return { list, owed: list.filter((r) => owed(r.state)).length, kept: list.filter((r) => r.state === "done").length,
+      proven: list.filter((r) => r.state === "not").length }; // 没做 with a message (or the user's word) behind it
   };
   return { me: side("me"), them: side("them"), both: side("both") };
 }
 
-/** The joke line under the score. */
-export function punchline(meOwed: number, themOwed: number, name: string) {
+/** The joke line under the score. "证据确凿" only when a 没做 with a message behind it is there to back it up. */
+export function punchline(meOwed: number, themOwed: number, name: string, meProven = 0, themProven = 0) {
   if (!meOwed && !themOwed) return "说到做到，你俩谁也挑不出毛病";
-  if (meOwed - themOwed >= 3) return `证据确凿：你就是那个光说不做的人`;
+  if (meOwed - themOwed >= 3) return meProven ? "证据确凿：你就是那个光说不做的人" : "答应了一堆都没下文，你自己心里清楚";
   if (meOwed > themOwed) return `你比${name}多欠了 ${meOwed - themOwed} 件，还不快去还`;
-  if (themOwed - meOwed >= 3) return `${name}欠你的，可以开始翻旧账了`;
+  if (themOwed - meOwed >= 3) return themProven ? `证据确凿：${name}欠你的，可以开始翻旧账了` : `${name}答应你的一堆都没下文，可以开始翻旧账了`;
   if (themOwed > meOwed) return `${name}比你多欠 ${themOwed - meOwed} 件，这局你赢`;
   return "半斤八两，谁也别说谁";
 }

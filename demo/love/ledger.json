@@ -1,45 +1,39 @@
 {
- "demo_xiaoyu:10": {
-  "who": "both",
-  "result": "unclear",
-  "proof": null,
-  "reason": "后面只问周末有空，没提去吃"
- },
- "demo_xiaoyu:11": {
+ "demo_xiaoyu:19": {
   "who": "me",
   "result": "unclear",
   "proof": null,
-  "reason": "原话已显示送到，小雨说到了好香"
- },
- "demo_xiaoyu:18": {
-  "who": "them",
-  "result": "unclear",
-  "proof": null,
-  "reason": "后面聊天没再提带吃的"
+  "reason": "后面没提泡脚包到没到"
  },
  "demo_xiaoyu:17": {
   "who": "them",
   "result": "done",
   "proof": 1117,
-  "reason": "她说电脑修好了，火锅也吃了"
+  "reason": "她说电脑修好了，奶茶也请了"
+ },
+ "demo_xiaoyu:18": {
+  "who": "them",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没提带吃的这事"
+ },
+ "demo_xiaoyu:10": {
+  "who": "both",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没再提那家新开的店"
  },
  "demo_xiaoyu:29": {
   "who": "them",
   "result": "unclear",
   "proof": null,
-  "reason": "后面没再提跟爸妈说的事"
+  "reason": "后面没提她跟爸妈说了没"
  },
- "demo_xiaoyu:19": {
+ "demo_xiaoyu:11": {
   "who": "me",
-  "result": "done",
-  "proof": 867,
-  "reason": "她说整个人都活了，夸泡脚包"
- },
- "demo_xiaoyu:40": {
-  "who": "me",
-  "result": "not",
-  "proof": 2413,
-  "reason": "我睡过头没去接，她等了四十分钟"
+  "result": "unclear",
+  "proof": null,
+  "reason": "原话里她已说到了好香"
  },
  "demo_xiaoyu:37": {
   "who": "them",
@@ -47,23 +41,29 @@
   "proof": null,
   "reason": "后面没提跟爸妈说的事"
  },
+ "demo_xiaoyu:40": {
+  "who": "me",
+  "result": "not",
+  "proof": 2417,
+  "reason": "她等了四十分钟，我睡过头没去"
+ },
  "demo_xiaoyu:69": {
   "who": "them",
   "result": "done",
   "proof": 3916,
-  "reason": "她说看了一章，眼睛都花了"
+  "reason": "她说看了一章眼睛都花了"
+ },
+ "demo_xiaoyu:52": {
+  "who": "me",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没提修好没修好"
  },
  "demo_xiaoyu:61": {
   "who": "me",
   "result": "unclear",
   "proof": null,
-  "reason": "后面没提筛房源的事"
- },
- "demo_xiaoyu:52": {
-  "who": "me",
-  "result": "done",
-  "proof": 3378,
-  "reason": "他说看了，是电源问题要换适配器"
+  "reason": "后面没提筛房源，只陪看房"
  },
  "demo_xiaoyu:70": {
   "who": "me",
@@ -71,41 +71,41 @@
   "proof": null,
   "reason": "后面没再提洗照片的事"
  },
- "demo_xiaoyu:108": {
-  "who": "me",
-  "result": "done",
-  "proof": 5945,
-  "reason": "她说草莓真甜，还让我尝"
- },
  "demo_xiaoyu:71": {
   "who": "me",
   "result": "done",
   "proof": 3521,
-  "reason": "我发了两个房源，她选了医院附近那个"
- },
- "demo_xiaoyu:121": {
-  "who": "them",
-  "result": "unclear",
-  "proof": null,
-  "reason": "后面没再提做饭的事"
- },
- "demo_xiaoyu:107": {
-  "who": "me",
-  "result": "unclear",
-  "proof": null,
-  "reason": "后面没提收拾书桌的事"
+  "reason": "我发了两个房源，她说医院附近不错"
  },
  "demo_xiaoyu:90": {
   "who": "me",
   "result": "unclear",
   "proof": null,
-  "reason": "聊天只到D-47，没到搬家日"
+  "reason": "聊天只到D-48，没提搬家那天"
  },
- "demo_xiaoyu:125": {
+ "demo_xiaoyu:107": {
+  "who": "me",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没再提收拾书桌的事"
+ },
+ "demo_xiaoyu:121": {
   "who": "them",
   "result": "unclear",
   "proof": null,
-  "reason": "后面没提考完吃火锅的事"
+  "reason": "后面没提做给我吃的事"
+ },
+ "demo_xiaoyu:125": {
+  "who": "them",
+  "result": "done",
+  "proof": 7141,
+  "reason": "她排号先坐下，一起吃上了"
+ },
+ "demo_xiaoyu:108": {
+  "who": "me",
+  "result": "done",
+  "proof": 5945,
+  "reason": "她说草莓真甜，还让我尝"
  },
  "demo_xiaoyu:138": {
   "who": "me",
@@ -113,41 +113,47 @@
   "proof": null,
   "reason": "后面没提适配器带没带"
  },
- "demo_azhe:4": {
+ "demo_azhe:18": {
   "who": "them",
   "result": "unclear",
   "proof": null,
-  "reason": "后面没再提还钱的事"
+  "reason": "只提先还500，没说还了没"
  },
  "demo_azhe:17": {
   "who": "them",
   "result": "unclear",
   "proof": null,
-  "reason": "后面没提还钱的事"
+  "reason": "只提先还500，后面没下文"
  },
- "demo_azhe:18": {
+ "demo_azhe:4": {
   "who": "them",
   "result": "unclear",
   "proof": null,
-  "reason": "只提记着钱，没见还"
+  "reason": "后面只说下月还，没见还钱消息"
  },
  "demo_azhe:20": {
   "who": "them",
   "result": "unclear",
   "proof": null,
-  "reason": "后面没再提吃烧烤的事"
+  "reason": "后面没提烧烤吃没吃"
  },
  "demo_azhe:35": {
   "who": "them",
   "result": "done",
   "proof": 2287,
-  "reason": "他问吃饱没，我说撑了"
+  "reason": "吃完问吃饱没，我说撑了"
  },
  "demo_azhe:36": {
   "who": "me",
   "result": "unclear",
   "proof": null,
-  "reason": "后面没提婚礼当天盯流程的事"
+  "reason": "后面没提盯流程做没做"
+ },
+ "demo_azhe:42": {
+  "who": "them",
+  "result": "done",
+  "proof": 2229,
+  "reason": "他说收到了1500，阿哲确实转了"
  },
  "demo_azhe:48": {
   "who": "me",
@@ -155,23 +161,11 @@
   "proof": null,
   "reason": "后面没提戒指的事"
  },
- "demo_laoxu:4": {
-  "who": "both",
-  "result": "done",
-  "proof": 433,
-  "reason": "钓完他说真痛快，老许也说下次还来"
- },
- "demo_azhe:42": {
-  "who": "them",
-  "result": "done",
-  "proof": 2164,
-  "reason": "他说发工资先转1500，确实转了"
- },
  "demo_azhe:47": {
   "who": "me",
   "result": "unclear",
   "proof": null,
-  "reason": "后面没提挡酒的事"
+  "reason": "后面没提挡酒和发言结果"
  },
  "demo_azhe:51": {
   "who": "them",
@@ -179,11 +173,11 @@
   "proof": null,
   "reason": "后面没再提吃饭的事"
  },
- "demo_laoxu:16": {
-  "who": "me",
+ "demo_laoxu:4": {
+  "who": "both",
   "result": "done",
-  "proof": 811,
-  "reason": "老许说颜色正、就用这个"
+  "proof": 433,
+  "reason": "他说今天真痛快，还约下次再来"
  },
  "demo_laoxu:11": {
   "who": "me",
@@ -191,11 +185,11 @@
   "proof": 809,
   "reason": "老许说颜色正，就用这版"
  },
- "demo_mom:9": {
+ "demo_laoxu:16": {
   "who": "me",
   "result": "unclear",
   "proof": null,
-  "reason": "后面没提药费谁出"
+  "reason": "原话里我已改好并发过去，老许认可"
  },
  "demo_mom:8": {
   "who": "me",
@@ -203,10 +197,16 @@
   "proof": 706,
   "reason": "复查结果出来了，医生说控制得还行"
  },
- "demo_sister:2": {
+ "demo_mom:9": {
   "who": "me",
   "result": "unclear",
   "proof": null,
-  "reason": "后面没提转没转三千"
+  "reason": "后面没提药费的事"
+ },
+ "demo_sister:2": {
+  "who": "me",
+  "result": "done",
+  "proof": 325,
+  "reason": "他说钱转了，姐姐也确认已给"
  }
 }
