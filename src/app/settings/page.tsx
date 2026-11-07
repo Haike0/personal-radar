@@ -2,7 +2,7 @@
 import { Badge, Button, Group, Paper, SegmentedControl, SimpleGrid, Skeleton, Stack, Text, Title, UnstyledButton } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import {
-  IconBell, IconBrain, IconDatabase, IconGlassFull, IconHeart, IconLayoutList, IconInfoCircle, IconLock, IconMessages, IconPalette, IconPlayerPlay, IconPlugConnected, IconSparkles, IconWand,
+  IconBell, IconBrain, IconBriefcase, IconDatabase, IconGlassFull, IconHeart, IconInfoCircle, IconLock, IconMessages, IconPalette, IconPlayerPlay, IconPlugConnected, IconSparkles, IconWand,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { Row, SettingsGroup, useSettings } from "@/components/settings/kit";
@@ -16,8 +16,8 @@ type Chats = { status: { ok: boolean; sessions: number } };
 type Push = { devices: number };
 const SCENES = [
   { id: "love", label: "恋人与朋友", icon: IconHeart, color: "pink" },
+  { id: "work", label: "职场", icon: IconBriefcase, color: "cyan" },
   { id: "night", label: "夜场", icon: IconGlassFull, color: "violet" },
-  { id: "life", label: "简单示例", icon: IconLayoutList, color: "gray" },
 ];
 
 /** One glanceable number that opens its page. */
@@ -82,7 +82,7 @@ export default function SettingsPage() {
         {s.mode === "demo" && (
           <SimpleGrid cols={3} spacing={8} className="set-pad">
             {SCENES.map((x) => (
-              <UnstyledButton key={x.id} onClick={() => save({ demo_set: x.id }, `已换成「${x.label}」`)} className={`assistant-card${(s.demo_set || "life") === x.id ? " is-active" : ""}`}>
+              <UnstyledButton key={x.id} onClick={() => save({ demo_set: x.id }, `已换成「${x.label}」`)} className={`assistant-card${(s.demo_set || "love") === x.id ? " is-active" : ""}`}>
                 <x.icon size={18} color={`var(--mantine-color-${x.color}-6)`} />
                 <Text size="sm" fw={600} mt={4}>{x.label}</Text>
               </UnstyledButton>

@@ -16,7 +16,7 @@ export async function POST(req: Request) {
   if (state !== "demo" && state !== "done") return Response.json({ error: "state must be demo or done" }, { status: 400 });
   setSettings({ onboarded: state, ...(state === "demo" ? { mode: "demo" } : {}) });
   // picking a scenario on the welcome page loads that demo
-  if (state === "demo" && (demo_set === "love" || demo_set === "night" || demo_set === "life") && getSetting("demo_set") !== demo_set) {
+  if (state === "demo" && (demo_set === "love" || demo_set === "work" || demo_set === "night") && getSetting("demo_set") !== demo_set) {
     setSettings({ demo_set }); setDemoSet(demo_set);
   }
   return Response.json({ ok: true });

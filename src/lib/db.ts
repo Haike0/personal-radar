@@ -40,7 +40,7 @@ CREATE INDEX IF NOT EXISTS idx_evidence_item ON evidence(item_id, ord);
 
 const DEFAULT_SETTINGS: Record<string, string> = {
   mode: "demo",
-  demo_set: "life",
+  demo_set: "love",
   quiet_start: "23:00",
   quiet_end: "08:00",
   digest_time: "09:00",
@@ -106,7 +106,7 @@ export function db(): DatabaseSync {
   const ins = d.prepare("INSERT OR IGNORE INTO settings(key,value) VALUES(?,?)");
   for (const [k, v] of Object.entries(DEFAULT_SETTINGS)) ins.run(k, v);
   const has = d.prepare("SELECT 1 FROM items WHERE mode='demo' LIMIT 1").get();
-  if (!has) seedDemo(d, ((d.prepare("SELECT value FROM settings WHERE key='demo_set'").get() as { value?: string } | undefined)?.value ?? "life") as DemoSet);
+  if (!has) seedDemo(d, ((d.prepare("SELECT value FROM settings WHERE key='demo_set'").get() as { value?: string } | undefined)?.value ?? "love") as DemoSet);
   try {
     fs.chmodSync(DB_PATH, 0o600);
   } catch {}

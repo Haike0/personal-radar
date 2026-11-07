@@ -1,6 +1,6 @@
 "use client";
-import { Badge, Button, Group, Paper, SimpleGrid, Stack, Text, ThemeIcon, Title, UnstyledButton } from "@mantine/core";
-import { IconBell, IconBriefcase, IconGlassFull, IconHeart, IconLock, IconMessageCircle, IconRadar2, IconSchool } from "@tabler/icons-react";
+import { Badge, Button, Group, Paper, Stack, Text, ThemeIcon, Title, UnstyledButton } from "@mantine/core";
+import { IconBell, IconBriefcase, IconGlassFull, IconHeart, IconLock, IconMessageCircle, IconRadar2 } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { post, refreshAll } from "@/lib/client";
@@ -13,10 +13,9 @@ const POINTS = [
 
 // Demo scenarios. Each one is a fictional circle of people, so you can see what Radar does in that part of life.
 const SCENES = [
-  { id: "love", icon: IconHeart, color: "pink", title: "恋人与朋友", text: "女朋友、朋友、家人、上司：约会、她的喜好、答应过的事、生日", ready: true },
-  { id: "night", icon: IconGlassFull, color: "violet", title: "夜场接客", text: "常客的喜好、来店和同伴、生日、上次聊到哪", ready: true },
-  { id: "student", icon: IconSchool, color: "blue", title: "学生", text: "老师、学生会、研讨课、社团：截止日期和分工", ready: false },
-  { id: "work", icon: IconBriefcase, color: "cyan", title: "职场", text: "同事、上司、客户：会议、交付、谁答应了什么", ready: false },
+  { id: "love", icon: IconHeart, color: "pink", title: "恋人与朋友", text: "女朋友、朋友、家人：约会和见家长、她的喜好、你答应过的事、生日" },
+  { id: "work", icon: IconBriefcase, color: "cyan", title: "职场", text: "上司、同事、客户：截止日期、改了的会、谁答应了什么、尾款" },
+  { id: "night", icon: IconGlassFull, color: "violet", title: "夜场接客", text: "常客的喜好、来店和同伴、生日、上次聊到哪" },
 ];
 
 /** First screen: what this is, pick a scenario to look around, or start with your own chats. */
@@ -43,21 +42,21 @@ export default function Welcome() {
 
       <Stack gap="sm">
         <Text fw={650}>先看看它怎么用：选一个场景</Text>
-        <SimpleGrid cols={2} spacing="sm">
+        <Stack gap="sm">
           {SCENES.map((s) => (
-            <UnstyledButton key={s.id} disabled={!s.ready || !!busy} onClick={() => demo(s.id)} style={{ opacity: s.ready ? 1 : 0.55 }}>
-              <Paper className={`surface scene-card${s.ready ? " pressable" : ""}`} radius="xl" p="md" h="100%">
-                <Group justify="space-between" align="flex-start" wrap="nowrap">
-                  <ThemeIcon size={34} radius="md" variant="light" color={s.color}><s.icon size={19} /></ThemeIcon>
-                  {!s.ready && <Badge size="xs" variant="light" color="gray">制作中</Badge>}
-                  {busy === s.id && <Badge size="xs" variant="light">加载中</Badge>}
+            <UnstyledButton key={s.id} disabled={!!busy} onClick={() => demo(s.id)}>
+              <Paper className="surface scene-card pressable" radius="xl" p="md">
+                <Group gap="md" wrap="nowrap" align="flex-start">
+                  <ThemeIcon size={40} radius="md" variant="light" color={s.color} style={{ flex: "none" }}><s.icon size={22} /></ThemeIcon>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <Group gap={6}><Text fw={650}>{s.title}</Text>{busy === s.id && <Badge size="xs" variant="light">加载中</Badge>}</Group>
+                    <Text size="xs" className="faint" mt={2} lh={1.5}>{s.text}</Text>
+                  </div>
                 </Group>
-                <Text fw={650} mt="sm">{s.title}</Text>
-                <Text size="xs" className="faint" mt={2} lh={1.5}>{s.text}</Text>
               </Paper>
             </UnstyledButton>
           ))}
-        </SimpleGrid>
+        </Stack>
         <Text size="xs" className="faint">演示里的人和聊天全是编的。</Text>
       </Stack>
 

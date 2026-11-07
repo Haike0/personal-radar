@@ -21,6 +21,7 @@ type Analysis = { summary: string; sections: { title: string; points: { text: st
 const SETS: Record<string, { platform: string; me: string; memo: string | null; tag: string }> = {
   night: { platform: "line", me: "あかり", memo: "席後メモ", tag: "客人" },
   love: { platform: "weixin", me: "周远", memo: null, tag: "朋友" },
+  work: { platform: "weixin", me: "周远", memo: null, tag: "同事" },
 };
 let SET = "night";
 const SRC = (set = SET) => path.join(process.env.RADAR_DEMO_DIR ?? path.join(process.cwd(), "demo"), set);
@@ -30,7 +31,7 @@ export function nightAvailable(set = "night") {
   return fs.existsSync(path.join(SRC(set), "chats.json"));
 }
 
-/** Remove the demo chat dbs (when the 生活 demo set is shown instead). */
+/** Remove the demo chat dbs (when a scenario has no files). */
 export function clearNightChats() {
   closeDemo();
   try { for (const f of fs.readdirSync(demoDir())) if (/^demo_.*\.db(-wal|-shm)?$/.test(f)) fs.rmSync(path.join(demoDir(), f)); } catch {}
