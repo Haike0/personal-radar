@@ -12,7 +12,7 @@ import { plan, read, write, writeState } from "../../scripts/lib/import-core.mjs
 
 // Two ways chats come in by themselves, so nobody has to drag files every week:
 //  1. connected platforms (Beeper, ChatLab, Pull sources) are synced every N hours;
-//  2. a folder is watched: point your exporter (WeFlow, QQ Chat Exporter, a phone's "save to Files"…) at it,
+//  2. a folder is watched: point an exporter (or a phone's "save to Files") at it,
 //     and every new export dropped there is imported. Files are read, never moved or changed.
 
 export const expand = (p: string) => (p.startsWith("~") ? path.join(os.homedir(), p.slice(1)) : p);

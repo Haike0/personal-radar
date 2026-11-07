@@ -1,10 +1,11 @@
 "use client";
-import { ActionIcon, Box, Button, Collapse, CopyButton, Group, Menu, Modal, Paper, ScrollArea, Stack, Text, Textarea, TextInput, Title, Tooltip, UnstyledButton } from "@mantine/core";
+import { ActionIcon, Box, Button, Collapse, CopyButton, Group, Menu, Modal, Paper, ScrollArea, SimpleGrid, Stack, Text, Textarea, TextInput, Title, Tooltip, UnstyledButton } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconArrowUp, IconCheck, IconChevronDown, IconChevronRight, IconCopy, IconDots, IconEye, IconHistory, IconLock, IconPlus, IconSearch, IconSparkles, IconTrash, IconWand } from "@tabler/icons-react";
 import Link from "next/link";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
+import { PersonPicker } from "@/components/PersonPicker";
 import { ASSISTANTS, assistantOf, briefFor, DAY_QUICK, ITEM_QUICK, quickFor } from "@/lib/ai/assistants";
 import { scopeKey as keyOf, scopeLabel, scopePerson, type Citation, type CompanionContext, type Proposal, type StreamEvent } from "@/lib/ai/types";
 import { BottomSheet } from "./BottomSheet";
@@ -32,7 +33,8 @@ export function AiChat({ context, layout, seedPrompt, onNavigate, picker }: {
   const [pick, setPick] = useState<string | null>(null);
   // `over`: a scope chosen inside the chat (widened from the scope menu, or restored from a past conversation)
   const [over, setOver] = useState<CompanionContext | null>(null);
-  const ctx: CompanionContext = over ?? (picker
+  const canPick = picker || context.page === "home" || context.page === "companion";
+  const ctx: CompanionContext = over ?? (canPick
     ? pick ? { page: "person", personKey: pick, personName: privates.find((p) => p.key === pick)?.name } : { page: "home" }
     : context);
   const personKey = scopePerson(ctx);
@@ -150,14 +152,23 @@ export function AiChat({ context, layout, seedPrompt, onNavigate, picker }: {
     </Stack>
   );
 
+  // four assistants up front (like ChatLab's selector); the rest behind 更多
+  const [moreA, setMoreA] = useState(false);
+  const shown = ASSISTANTS.filter((x) => x.pinned || moreA || x.id === assistant);
   const pills = (
-    <ScrollArea type="never" w="100%">
-      <Group gap={6} wrap="nowrap" justify={desktop ? "center" : "flex-start"} px={2} py={2}>
-        {ASSISTANTS.map((x) => (
-          <UnstyledButton key={x.id} onClick={() => setAssistant(x.id)} className={`ai-pill${x.id === assistant ? " is-active" : ""}`}>{x.name}</UnstyledButton>
+    <Stack gap={8} w="100%" maw={560}>
+      <SimpleGrid cols={2} spacing={8}>
+        {shown.map((x) => (
+          <UnstyledButton key={x.id} onClick={() => setAssistant(x.id)} className={`assistant-card${x.id === assistant ? " is-active" : ""}`}>
+            <Text size="sm" fw={600}>{x.name}</Text>
+            <Text size="xs" className="faint" truncate>{x.desc}</Text>
+          </UnstyledButton>
         ))}
-      </Group>
-    </ScrollArea>
+      </SimpleGrid>
+      <UnstyledButton onClick={() => setMoreA((m) => !m)} style={{ alignSelf: "center" }}>
+        <Text size="xs" c="radar">{moreA ? "收起" : `更多助手（${ASSISTANTS.filter((x) => !x.pinned).length}）`}</Text>
+      </UnstyledButton>
+    </Stack>
   );
 
   const empty = (
@@ -226,30 +237,20 @@ export function AiChat({ context, layout, seedPrompt, onNavigate, picker }: {
   );
   const header = (
     <Group justify="space-between" wrap="nowrap" gap={6} pb={8}>
-      <Box style={{ flex: 1, minWidth: 0 }}>{picker ? null : scopeChip}</Box>
-      {msgs.length > 0 && <ActionIcon variant="subtle" onClick={fresh} aria-label="新对话"><IconPlus size={18} /></ActionIcon>}
+      <Box style={{ flex: 1, minWidth: 0 }}>{canPick && !over ? <PersonPicker people={privates} value={pick} onChange={setPick} /> : scopeChip}</Box>
+      {!sidebar && <Button size="compact-sm" variant="subtle" color="gray" leftSection={<IconHistory size={15} />} onClick={() => setHistoryOpen(true)}>历史</Button>}
+      <Button size="compact-sm" variant="light" leftSection={<IconPlus size={15} />} onClick={fresh}>新对话</Button>
       <Menu position="bottom-end" withinPortal zIndex={600}>
-        <Menu.Target><ActionIcon variant="subtle" aria-label="更多"><IconDots size={18} /></ActionIcon></Menu.Target>
+        <Menu.Target><ActionIcon variant="subtle" color="gray" aria-label="更多"><IconDots size={18} /></ActionIcon></Menu.Target>
         <Menu.Dropdown>
           <Menu.Label>{a.name} · {model}</Menu.Label>
-          {!sidebar && <Menu.Item leftSection={<IconHistory size={14} />} onClick={() => setHistoryOpen(true)}>历史对话</Menu.Item>}
-          <Menu.Item leftSection={<IconPlus size={14} />} onClick={fresh}>新对话</Menu.Item>
           <Menu.Item leftSection={<IconEye size={14} />} onClick={showPreview}>看看这次会发出去什么</Menu.Item>
           {msgs.length > 0 && <Menu.Divider />}
+          {msgs.length > 0 && <Menu.Label>换个助手</Menu.Label>}
           {msgs.length > 0 && ASSISTANTS.map((x) => <Menu.Item key={x.id} onClick={() => setAssistant(x.id)} leftSection={x.id === assistant ? <IconCheck size={14} /> : <span style={{ width: 14 }} />}>{x.name}</Menu.Item>)}
         </Menu.Dropdown>
       </Menu>
     </Group>
-  );
-
-  const scopePicker = picker && (
-    <ScrollArea type="never" mb="sm">
-      <Group gap={6} wrap="nowrap">
-        {[{ key: null as string | null, name: "全部" }, ...privates.map((p) => ({ key: p.key as string | null, name: p.name }))].map((p) => (
-          <UnstyledButton key={p.key ?? "all"} onClick={() => setPick(p.key)} className={`ai-pill${pick === p.key ? " is-active" : ""}`}>{p.name}</UnstyledButton>
-        ))}
-      </Group>
-    </ScrollArea>
   );
 
   const height = layout === "drawer" ? "100%" : layout === "embedded" ? (desktop ? "min(720px, calc(100dvh - 160px))" : "calc(100dvh - var(--tabbar-h) - var(--safe-bottom) - 140px)") : (desktop ? "calc(100dvh - 150px)" : "calc(100dvh - var(--tabbar-h) - var(--safe-bottom) - 150px)");
@@ -264,7 +265,6 @@ export function AiChat({ context, layout, seedPrompt, onNavigate, picker }: {
   return (
     <>
       {layout !== "drawer" && <span className="ai-inline" hidden />}
-      {scopePicker}
       {sidebar ? (
         <Box className="ai-shell" style={{ height }}>
           <Paper className="surface ai-side" p="sm"><ScrollArea h="100%" type="never">{list}</ScrollArea></Paper>

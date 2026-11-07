@@ -3,7 +3,7 @@
 //
 //   npm run import -- <file> [more files…] [--me "your name in the chat"] [--name "display name"] [--date-order dmy|mdy] [--dry-run]
 //
-// Formats: LINE .txt · WhatsApp .txt/.zip · Telegram result.json · Discord (DiscordChatExporter) JSON ·
+// Formats: LINE .txt · WhatsApp .txt/.zip · Telegram result.json · Discord JSON ·
 //          Instagram / Messenger message_N.json · ChatLab JSON / JSONL. Re-importing only adds new messages.
 import fs from "node:fs";
 import path from "node:path";

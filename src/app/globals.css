@@ -267,3 +267,8 @@ a.apl-tl-title:hover { text-decoration: underline; text-underline-offset: 3px; }
 .heat-cell { flex: 1; aspect-ratio: 1; min-width: 0; border-radius: 3px; background: var(--mantine-color-radar-6); }
 .type-bar { height: 8px; border-radius: 4px; background: var(--mantine-color-radar-5); }
 .report-entry { display: block; padding: 14px 16px; border-radius: var(--mantine-radius-xl); color: inherit; text-decoration: none; }
+.who-btn { display: inline-flex; align-items: center; gap: 8px; max-width: 100%; padding: 5px 10px 5px 6px; border-radius: 999px; background: light-dark(#fff, rgba(255,255,255,.06)); border: 1px solid light-dark(rgba(20,24,39,.08), rgba(255,255,255,.08)); }
+.who-all { width: 24px; height: 24px; border-radius: 7px; display: inline-grid; place-items: center; flex: none; color: var(--mantine-color-radar-7); background: light-dark(rgba(0,168,145,.12), rgba(52,204,182,.18)); }
+.who-all.big { width: 40px; height: 40px; border-radius: 10px; }
+.assistant-card { display: block; text-align: left; padding: 12px 14px; border-radius: 16px; background: light-dark(#fff, rgba(255,255,255,.05)); border: 1px solid light-dark(rgba(20,24,39,.07), rgba(255,255,255,.07)); min-width: 0; }
+.assistant-card.is-active { border-color: var(--mantine-color-radar-5); background: light-dark(rgba(0,168,145,.06), rgba(52,204,182,.1)); }

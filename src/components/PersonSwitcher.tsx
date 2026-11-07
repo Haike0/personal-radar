@@ -1,9 +1,10 @@
 "use client";
 import Link from "next/link";
-import { Avatar, Badge, Drawer, Group, Skeleton, Text, UnstyledButton } from "@mantine/core";
+import { Avatar, Badge, Drawer, Group, ScrollArea, Skeleton, Text, UnstyledButton } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconChevronRight, IconUsers } from "@tabler/icons-react";
 import { useMemo, useState, useSyncExternalStore, type ReactNode } from "react";
+import { tagColor } from "@/components/TagEditor";
 import { useApi } from "@/lib/client";
 import { pickFocus } from "@/lib/focus";
 import { initial, WEEKDAYS } from "@/lib/format";
@@ -52,6 +53,7 @@ function Face({ p, size, className }: { p: Person; size: number; className?: str
 /** Avatar + name of the person being shown, with a button on the right that lists every contact. */
 export function PersonBar({ person, contacts, pick, loading, subtitle }: ReturnType<typeof useCurrentPerson> & { subtitle?: ReactNode }) {
   const [open, setOpen] = useState(false);
+  const [tag, setTag] = useState<string | null>(null);
   const desktop = useMediaQuery("(min-width: 48em)", false);
   // today's focus count per person, for the red badge in the list (same rule as the Today page)
   const { data: all } = useApi<{ items: Item[] }>(open ? "/api/items" : null);
@@ -61,6 +63,8 @@ export function PersonBar({ person, contacts, pick, loading, subtitle }: ReturnT
     return new Map([...by].map(([k, list]) => [k, pickFocus(list).length]));
   }, [all]);
 
+  const tags = [...new Set(contacts.flatMap((p) => p.tags ?? []))];
+  const shown = tag ? contacts.filter((p) => p.tags?.includes(tag)) : contacts;
   if (loading) return <Skeleton h={64} radius="xl" />;
   if (!person) return <Text className="faint">还没有联系人</Text>;
   return (
@@ -79,15 +83,29 @@ export function PersonBar({ person, contacts, pick, loading, subtitle }: ReturnT
 
       <Drawer opened={open} onClose={() => setOpen(false)} position={desktop ? "right" : "bottom"} size={desktop ? 380 : "auto"}
         title={<Text fw={650}>联系人</Text>} styles={{ body: { padding: "0 0 calc(var(--safe-bottom) + 12px)" }, content: desktop ? undefined : { height: "auto", maxHeight: "80dvh" } }}>
-        <div className="contact-index">私聊 · {contacts.length}</div>
-        {contacts.map((p) => {
+        {tags.length > 0 && (
+          <ScrollArea type="never" px="md" pb={6}>
+            <Group gap={6} wrap="nowrap">
+              {[null, ...tags].map((t) => (
+                <UnstyledButton key={t ?? "all"} onClick={() => setTag(t)} className={`ai-pill${tag === t ? " is-active" : ""}`}>
+                  {t ?? "全部"} <Text span size="xs" className="faint">{t ? contacts.filter((p) => p.tags?.includes(t)).length : contacts.length}</Text>
+                </UnstyledButton>
+              ))}
+            </Group>
+          </ScrollArea>
+        )}
+        <div className="contact-index">{tag ?? "私聊"} · {shown.length}</div>
+        {shown.map((p) => {
           const n = focusCount.get(p.key) ?? 0;
           return (
             <UnstyledButton key={p.key} className="contact-row" data-active={p.key === person.key || undefined}
               onClick={() => { pick(p.key); setOpen(false); }}>
               <Face p={p} size={44} />
               <div className="contact-body">
-                <Text fw={550} truncate style={{ flex: 1, minWidth: 0 }}>{p.name}</Text>
+                <Group gap={6} wrap="nowrap" style={{ flex: 1, minWidth: 0 }}>
+                  <Text fw={550} truncate>{p.name}</Text>
+                  {p.tags?.map((t) => <Badge key={t} size="xs" variant="light" color={tagColor(t)} radius="sm" tt="none" style={{ flex: "none" }}>{t}</Badge>)}
+                </Group>
                 <div className="contact-side">
                   <Text size="xs" className="faint tabular">{shortWhen(p.lastTs)}</Text>
                   {n > 0 && <Badge size="sm" color="red" variant="filled" circle aria-label={`今日焦点 ${n} 件`}>{n}</Badge>}

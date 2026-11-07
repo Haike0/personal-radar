@@ -44,7 +44,7 @@ export function WatchFolder() {
           ))}
         </Stack>
       )}
-      <Text size="xs" className="faint" lh={1.6}>适合能定时导出的工具（QQ Chat Exporter、WeFlow），也可以把手机导出的文件存到这个文件夹（比如用 iCloud 云盘同步过来）。原文件不会被移动或修改。分不出「谁是你」的文件会标「需处理」，到上面拖进来选一下就行。</Text>
+      <Text size="xs" className="faint" lh={1.6}>适合能定时导出的工具，也可以把手机导出的文件存到这个文件夹（比如用 iCloud 云盘同步过来）。原文件不会被移动或修改。分不出「谁是你」的文件会标「需处理」，到上面拖进来选一下就行。</Text>
     </Stack>
   );
 }

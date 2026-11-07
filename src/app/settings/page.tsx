@@ -1,8 +1,8 @@
 "use client";
-import { Badge, Button, Group, Paper, SegmentedControl, SimpleGrid, Skeleton, Stack, Text, Title } from "@mantine/core";
+import { Badge, Button, Group, Paper, SegmentedControl, SimpleGrid, Skeleton, Stack, Text, Title, UnstyledButton } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import {
-  IconBell, IconBrain, IconDatabase, IconInfoCircle, IconLock, IconMessages, IconPalette, IconPlayerPlay, IconPlugConnected, IconSparkles, IconWand,
+  IconBell, IconBrain, IconDatabase, IconGlassFull, IconHeart, IconLayoutList, IconInfoCircle, IconLock, IconMessages, IconPalette, IconPlayerPlay, IconPlugConnected, IconSparkles, IconWand,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { Row, SettingsGroup, useSettings } from "@/components/settings/kit";
@@ -14,6 +14,11 @@ import type { SyncStatus } from "@/lib/sync";
 type Data = { settings: Record<string, string>; sync: SyncStatus; deepseekKey: boolean; chatModel: string; aiUsage?: { calls: number; usd: number } };
 type Chats = { status: { ok: boolean; sessions: number } };
 type Push = { devices: number };
+const SCENES = [
+  { id: "love", label: "恋人与朋友", icon: IconHeart, color: "pink" },
+  { id: "night", label: "夜场", icon: IconGlassFull, color: "violet" },
+  { id: "life", label: "简单示例", icon: IconLayoutList, color: "gray" },
+];
 
 /** One glanceable number that opens its page. */
 function Stat({ href, label, value, sub, warn }: { href: string; label: string; value: string; sub?: string; warn?: boolean }) {
@@ -70,12 +75,25 @@ export default function SettingsPage() {
         </Group>
       </Paper>
 
+      <SettingsGroup title="显示哪套数据">
+        <Row icon={IconSparkles} color="yellow" label={s.mode === "demo" ? "演示数据" : "我的数据"} value={s.mode === "demo" ? "人和聊天全是编的" : n ? `${n} 个聊天` : "还没有导入"} right={
+          <SegmentedControl size="xs" radius="xl" value={s.mode} onChange={(v) => save({ mode: v }, v === "real" ? "已切换到真实数据" : "已切换到演示数据")}
+            data={[{ value: "demo", label: "演示" }, { value: "real", label: "真实" }]} />} />
+        {s.mode === "demo" && (
+          <SimpleGrid cols={3} spacing={8} className="set-pad">
+            {SCENES.map((x) => (
+              <UnstyledButton key={x.id} onClick={() => save({ demo_set: x.id }, `已换成「${x.label}」`)} className={`assistant-card${(s.demo_set || "life") === x.id ? " is-active" : ""}`}>
+                <x.icon size={18} color={`var(--mantine-color-${x.color}-6)`} />
+                <Text size="sm" fw={600} mt={4}>{x.label}</Text>
+              </UnstyledButton>
+            ))}
+          </SimpleGrid>
+        )}
+      </SettingsGroup>
+
       <SettingsGroup title="数据">
         <Row icon={IconMessages} label="聊天来源" value="聊天软件 · 聚合平台 · 自动导入" href="/settings/sources" />
         <Row icon={IconDatabase} color="gray" label="数据管理" value="数据健康 · 导出 · 删除" href="/settings/data" />
-        <Row icon={IconSparkles} color="yellow" label="显示哪套数据" right={
-          <SegmentedControl size="xs" radius="xl" value={s.mode} onChange={(v) => save({ mode: v }, v === "real" ? "已切换到真实数据" : "已切换到演示数据")}
-            data={[{ value: "demo", label: "演示" }, { value: "real", label: "真实" }]} />} />
       </SettingsGroup>
 
       <SettingsGroup title="AI">

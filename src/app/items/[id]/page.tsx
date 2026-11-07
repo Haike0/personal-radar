@@ -1,4 +1,5 @@
 "use client";
+import { useBack } from "@/lib/nav";
 import {
   Alert, Badge, Box, Button, Divider, Group, Menu, Modal, Paper, Select, SimpleGrid, Skeleton, Stack, Text, TextInput, Textarea, Timeline, Title, UnstyledButton,
 } from "@mantine/core";
@@ -9,7 +10,7 @@ import {
   IconHistory, IconMessage2, IconQuote, IconRefresh, IconSparkles,
 } from "@tabler/icons-react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useState } from "react";
 import { act, CAT_COLOR } from "@/components/ItemCard";
 import { ITEM_QUICK } from "@/lib/ai/assistants";
@@ -31,7 +32,7 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
 
 export default function ItemPage() {
   const { id } = useParams<{ id: string }>();
-  const router = useRouter();
+  const back = useBack("/");
   const { data: it, error, loading } = useApi<ItemDetail>(`/api/items/${id}`);
   const { openCompanion } = useCompanion();
   const [ctxOpen, setCtxOpen] = useState(false);
@@ -50,7 +51,7 @@ export default function ItemPage() {
   return (
     <Stack gap="lg" className="fade-in">
       <Group justify="space-between">
-        <Button variant="subtle" color="gray" leftSection={<IconArrowLeft size={18} />} px={6} onClick={() => (history.length > 1 ? router.back() : router.push("/"))}>返回</Button>
+        <Button variant="subtle" color="gray" leftSection={<IconArrowLeft size={18} />} px={6} onClick={back}>返回</Button>
         <Menu position="bottom-end" radius="lg" shadow="md" width={200}>
           <Menu.Target><Button variant="subtle" color="gray" px={8}><IconDots size={20} /></Button></Menu.Target>
           <Menu.Dropdown>

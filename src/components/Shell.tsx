@@ -5,6 +5,7 @@ import { IconCalendarEvent, IconRadar2, IconSettings, IconSparkles, IconUsers } 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { registerSW } from "@/lib/push-client";
+import { recordPath } from "@/lib/nav";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { CompanionContext } from "@/lib/ai/types";
 import { Companion } from "./Companion";
@@ -41,6 +42,7 @@ export function Shell({ children }: { children: ReactNode }) {
   const [override, setOverride] = useState<CompanionContext | null>(null);
   const openCompanion = useCallback((prompt?: string, context?: CompanionContext) => { setOverride(context ?? null); setSeed(prompt); setOpen(true); }, []);
   const value = useMemo(() => ({ openCompanion, setPageContext, pageContext }), [openCompanion, pageContext]);
+  useEffect(() => { recordPath(path); }, [path]);
   const active = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
   const onCompanionPage = path.startsWith("/companion");
   // first-run pages are a focused flow: no sidebar, no bottom tab bar, no AI button

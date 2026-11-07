@@ -2,6 +2,7 @@
 import { Badge, Box, Button, Group, Paper, Progress, SegmentedControl, Skeleton, Stack, Text, Title } from "@mantine/core";
 import { IconArrowLeft, IconChecks } from "@tabler/icons-react";
 import Link from "next/link";
+import { useBack } from "@/lib/nav";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useMemo, useState } from "react";
 import { ReviewButtons } from "@/components/ItemCard";
@@ -36,6 +37,7 @@ function Rows({ list }: { list: Item[] }) {
 }
 
 function Review() {
+  const back = useBack("/");
   const person = useSearchParams().get("person");
   usePageContext({ page: "home" });
   const { data, loading } = useApi<{ items: Item[] }>(`/api/items${person ? `?person=${encodeURIComponent(person)}` : ""}`);
@@ -50,7 +52,7 @@ function Review() {
 
   return (
     <Stack gap="lg" className="fade-in">
-      <Button component={Link} href="/" variant="subtle" color="gray" leftSection={<IconArrowLeft size={18} />} px={6} w="fit-content">今天</Button>
+      <Button onClick={back} variant="subtle" color="gray" leftSection={<IconArrowLeft size={18} />} px={6} w="fit-content">今天</Button>
       <div>
         <Title order={1} fz={26}>核对 AI 整理的记录{person && name ? ` · ${name}` : ""}</Title>
         <Text size="sm" className="muted" mt={4} lh={1.6}>

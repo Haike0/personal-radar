@@ -75,7 +75,7 @@ const DEFAULT_SETTINGS: Record<string, string> = {
   beeper_api_url: "http://localhost:23373",
   beeper_api_token: "",
   beeper_chats: "[]",
-  // any tool that speaks the ChatLab Pull protocol (e.g. douyin-chat-export)
+  // any tool that speaks the ChatLab Pull protocol
   pull_api_url: "",
   pull_api_token: "",
   pull_sessions: "[]",

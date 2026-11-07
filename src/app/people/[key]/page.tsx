@@ -12,6 +12,7 @@ import { ChatMemory } from "@/components/ChatMemory";
 import { TagEditor } from "@/components/TagEditor";
 import { useCompanion, usePageContext } from "@/components/Shell";
 import { useApi } from "@/lib/client";
+import { useBack } from "@/lib/nav";
 import { dayDiff, initial, relDate, sinceText } from "@/lib/format";
 import { isKnowledge, STATUS_LABEL, type Item, type PersonProfile } from "@/lib/types";
 
@@ -54,6 +55,7 @@ export default function PersonPage() {
   const { key: raw } = useParams<{ key: string }>();
   const key = decodeURIComponent(raw);
   const router = useRouter();
+  const back = useBack("/people");
   const { openCompanion } = useCompanion();
   const { pick } = useCurrentPerson(); // "在今天里处理" switches Today to this person
   const { data: p, loading, error } = useApi<PersonProfile>(`/api/people/${encodeURIComponent(key)}`);
@@ -81,7 +83,7 @@ export default function PersonPage() {
 
   return (
     <Stack gap="lg" className="fade-in">
-      <Button variant="subtle" color="gray" leftSection={<IconArrowLeft size={18} />} px={6} w="fit-content" onClick={() => router.push("/people")}>人物</Button>
+      <Button variant="subtle" color="gray" leftSection={<IconArrowLeft size={18} />} px={6} w="fit-content" onClick={back}>返回</Button>
 
       {/* hero */}
       <Paper className="surface" radius="xl" style={{ overflow: "hidden" }}>

@@ -76,7 +76,7 @@ test("Telegram single chat and full account export", () => {
   assert.equal(plan(all[1], {}, tmp()).ok, true); // owner known from personal_information
 });
 
-test("Discord DM (DiscordChatExporter)", () => {
+test("Discord DM (JSON export)", () => {
   const c = load("discord-dm.json").chats[0];
   assert.equal(c.name, "nova");
   assert.equal(c.messages[2].type, T.image);
@@ -117,7 +117,7 @@ test("unknown files get a readable error", () => {
   assert.throws(() => read(Buffer.from('{"a":1}'), "x.json"), /认不出这个 JSON/);
 });
 
-test("QQ Chat Exporter JSON: owner from selfUid, elements text, image type", () => {
+test("QQ export JSON: owner from selfUid, elements text, image type", () => {
   const { format, chats } = load("qce-private.json");
   assert.equal(format, "qq");
   const c = chats[0];

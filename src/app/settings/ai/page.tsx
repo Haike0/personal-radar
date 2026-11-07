@@ -2,7 +2,7 @@
 import { ActionIcon, Anchor, Autocomplete, Badge, Button, Collapse, Group, Modal, Paper, PasswordInput, SegmentedControl, Select, Skeleton, Stack, TagsInput, Text, TextInput, UnstyledButton } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconChevronDown, IconChevronLeft, IconPencil, IconPlus, IconTrash } from "@tabler/icons-react";
-import Link from "next/link";
+import { useBack } from "@/lib/nav";
 import { useState } from "react";
 import { usePageContext } from "@/components/Shell";
 import { post, refreshAll, useApi } from "@/lib/client";
@@ -140,6 +140,7 @@ function ModelPick({ label, hint, role, data }: { label: string; hint: string; r
 }
 
 export default function AiSettingsPage() {
+  const goBack = useBack("/settings");
   usePageContext({ page: "settings" });
   const { data } = useApi<Data>("/api/ai/services");
   const { data: st } = useApi<Settings>("/api/settings");
@@ -157,7 +158,7 @@ export default function AiSettingsPage() {
 
   return (
     <div className="fade-in">
-      <Link href="/settings" className="back-link"><IconChevronLeft size={16} />设置</Link>
+      <button type="button" onClick={goBack} className="back-link" style={{ background: "none", border: 0, padding: 0, cursor: "pointer" }}><IconChevronLeft size={16} />返回</button>
       <h1 className="page-title">AI 设置</h1>
       <div className="ai-set">
         <nav className="ai-set-nav" aria-label="AI 设置分区">

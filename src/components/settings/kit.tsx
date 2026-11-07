@@ -6,14 +6,16 @@ import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import { usePageContext } from "@/components/Shell";
 import { post, refreshAll, useApi } from "@/lib/client";
+import { useBack } from "@/lib/nav";
 
 /** A settings sub-page: back to 设置, a title, one short line, then the content. */
 export function SubPage({ title, intro, children, back = "/settings", backLabel = "设置" }: { title: string; intro?: string; children: ReactNode; back?: string; backLabel?: string }) {
   usePageContext({ page: "settings" });
+  const goBack = useBack(back);
   return (
     <Stack gap="lg" className="fade-in">
       <div>
-        <UnstyledButton component={Link} href={back} className="back-link"><IconChevronLeft size={18} />{backLabel}</UnstyledButton>
+        <UnstyledButton onClick={goBack} className="back-link"><IconChevronLeft size={18} />{backLabel}</UnstyledButton>
         <Title order={1} fz={26} mt={6}>{title}</Title>
         {intro && <Text size="sm" className="muted" mt={4}>{intro}</Text>}
       </div>

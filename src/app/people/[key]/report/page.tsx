@@ -1,11 +1,11 @@
 "use client";
 import { Badge, Group, Paper, SimpleGrid, Skeleton, Stack, Text, Title, Tooltip, UnstyledButton } from "@mantine/core";
 import { IconChevronLeft } from "@tabler/icons-react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ChatStats } from "@/components/ChatStats";
 import { usePageContext } from "@/components/Shell";
 import { useApi } from "@/lib/client";
+import { useBack } from "@/lib/nav";
 
 type W = { w: string; c: number };
 type Report = {
@@ -35,6 +35,7 @@ export default function ReportPage() {
   const { data: prof } = useApi<{ name: string }>(`/api/people/${encodeURIComponent(key)}`);
   const { data } = useApi<{ report: Report | null }>(`/api/people/${encodeURIComponent(key)}/report`);
   const name = (prof?.name ?? "").replace(/^演示·/, "");
+  const back = useBack(`/people/${encodeURIComponent(key)}`);
   usePageContext({ page: "person", personKey: key, personName: name });
   const r = data?.report;
   const maxHeat = r ? Math.max(1, ...r.heat.flat()) : 1;
@@ -44,7 +45,7 @@ export default function ReportPage() {
   return (
     <Stack gap="lg" className="fade-in">
       <div>
-        <UnstyledButton component={Link} href={`/people/${encodeURIComponent(key)}`} className="back-link"><IconChevronLeft size={18} />{name || "返回"}</UnstyledButton>
+        <UnstyledButton onClick={back} className="back-link"><IconChevronLeft size={18} />{name || "返回"}</UnstyledButton>
         <Title order={1} fz={26} mt={6}>聊天分析</Title>
         <Text size="sm" className="muted" mt={4}>只用这台电脑上的聊天记录算出来，不经过 AI，也不打「好感度」之类的分。</Text>
       </div>

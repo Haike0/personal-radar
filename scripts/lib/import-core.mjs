@@ -18,11 +18,11 @@ export const FORMATS = [
   { id: "line", label: "LINE", hint: "トーク履歴を送信 / 发送聊天记录（.txt）" },
   { id: "whatsapp", label: "WhatsApp", hint: "导出聊天 → 不含媒体（.txt 或 .zip）" },
   { id: "telegram", label: "Telegram", hint: "Telegram Desktop → 导出聊天记录 → JSON（result.json）" },
-  { id: "discord", label: "Discord", hint: "DiscordChatExporter → JSON" },
+  { id: "discord", label: "Discord", hint: "JSON 导出" },
   { id: "instagram", label: "Instagram / Messenger", hint: "下载你的信息 → JSON（message_1.json）" },
-  { id: "qq", label: "QQ", hint: "QQ Chat Exporter 的 JSON，或 QQ 自带「导出消息记录」的 .txt" },
+  { id: "qq", label: "QQ", hint: "旧版 QQ「导出消息记录」的 .txt，或常见的 QQ 导出 JSON" },
   { id: "googlechat", label: "Google Chat", hint: "Google Takeout 只选 Google Chat（.zip）" },
-  { id: "chatlab", label: "ChatLab JSON / JSONL", hint: "ChatLab Format 0.0.x（WeFlow、抖音聊天导出工具都能导出这种格式）" },
+  { id: "chatlab", label: "ChatLab JSON / JSONL", hint: "ChatLab Format 0.0.x（很多开源项目都能导出这种格式）" },
 ];
 
 const p2 = (n) => String(n).padStart(2, "0");
@@ -143,7 +143,7 @@ function parseTelegram(doc) {
   return list.filter((c) => Array.isArray(c.messages) && c.messages.length).map((c) => telegramChat(c, my));
 }
 
-// ---------------------------------------------------------------- Discord (DiscordChatExporter JSON)
+// ---------------------------------------------------------------- Discord (JSON export)
 function parseDiscord(doc) {
   const dm = /^Direct/.test(String(doc.channel?.type ?? ""));
   const messages = (doc.messages ?? []).map((m) => {
@@ -205,7 +205,7 @@ function parseChatLabJsonl(text) {
 }
 
 
-// ---------------------------------------------------------------- QQ Chat Exporter (QCE) JSON
+// ---------------------------------------------------------------- QQ export JSON (chatInfo + messages layout)
 // { chatInfo: { name, type|chatType, selfUid|selfUin, selfName }, statistics: { senders: [...] }, messages: [{ msgId|id|seq, sender: {uid, uin, name} | "id", timestamp, content: string | {text, elements} }] }
 const QCE_KIND = { image: T.image, pic: T.image, face: T.sticker, marketface: T.sticker, sticker: T.sticker, file: T.file, video: T.video, ptt: T.voice, voice: T.voice, record: T.voice, location: T.location };
 function parseQce(doc) {
@@ -322,13 +322,13 @@ export function read(input, filename = "", opts = {}) {
     if (doc.chatInfo && Array.isArray(doc.messages)) return { format: "qq", chats: parseQce(doc) };
     if (Array.isArray(doc.participants) && Array.isArray(doc.messages) && doc.messages.some((m) => "sender_name" in m)) return { format: "instagram", chats: parseInstagram(doc, name) };
     if (doc.chats?.list || (Array.isArray(doc.messages) && "type" in doc && doc.messages.some((m) => "date" in m))) return { format: "telegram", chats: parseTelegram(doc) };
-    throw new Error("认不出这个 JSON：支持 ChatLab（含 WeFlow、抖音导出工具）、QQ Chat Exporter、Telegram、Discord、Instagram / Messenger");
+    throw new Error("认不出这个 JSON：支持 ChatLab 格式、常见的 QQ 导出、Telegram、Discord、Instagram / Messenger");
   }
   if (/^\[LINE\]/.test(head)) return { format: "line", chats: parseLine(text) };
   if (/消息对象[:：]|^消息记录（此消息记录为文本格式/m.test(head)) return { format: "qq", chats: parseQqTxt(text) };
   const wa = parseWhatsApp(text, name, opts);
   if (wa && wa[0].messages.length) return { format: "whatsapp", chats: wa };
-  throw new Error("认不出这个文件的格式。支持：LINE / WhatsApp / QQ 的 .txt，WhatsApp 和 Google Chat 的 .zip，以及 ChatLab、QQ Chat Exporter、Telegram、Discord、Instagram 的 JSON。");
+  throw new Error("认不出这个文件的格式。支持：LINE / WhatsApp / QQ 的 .txt，WhatsApp 和 Google Chat 的 .zip，以及 ChatLab、QQ 导出、Telegram、Discord、Instagram 的 JSON。");
 }
 
 /** Work out who is "me", the conversation id, and how many messages are new. Never writes. */

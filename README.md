@@ -32,13 +32,13 @@ chat export ──drag into Settings → Import──▶ local SQLite (~/.person
 
 | Supported exports | |
 |---|---|
-| WeChat — via [WeFlow](https://github.com/hicccc77/WeFlow) (ChatLab format) | QQ — [QQ Chat Exporter](https://github.com/shuakami/qq-chat-exporter) JSON, or old QQ `.txt` |
+| WeChat — any ChatLab-format file (WeChat has no official export; how you get one is up to you) | QQ — old QQ `.txt` export, or common QQ export JSON |
 | LINE `.txt` (Japanese, Chinese, English UI) | WhatsApp `.txt` or `.zip` (iPhone and Android) |
-| Telegram Desktop `result.json` (one chat or the whole account) | Discord (DiscordChatExporter JSON) |
+| Telegram Desktop `result.json` (one chat or the whole account) | Discord (JSON export) |
 | Instagram / Messenger `message_N.json` | Google Chat (Google Takeout `.zip`) |
-| Douyin — via douyin-chat-export (ChatLab format or Pull) | ChatLab JSON / JSONL |
+| Douyin — ChatLab-format file, or a ChatLab Pull source | ChatLab JSON / JSONL |
 
-**Automatic import:** watch a folder (point your exporter at it and new files come in by themselves), or connect a hub and sync every few hours. Radar ships no decryption or scraping tools; for apps that can't export (like WeChat) it points to third-party tools you run yourself.
+**Automatic import:** watch a folder (point your exporter at it and new files come in by themselves), or connect a hub and sync every few hours. Radar ships no decryption or scraping tools and doesn't recommend any. For apps without an official export (like WeChat), getting your own data out is up to you; Radar reads the ChatLab format that many open-source projects produce.
 
 **One-tap connections (no export files):** if you already use [Beeper](https://www.beeper.com) (one app for WhatsApp, Telegram, Signal, Instagram, iMessage and more) or [ChatLab](https://chatlab.fun), connect it with a token from its local API and pick which chats to bring in. Both are read-only and stay on your computer. *These two connections are new and not yet tested against the real apps — reports welcome.*
 
@@ -127,7 +127,7 @@ npm run dev        # 打开 http://localhost:3210，先看演示数据
 
 点首页的「开始设置」：① 拖入导出的聊天文件，预览后确认；② 选 AI 服务、粘贴密钥、点「测试并保存」；③ 设置发出去前要隐藏什么；④ 先看「会发什么」，再开始整理。全程不用改配置文件。
 
-支持 LINE、WhatsApp（.txt / .zip）、Telegram、Discord、Instagram / Messenger、ChatLab。也可以一键连接 Beeper 或 ChatLab，不用导出文件（这两项还没用真实软件测过）。不会装的话，把 [AGENT_SETUP.md](AGENT_SETUP.md) 交给你的 AI 编程助手，让它帮你装。各 App 怎么导出见 [导出指南](docs/export-guide.md)，遇到问题看 [常见问题](docs/troubleshooting.md)。
+支持 LINE、WhatsApp、Telegram、Instagram / Messenger、Google Chat 的官方导出，QQ 旧版导出，以及 ChatLab 格式（微信等没有官方导出的软件，需要你自己解决，可以参考其他开源项目）。也可以连接 Beeper 或 ChatLab 自动同步（这两项还没用真实软件测过）。不会装的话，把 [AGENT_SETUP.md](AGENT_SETUP.md) 交给你的 AI 编程助手，让它帮你装。各 App 怎么导出见 [导出指南](docs/export-guide.md)，遇到问题看 [常见问题](docs/troubleshooting.md)。
 
 ### 隐私
 - 聊天、整理结果、密钥都在 `~/.personal-radar`，App 只在本机监听。
