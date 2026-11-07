@@ -22,7 +22,8 @@ export const FORMATS = [
   { id: "instagram", label: "Instagram / Messenger", hint: "下载你的信息 → JSON（message_1.json）" },
   { id: "qq", label: "QQ", hint: "旧版 QQ「导出消息记录」的 .txt，或常见的 QQ 导出 JSON" },
   { id: "googlechat", label: "Google Chat", hint: "Google Takeout 只选 Google Chat（.zip）" },
-  { id: "chatlab", label: "ChatLab JSON / JSONL", hint: "ChatLab Format 0.0.x（很多开源项目都能导出这种格式）" },
+  { id: "chatlab", label: "通用聊天格式（JSON / JSONL）", hint: "很多开源导出工具都支持" },
+  { id: "text", label: "Markdown / 文本聊天记录", hint: "每条带时间和发送人的 .md / .txt，或打包成 .zip" },
 ];
 
 const p2 = (n) => String(n).padStart(2, "0");
@@ -297,14 +298,72 @@ function parseGoogleChat(entries) {
   return chats;
 }
 
+
+// ---------------------------------------------------------------- Markdown / plain-text chat logs
+// What many exporters (and forwarded-chat tools) write, in any of these shapes:
+//   - 2026-11-05 21:03:12 [文本] 小雨: 内容          (one line per message, optional bullet / [type])
+//   [2026-11-05 21:03] 小雨：内容
+//   小雨 2026-11-05 21:03:12  ↵  内容…              (header line, then the text)
+//   ## 2026-11-05  ↵  21:03 小雨：内容  /  **小雨** 21:03 ↵ 内容
+const TEXT_KIND = { 文本: T.text, 文字: T.text, 图片: T.image, 照片: T.image, 表情: T.sticker, 动画表情: T.sticker, 语音: T.voice, 视频: T.video, 文件: T.file, 链接: T.link, 位置: T.location, 通话: T.call, 系统: T.system, 撤回: T.recall };
+const DT = String.raw`(\d{4})[-/.年](\d{1,2})[-/.月](\d{1,2})日?[ T](\d{1,2}):(\d{2})(?::(\d{2}))?`;
+function parseTextLog(text, filename) {
+  const lines = text.replace(/^\uFEFF/, "").split(/\r?\n/);
+  const bullet = String.raw`(?:[-*]\s+|\d{1,6}[.)、]\s+)?`;
+  const oneLine = new RegExp(String.raw`^${bullet}\[?${DT}\]?\s*(?:\[([^\]]{1,80})\]\s*)?(?:\*\*)?([^:：\n*\[\]<]{1,40}?)(?:\*\*)?\s*[:：]\s?(.*)$`);
+  const stamped = new RegExp(String.raw`^${bullet}\[?${DT}\]?\s*(?:\[([^\]]{1,80})\]\s*)?(.*)$`); // a timestamp but no "sender:" → system line
+  const header = new RegExp(String.raw`^(?:[-*]\s+)?(?:\*\*)?([^\n*:：]{1,40}?)(?:\*\*)?\s+\(?${DT}\)?\s*$`); // "导出时间: …" is metadata, not a sender
+  const dayHead = /^#{1,4}\s*(\d{4})[-/.年](\d{1,2})[-/.月](\d{1,2})/;
+  const timeLine = /^(?:[-*]\s+)?(?:\*\*)?(?:(\d{1,2}):(\d{2})(?::(\d{2}))?\s+([^:：\n*]{1,40}?)|([^:：\n*]{1,40}?)(?:\*\*)?\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)(?:\*\*)?\s*(?:[:：]\s?(.*))?$/;
+  const title = lines.find((l) => /^#\s/.test(l)) ?? "";
+  const name = title.match(/^#\s*(?:聊天记录|Chat(?: history)?)\s*[:：]\s*(.+)$/i)?.[1]?.trim() ?? title.match(/^#\s*(?:与|和)(.+?)的聊天记录/)?.[1]?.trim()
+    ?? (path.basename(filename).replace(/\.(md|markdown|txt)$/i, "").replace(/^(聊天记录|chat)[_-\s]*/i, "") || null);
+  const out = [];
+  let day = null, open = null;
+  for (const raw of lines) {
+    const line = raw.replace(/\s+$/, "");
+    let m;
+    if ((m = line.match(oneLine)) && m[8]) {
+      const tag = (m[7] ?? "").split(/[｜|]/).pop().trim(); // "[群号｜图片]" → 图片
+      const kind = tag ? TEXT_KIND[tag] ?? T.text : T.text;
+      open = { ts: epochOf(m[1], m[2], m[3], m[4], m[5], m[6] ?? 0), sender: m[8].trim(), text: m[9] ?? "", type: kind };
+      out.push(open); continue;
+    }
+    if ((m = line.match(stamped)) && !line.match(header)) {
+      const tag = (m[7] ?? "").split(/[｜|]/).pop().trim();
+      open = null;
+      out.push({ ts: epochOf(m[1], m[2], m[3], m[4], m[5], m[6] ?? 0), sender: "SYSTEM", text: m[8] ?? "", type: TEXT_KIND[tag] === T.recall ? T.recall : T.system });
+      continue;
+    }
+    if ((m = line.match(header))) { open = { ts: epochOf(m[2], m[3], m[4], m[5], m[6], m[7] ?? 0), sender: m[1].trim(), text: "", type: T.text }; out.push(open); continue; }
+    if ((m = line.match(dayHead))) { day = [m[1], m[2], m[3]]; open = null; continue; }
+    if (day && (m = line.match(timeLine))) {
+      const [h, mi, sec, who] = m[1] ? [m[1], m[2], m[3], m[4]] : [m[6], m[7], m[8], m[5]];
+      open = { ts: epochOf(day[0], day[1], day[2], h, mi, sec ?? 0), sender: who.trim(), text: m[9] ?? "", type: T.text };
+      out.push(open); continue;
+    }
+    if (open && line.trim() && !/^#/.test(line) && !/^[-*]\s+\S+[:：]/.test(line)) open.text += (open.text ? "\n" : "") + line.replace(/^\s{2,}/, "").replace(/^>\s?/, "");
+  }
+  for (const msg of out) {
+    const t = msg.text.trim();
+    if (msg.type === T.text) msg.type = /^\[(图片|照片)\]$/.test(t) ? T.image : /^\[(表情|动画表情)\]$/.test(t) ? T.sticker : /^\[语音\]/.test(t) ? T.voice : linkOnly(t) ? T.link : T.text;
+  }
+  return out.length ? [{ platform: "text", name, messages: out }] : null;
+}
+
 // ---------------------------------------------------------------- entry points
 /** Read an export (Buffer or string) and return its chats. Throws with a readable message when the format is unknown. */
 export function read(input, filename = "", opts = {}) {
   let buf = Buffer.isBuffer(input) ? input : Buffer.from(String(input), "utf8");
   let name = filename;
   if (isZip(buf)) {
-    const entries = readZip(buf).filter((e) => !e.name.startsWith("__MACOSX") && /\.(txt|json|jsonl)$/i.test(e.name));
+    const entries = readZip(buf).filter((e) => !e.name.startsWith("__MACOSX") && /\.(txt|json|jsonl|md|markdown)$/i.test(e.name));
     if (entries.some((e) => /Google Chat\/Groups\/[^/]+\/messages\.json$/.test(e.name))) return { format: "googlechat", chats: parseGoogleChat(entries) };
+    const texts = readZip(buf).filter((e) => !e.name.startsWith("__MACOSX") && /\.(md|markdown|txt)$/i.test(e.name) && !/_chat\.txt$/i.test(e.name));
+    if (texts.length > 1) {
+      const chats = texts.flatMap((e) => parseTextLog(e.read().toString("utf8"), e.name) ?? []);
+      if (chats.length) return { format: "text", chats };
+    }
     const pickEntry = entries.find((e) => /(^|\/)_chat\.txt$/i.test(e.name)) ?? entries.find((e) => /WhatsApp/i.test(e.name)) ?? entries.find((e) => /message_\d+\.json$|result\.json$/i.test(e.name)) ?? entries[0];
     if (!pickEntry) throw new Error("zip 里没有找到聊天文件（.txt / .json）");
     buf = pickEntry.read();
@@ -322,13 +381,16 @@ export function read(input, filename = "", opts = {}) {
     if (doc.chatInfo && Array.isArray(doc.messages)) return { format: "qq", chats: parseQce(doc) };
     if (Array.isArray(doc.participants) && Array.isArray(doc.messages) && doc.messages.some((m) => "sender_name" in m)) return { format: "instagram", chats: parseInstagram(doc, name) };
     if (doc.chats?.list || (Array.isArray(doc.messages) && "type" in doc && doc.messages.some((m) => "date" in m))) return { format: "telegram", chats: parseTelegram(doc) };
-    throw new Error("认不出这个 JSON：支持 ChatLab 格式、常见的 QQ 导出、Telegram、Discord、Instagram / Messenger");
+    throw new Error("认不出这个 JSON：支持通用聊天格式、常见的 QQ 导出、Telegram、Discord、Instagram / Messenger");
   }
   if (/^\[LINE\]/.test(head)) return { format: "line", chats: parseLine(text) };
   if (/消息对象[:：]|^消息记录（此消息记录为文本格式/m.test(head)) return { format: "qq", chats: parseQqTxt(text) };
   const wa = parseWhatsApp(text, name, opts);
+  const tl = parseTextLog(text, name);
+  const real = (chats) => (chats ? chats[0].messages.filter((m) => m.type !== T.system).length : 0);
+  if (tl && real(tl) > real(wa)) return { format: "text", chats: tl };
   if (wa && wa[0].messages.length) return { format: "whatsapp", chats: wa };
-  throw new Error("认不出这个文件的格式。支持：LINE / WhatsApp / QQ 的 .txt，WhatsApp 和 Google Chat 的 .zip，以及 ChatLab、QQ 导出、Telegram、Discord、Instagram 的 JSON。");
+  throw new Error("认不出这个文件的格式。支持：LINE / WhatsApp / QQ 的导出，带时间和发送人的 Markdown 或文本记录，Google Chat 的 .zip，以及通用聊天格式、Telegram、Discord、Instagram 的 JSON。");
 }
 
 /** Work out who is "me", the conversation id, and how many messages are new. Never writes. */
@@ -345,6 +407,7 @@ export function plan(chat, opts = {}, chatsDir) {
   // the owner id from the source (ChatLab / Beeper) is trusted even if "me" sent nothing in this batch
   if (me && !counts.has(me)) me = people.find((p) => p.name === me)?.id ?? (chat.ownerId === me ? me : null);
   if (opts.me && !me) return { ok: false, needMe: true, people, error: `聊天里没有叫「${opts.me}」的人` };
+  if (!me) me = people.find((p) => /^(我|me|自分)$/i.test(p.name))?.id ?? null; // exporters often write yourself as 我
   if (!me && !isGroup && chat.name) me = people.find((p) => p.name !== chat.name && p.id !== chat.name)?.id ?? null;
   if (!me && !isGroup && chat.participants?.length === 2 && chat.name) me = people.find((p) => p.name !== chat.name)?.id ?? null;
   if (!me) return { ok: false, needMe: true, people, isGroup, error: "分不出哪个是你，请选一下" };

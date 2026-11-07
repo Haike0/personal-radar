@@ -150,3 +150,36 @@ test("Google Chat Takeout zip: DM, owner from user_info, narrow-space dates", ()
   assert.equal(new Date(c.messages[0].ts * 1000).toISOString(), "2026-11-04T21:03:12.000Z");
   assert.equal(plan(c, {}, tmp()).meName, "Kai");
 });
+
+test("Markdown, one line per message with [type]", () => {
+  const { format, chats } = load("text-oneline.md");
+  assert.equal(format, "text");
+  const c = chats[0];
+  assert.equal(c.name, "阿杰");
+  assert.equal(c.messages.length, 4);
+  assert.equal(c.messages[2].type, T.image);
+  assert.equal(plan(c, {}, tmp()).meName, "我");
+});
+
+test("Text log with name+time header lines and multi-line bodies", () => {
+  const c = load("text-header.txt").chats[0];
+  assert.equal(c.messages.length, 3);
+  assert.equal(c.messages[0].text, "早，今天降温\n记得带伞");
+  assert.equal(c.messages[2].type, T.sticker);
+  assert.equal(local(c.messages[1].ts), "2026-11-04 09:05");
+  assert.equal(plan(c, {}, tmp()).meName, "我");
+});
+
+test("Markdown with date headings, 'time name：text' and '**name** time' lines", () => {
+  const c = load("text-dayhead.md").chats[0];
+  assert.equal(c.name, "老周");
+  assert.equal(c.messages.length, 3);
+  assert.equal(local(c.messages[2].ts), "2026-11-06 08:40");
+  assert.equal(c.messages[2].text, "材料发你邮箱了");
+});
+
+test("Zip of several Markdown files → one chat each", () => {
+  const { format, chats } = load("text-bundle.zip");
+  assert.equal(format, "text");
+  assert.deepEqual(chats.map((c) => c.name).sort(), ["老周", "阿杰"].sort());
+});

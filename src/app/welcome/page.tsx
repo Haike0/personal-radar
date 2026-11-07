@@ -63,7 +63,7 @@ export default function Welcome() {
 
       <Stack gap={6}>
         <Button size="md" radius="xl" onClick={() => router.push("/setup")}>用我自己的聊天</Button>
-        <Text size="xs" className="faint" ta="center">支持微信、LINE、QQ、WhatsApp、Telegram 等，也能连接 Beeper、ChatLab 自动同步。</Text>
+        <Text size="xs" className="faint" ta="center">支持微信、LINE、QQ、WhatsApp、Telegram 等聊天记录，也能连接汇总聊天的软件自动同步。</Text>
       </Stack>
     </Stack>
   );

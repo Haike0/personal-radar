@@ -14,18 +14,18 @@ type Preview = { token: string; chats: Row[]; errors: { file: string; error: str
 type Choice = { include: boolean; me?: string; name?: string };
 
 const day = (s: number) => new Date(s * 1000).toLocaleDateString("sv-SE");
-const FORMAT: Record<string, string> = { line: "LINE", whatsapp: "WhatsApp", telegram: "Telegram", discord: "Discord", instagram: "Instagram / Messenger", chatlab: "ChatLab" };
+const FORMAT: Record<string, string> = { line: "LINE", whatsapp: "WhatsApp", telegram: "Telegram", discord: "Discord", instagram: "Instagram / Messenger", chatlab: "通用格式", text: "文本记录", qq: "QQ", googlechat: "Google Chat" };
 
 // Where the chat comes from → three short steps. Shown only for the app you pick.
 export const SOURCES: { id: string; name: string; color: string; file: string; steps: string[]; note?: string; link?: { label: string; href: string } }[] = [
-  { id: "wechat", name: "微信", color: "#07C160", file: "ChatLab 格式 .json / .jsonl", steps: ["微信官方不支持导出聊天记录", "怎么拿到聊天记录需要你自己解决，可以参考其他开源项目", "整理成 ChatLab 格式后拖到上面"], note: "Radar 只读取你自己提供的文件，不提供、不内置任何读取微信数据的工具" },
+  { id: "wechat", name: "微信", color: "#07C160", file: "通用聊天格式 / Markdown / 文本", steps: ["微信官方不支持导出聊天记录", "怎么拿到聊天记录需要你自己解决，可以参考其他开源项目", "整理成通用聊天格式（JSON），或带时间和发送人的 Markdown / 文本，拖到上面"], note: "Radar 只读取你自己提供的文件，不提供、不内置任何读取微信数据的工具" },
   { id: "line", name: "LINE", color: "#06C755", file: ".txt", steps: ["打开要导入的聊天", "右上角 ≡ →「设置 / その他」", "「发送聊天记录 / トーク履歴を送信」→ 存成文件"], note: "用手机导出更完整，电脑版只存已加载的消息" },
-  { id: "qq", name: "QQ", color: "#12B7F5", file: ".txt / .json", steps: ["旧版 QQ：消息管理器 →「导出消息记录」存成 .txt", "新版 QQ 官方没有导出功能，需要你自己解决（可参考其他开源项目）", "拖到上面；能识别 ChatLab 格式和常见的 QQ 导出 JSON"] },
+  { id: "qq", name: "QQ", color: "#12B7F5", file: ".txt / .json / Markdown", steps: ["旧版 QQ：消息管理器 →「导出消息记录」存成 .txt", "新版 QQ 官方没有导出功能，需要你自己解决（可参考其他开源项目）", "拖到上面；通用聊天格式、常见的 QQ 导出 JSON、Markdown / 文本都能识别"] },
   { id: "whatsapp", name: "WhatsApp", color: "#25D366", file: ".zip 或 .txt", steps: ["打开聊天，点对方名字", "「导出聊天」", "选「不含媒体」，保存"], note: "iPhone 得到 .zip，不用解压" },
   { id: "telegram", name: "Telegram", color: "#2AABEE", file: "result.json", steps: ["在电脑上打开 Telegram Desktop", "聊天右上角 ⋮ →「导出聊天记录」", "格式选 JSON"] },
   { id: "instagram", name: "Instagram", color: "#E1306C", file: "message_1.json", steps: ["账户中心 →「下载你的信息」", "只选「消息」，格式选 JSON", "解压，找到 inbox/对方/message_1.json"], note: "Facebook Messenger 也是这样" },
-  { id: "douyin", name: "抖音", color: "#111111", file: "ChatLab 格式", steps: ["抖音官方不支持导出私信", "需要你自己解决（可参考其他开源项目），整理成 ChatLab 格式", "拖到上面，或在「聚合平台 → 其他导出工具」里连接支持 ChatLab Pull 协议的工具"] },
-  { id: "imessage", name: "iMessage", color: "#34C759", file: "—", steps: ["最省事：在「聚合平台」里连接 Beeper（官方提供的本地接口）", "或者自己导出成 ChatLab 格式", "拖到上面"], note: "只能在 Mac 上做" },
+  { id: "douyin", name: "抖音", color: "#111111", file: "通用聊天格式 / Markdown / 文本", steps: ["抖音官方不支持导出私信", "需要你自己解决（可参考其他开源项目），整理成通用聊天格式或 Markdown / 文本", "拖到上面，或在「聚合平台 → 其他导出工具」里连接"] },
+  { id: "imessage", name: "iMessage", color: "#34C759", file: "—", steps: ["最省事：在「聚合平台」里连接 Beeper（官方提供的本地接口）", "或者自己导出成通用聊天格式 / Markdown / 文本", "拖到上面"], note: "只能在 Mac 上做" },
   { id: "discord", name: "Discord", color: "#5865F2", file: ".json", steps: ["Discord 官方的「数据下载」不含完整私信", "需要你自己导出（可参考其他开源项目），格式选 JSON", "拖到上面"] },
   { id: "googlechat", name: "Google Chat", color: "#1A73E8", file: "Takeout .zip", steps: ["打开 takeout.google.com", "只勾选「Google Chat」，导出", "下载后整个 .zip 拖进来"], note: "第一次导出可能要几个小时" },
 ];

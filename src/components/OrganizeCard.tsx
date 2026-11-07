@@ -99,7 +99,7 @@ export function OrganizeCard() {
         <div style={{ minWidth: 0 }}>
           <Text size="sm">自动整理</Text>
           <Text size="xs" className="faint">
-            {data.auto ? (data.next ? `下次 ${data.next}；App 开着时才会运行，先同步 ChatLab（如果连了）` : "还没设时间") : "已关闭，只在你按按钮时整理"}
+            {data.auto ? (data.next ? `下次 ${data.next}；App 开着时才会运行，先同步已连接的平台` : "还没设时间") : "已关闭，只在你按按钮时整理"}
           </Text>
         </div>
         <Switch checked={data.auto} onChange={(e) => schedule({ auto: e.currentTarget.checked })} aria-label="自动整理" />

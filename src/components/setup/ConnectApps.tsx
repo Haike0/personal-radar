@@ -23,8 +23,8 @@ export const APPS: App[] = [
   },
   {
     id: "pull", name: "其他导出工具", color: "#0EA5E9", endpoint: "/api/pull-api", href: "https://docs.chatlab.fun/cn/standard/chatlab-pull", tokenOptional: true, urlHint: "http://127.0.0.1:端口",
-    tagline: "任何支持「ChatLab 远程数据源（Pull 协议）」的工具",
-    steps: ["打开那个工具并启动它的服务", "在它的说明里找到「ChatLab 远程数据源 / Pull」地址", "把地址填在下面（有令牌就一起填）"],
+    tagline: "任何提供「远程数据源（Pull）」接口的导出工具",
+    steps: ["打开那个工具并启动它的服务", "在它的说明里找到「远程数据源 / Pull」地址", "把地址填在下面（有令牌就一起填）"],
   },
 ];
 

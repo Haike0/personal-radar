@@ -125,7 +125,7 @@ function backfillRemaining0(r, c, sid) {
 
 function cmdBackfillStart() {
   const sid = arg("session") ?? die("--session required");
-  const minId = Number(arg("min-id") ?? die("--min-id required (largest ChatLab message id before the late import)"));
+  const minId = Number(arg("min-id") ?? die("--min-id required (largest message id before the late import)"));
   if (!Number.isInteger(minId) || minId < 0) die("--min-id must be a non-negative integer");
   const r = radar(); chat(sid);
   if (r.prepare("SELECT 1 FROM ai_backfill WHERE session_id=?").get(sid)) die("backfill already started for this session");
@@ -299,7 +299,7 @@ function cmdSubmit() {
   for (const x of items) x.message_ids = x.refs.map(ref);
   for (const a of attach) a.message_ids = (a.refs ?? []).filter(Number.isInteger).map(ref);
   const exists = c.prepare("SELECT ts FROM message WHERE platform_message_id=?");
-  const tsOf = (mid) => { const row = exists.get(mid); if (!row) die(`message id not found in ChatLab: ${mid}`); return Number(row.ts); };
+  const tsOf = (mid) => { const row = exists.get(mid); if (!row) die(`message id not found in the chat: ${mid}`); return Number(row.ts); };
   const used = new Set(r.prepare("SELECT e.message_id mid FROM evidence e JOIN items i ON i.id=e.item_id WHERE i.mode='real' AND i.person_key=?").all(sid).map((x) => x.mid));
   const name = c.prepare("SELECT name FROM meta").get().name;
   const t = now(), td = today();

@@ -32,15 +32,15 @@ chat export ──drag into Settings → Import──▶ local SQLite (~/.person
 
 | Supported exports | |
 |---|---|
-| WeChat — any ChatLab-format file (WeChat has no official export; how you get one is up to you) | QQ — old QQ `.txt` export, or common QQ export JSON |
+| WeChat — a standard chat JSON or Markdown / text log (WeChat has no official export; getting one is up to you) | QQ — old QQ `.txt` export, common QQ export JSON |
 | LINE `.txt` (Japanese, Chinese, English UI) | WhatsApp `.txt` or `.zip` (iPhone and Android) |
 | Telegram Desktop `result.json` (one chat or the whole account) | Discord (JSON export) |
 | Instagram / Messenger `message_N.json` | Google Chat (Google Takeout `.zip`) |
-| Douyin — ChatLab-format file, or a ChatLab Pull source | ChatLab JSON / JSONL |
+| Markdown / plain-text chat logs (any exporter; time + sender per message), also zipped | Standard chat JSON / JSONL |
 
-**Automatic import:** watch a folder (point your exporter at it and new files come in by themselves), or connect a hub and sync every few hours. Radar ships no decryption or scraping tools and doesn't recommend any. For apps without an official export (like WeChat), getting your own data out is up to you; Radar reads the ChatLab format that many open-source projects produce.
+**Automatic import:** watch a folder (point your exporter at it and new files come in by themselves), or connect a hub and sync every few hours. Radar ships no decryption or scraping tools and doesn't recommend any. For apps without an official export (like WeChat), getting your own data out is up to you; Radar reads the standard chat JSON and the Markdown / text logs that many open-source exporters produce.
 
-**One-tap connections (no export files):** if you already use [Beeper](https://www.beeper.com) (one app for WhatsApp, Telegram, Signal, Instagram, iMessage and more) or [ChatLab](https://chatlab.fun), connect it with a token from its local API and pick which chats to bring in. Both are read-only and stay on your computer. *These two connections are new and not yet tested against the real apps — reports welcome.*
+**Hubs (no export files):** connect [Beeper](https://www.beeper.com) or [ChatLab](https://chatlab.fun) once with a token from their local API, pick chats, and Radar keeps them in sync (read-only). *Not yet tested against the real apps — reports welcome.*
 
 Radar ships no decryption or scraping tools. See the [export guide](docs/export-guide.md) for each app.
 
@@ -85,20 +85,24 @@ The server only listens on your computer. To use it from your phone, put both de
 
 ## Compared with
 
-| | Personal Radar | [Monica](https://github.com/monicahq/monica) | [PingCRM](https://github.com/sneg55/pingcrm) | [ChatLab](https://github.com/ChatLab/ChatLab) |
-|---|---|---|---|---|
-| Main job | Reminders and per-person memory from your chats | Personal CRM you fill in by hand | Networking CRM synced from your accounts | Analyze and explore chat history |
-| Gets chats from | Export files, or Beeper / ChatLab locally | — | Logs into Gmail, Telegram, WhatsApp… | Export files |
-| AI extracts promises & plans with dates | ✅ with sources | — | Life events, follow-ups | Q&A and summaries |
-| Phone + push reminders | ✅ (home-screen web app) | Email reminders | Web app | Desktop app |
-| AI provider | Your own key, any OpenAI-compatible, or local Ollama | — | Anthropic | Your own key |
-| Runs | On your computer | Self-host or paid cloud | Self-host or cloud | Desktop / CLI / Docker |
+| | Personal Radar | [Monica](https://github.com/monicahq/monica) | [PingCRM](https://github.com/sneg55/pingcrm) |
+|---|---|---|---|
+| Main job | Reminders and per-person memory from your chats | Personal CRM you fill in by hand | Networking CRM synced from your accounts |
+| Gets chats from | Export files, or hubs like Beeper locally | — | Logs into Gmail, Telegram, WhatsApp… |
+| AI extracts promises & plans with dates | ✅ with sources | — | Life events, follow-ups |
+| Phone + push reminders | ✅ (home-screen web app) | Email reminders | Web app |
+| AI provider | Your own key, any OpenAI-compatible, or local Ollama | — | Anthropic |
+| Runs | On your computer | Self-host or paid cloud | Self-host or cloud |
 
 Radar reads exports instead of logging into your messaging accounts: less automatic, but no account-ban risk and nothing to hand over.
 
 ## Contributing
 
 New importers (KakaoTalk, Signal, iMessage…) and fixes for real-world export variants are the most useful contributions; each format has fixtures and tests in `tests/`. Please read [CONTRIBUTING.md](CONTRIBUTING.md) and the [CLA](CLA.md) first, and never put real chat logs in issues.
+
+## Thanks
+
+Thanks to [ChatLab](https://github.com/ChatLab/ChatLab) for its open chat format and local API, which let Radar read chats people already keep there.
 
 ## License
 
@@ -127,13 +131,16 @@ npm run dev        # 打开 http://localhost:3210，先看演示数据
 
 点首页的「开始设置」：① 拖入导出的聊天文件，预览后确认；② 选 AI 服务、粘贴密钥、点「测试并保存」；③ 设置发出去前要隐藏什么；④ 先看「会发什么」，再开始整理。全程不用改配置文件。
 
-支持 LINE、WhatsApp、Telegram、Instagram / Messenger、Google Chat 的官方导出，QQ 旧版导出，以及 ChatLab 格式（微信等没有官方导出的软件，需要你自己解决，可以参考其他开源项目）。也可以连接 Beeper 或 ChatLab 自动同步（这两项还没用真实软件测过）。不会装的话，把 [AGENT_SETUP.md](AGENT_SETUP.md) 交给你的 AI 编程助手，让它帮你装。各 App 怎么导出见 [导出指南](docs/export-guide.md)，遇到问题看 [常见问题](docs/troubleshooting.md)。
+支持 LINE、WhatsApp、Telegram、Instagram / Messenger、Google Chat 的官方导出，QQ 旧版导出，通用聊天格式，以及每条带时间和发送人的 Markdown / 文本记录（微信等没有官方导出的软件，需要你自己解决，可以参考其他开源项目）。也可以在「聚合平台」连接 Beeper、ChatLab 自动同步（还没用真实软件测过）。不会装的话，把 [AGENT_SETUP.md](AGENT_SETUP.md) 交给你的 AI 编程助手，让它帮你装。各 App 怎么导出见 [导出指南](docs/export-guide.md)，遇到问题看 [常见问题](docs/troubleshooting.md)。
 
 ### 隐私
 - 聊天、整理结果、密钥都在 `~/.personal-radar`，App 只在本机监听。
 - 只有两种时候会把内容发出去：整理聊天时，和你在 App 里提问时。发出前都会按你的规则脱敏（密钥、邮箱、电话、卡号、证件号、链接），黑名单关键词所在的消息整条不发；两处都能先预览具体发什么。
 - 可以把某个人设成「不发给 AI」；用本机 Ollama 模型则完全不联网。
 - 默认用 DeepSeek（服务器在中国），可以换成任何兼容 OpenAI 接口的服务。
+
+### 致谢
+感谢 ChatLab 开放的聊天格式和本地接口，让 Radar 能读取大家已经存在 ChatLab 里的聊天。
 
 ### 许可
 AGPL-3.0。提交代码前请先看 [CLA](CLA.md)。

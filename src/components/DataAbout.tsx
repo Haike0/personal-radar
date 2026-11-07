@@ -30,7 +30,7 @@ export function DataControls() {
       <Modal opened={open} onClose={() => setOpen(false)} radius="lg" title={<Text fw={650}>删除全部数据</Text>}>
         <Stack gap="sm">
           <Text size="sm" lh={1.7}>会删掉导入的聊天、整理出的记录、分析、设置和密钥，回到第一次打开的样子。<b>不能恢复。</b>建议先「导出全部记录」。</Text>
-          <Text size="xs" className="faint">不会动你原来的导出文件，也不会动 ChatLab、Beeper 里的东西。</Text>
+          <Text size="xs" className="faint">不会动你原来的导出文件，也不会动你连接的其他软件里的东西。</Text>
           <TextInput radius="md" label="输入「删除」确认" value={word} onChange={(e) => setWord(e.currentTarget.value)} />
           <Group justify="flex-end" gap="xs">
             <Button variant="subtle" color="gray" radius="md" onClick={() => setOpen(false)}>取消</Button>
