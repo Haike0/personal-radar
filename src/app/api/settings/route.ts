@@ -34,6 +34,6 @@ export async function PATCH(req: Request) {
   for (const k of ["ai_chat", "ai_fast"]) if (k in patch && patch[k] !== "" && !/^[\w-]+\|\S+/.test(String(patch[k]))) return Response.json({ error: "模型格式不对" }, { status: 400 });
   const prevSet = getSettings().demo_set;
   setSettings(patch);
-  if ((patch.demo_set === "life" || patch.demo_set === "night") && patch.demo_set !== prevSet) setDemoSet(patch.demo_set);
+  if (["life", "night", "love"].includes(patch.demo_set) && patch.demo_set !== prevSet) setDemoSet(patch.demo_set);
   return Response.json({ ok: true });
 }

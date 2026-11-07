@@ -9,7 +9,7 @@ export type Seed = {
   facet?: string; milestone?: boolean;
 };
 
-export type DemoSet = "life" | "night";
+export type DemoSet = "life" | "night" | "love";
 
 const LIFE_SEEDS: Seed[] = [
   {
@@ -76,9 +76,9 @@ export function seedDemo(d: DatabaseSync, set: DemoSet = "life") {
     return `${x.getFullYear()}-${p(x.getMonth() + 1)}-${p(x.getDate())}`;
   };
   const now = `${dateOf(0)} ${p(today.getHours())}:${p(today.getMinutes())}:00`;
-  if (set === "night" && nightAvailable()) {
+  if ((set === "night" || set === "love") && nightAvailable(set)) {
     ensureAnalysisTable(d);
-    seedNight(d, now, dateOf);
+    seedNight(d, now, dateOf, set);
     return;
   }
   clearNightChats();

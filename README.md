@@ -32,9 +32,13 @@ chat export ──drag into Settings → Import──▶ local SQLite (~/.person
 
 | Supported exports | |
 |---|---|
+| WeChat — via [WeFlow](https://github.com/hicccc77/WeFlow) (ChatLab format) | QQ — [QQ Chat Exporter](https://github.com/shuakami/qq-chat-exporter) JSON, or old QQ `.txt` |
 | LINE `.txt` (Japanese, Chinese, English UI) | WhatsApp `.txt` or `.zip` (iPhone and Android) |
 | Telegram Desktop `result.json` (one chat or the whole account) | Discord (DiscordChatExporter JSON) |
-| Instagram / Messenger `message_N.json` | ChatLab JSON / JSONL, or ChatLab's local API |
+| Instagram / Messenger `message_N.json` | Google Chat (Google Takeout `.zip`) |
+| Douyin — via douyin-chat-export (ChatLab format or Pull) | ChatLab JSON / JSONL |
+
+**Automatic import:** watch a folder (point your exporter at it and new files come in by themselves), or connect a hub and sync every few hours. Radar ships no decryption or scraping tools; for apps that can't export (like WeChat) it points to third-party tools you run yourself.
 
 **One-tap connections (no export files):** if you already use [Beeper](https://www.beeper.com) (one app for WhatsApp, Telegram, Signal, Instagram, iMessage and more) or [ChatLab](https://chatlab.fun), connect it with a token from its local API and pick which chats to bring in. Both are read-only and stay on your computer. *These two connections are new and not yet tested against the real apps — reports welcome.*
 

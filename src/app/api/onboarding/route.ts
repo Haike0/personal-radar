@@ -1,7 +1,7 @@
 import { DEMO_ONLY } from "@/lib/config";
 import { connection } from "next/server";
 import { listSessions } from "@/lib/chatlab";
-import { getSetting, setSettings } from "@/lib/db";
+import { getSetting, setDemoSet, setSettings } from "@/lib/db";
 
 // Has this install been set up? Existing installs that already have chats count as set up.
 export async function GET() {
@@ -12,8 +12,12 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const { state } = (await req.json()) as { state?: string };
+  const { state, demo_set } = (await req.json()) as { state?: string; demo_set?: string };
   if (state !== "demo" && state !== "done") return Response.json({ error: "state must be demo or done" }, { status: 400 });
   setSettings({ onboarded: state, ...(state === "demo" ? { mode: "demo" } : {}) });
+  // picking a scenario on the welcome page loads that demo
+  if (state === "demo" && (demo_set === "love" || demo_set === "night" || demo_set === "life") && getSetting("demo_set") !== demo_set) {
+    setSettings({ demo_set }); setDemoSet(demo_set);
+  }
   return Response.json({ ok: true });
 }

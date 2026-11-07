@@ -51,3 +51,4 @@ __pycache__/
 .privacy-hits
 !.env.example
 radar-data/
+demo/love/.cache/

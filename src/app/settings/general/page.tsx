@@ -17,7 +17,7 @@ export default function GeneralPage() {
       <SettingsGroup title="演示数据">
         <Line label="演示场景" hint="演示数据全是编的">
           <SegmentedControl size="xs" radius="xl" value={s.demo_set || "life"} onChange={(v) => save({ demo_set: v })}
-            data={[{ value: "life", label: "生活" }, { value: "night", label: "夜场" }]} />
+            data={[{ value: "love", label: "恋人与朋友" }, { value: "night", label: "夜场" }, { value: "life", label: "简单" }]} />
         </Line>
       </SettingsGroup>
       <Text size="xs" className="faint" ta="center">界面语言目前只有中文</Text>

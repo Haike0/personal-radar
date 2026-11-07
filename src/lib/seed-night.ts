@@ -12,17 +12,22 @@ import { closeDemo, demoDir } from "./chatlab";
 // 这样人物页、聊天记忆、搜原话、AI 问答都走和真实数据完全一样的代码。
 
 type Msg = [number, string, "C" | "A" | "M", string];
-type Session = { id: string; name: string; avatar: string; messages: Msg[] };
+type Session = { id: string; name: string; avatar: string; tag?: string; messages: Msg[] };
 type Ex = { tmp: string; title: string; kind: string; facet: string | null; subject: string; certainty: string; milestone: boolean | null;
   event_day: number | null; event_time: string | null; summary: string; why: string; refs: number[]; supersedes: string | null };
 type Analysis = { summary: string; sections: { title: string; points: { text: string; basis: string; items: number[] }[] }[] };
 
-const SRC = () => path.join(process.env.RADAR_DEMO_DIR ?? path.join(process.cwd(), "demo"), "night");
+// Each demo scenario is a folder under demo/ with the same three files. How "me" is named and which app it imitates:
+const SETS: Record<string, { platform: string; me: string; memo: string | null; tag: string }> = {
+  night: { platform: "line", me: "あかり", memo: "席後メモ", tag: "客人" },
+  love: { platform: "weixin", me: "周远", memo: null, tag: "朋友" },
+};
+let SET = "night";
+const SRC = (set = SET) => path.join(process.env.RADAR_DEMO_DIR ?? path.join(process.cwd(), "demo"), set);
 const read = <T,>(f: string): T => JSON.parse(fs.readFileSync(path.join(SRC(), f), "utf8")) as T;
-const MEMO = "席後メモ";
 
-export function nightAvailable() {
-  return fs.existsSync(path.join(SRC(), "chats.json"));
+export function nightAvailable(set = "night") {
+  return fs.existsSync(path.join(SRC(set), "chats.json"));
 }
 
 /** Remove the demo chat dbs (when the 生活 demo set is shown instead). */
@@ -31,7 +36,10 @@ export function clearNightChats() {
   try { for (const f of fs.readdirSync(demoDir())) if (/^demo_.*\.db(-wal|-shm)?$/.test(f)) fs.rmSync(path.join(demoDir(), f)); } catch {}
 }
 
-export function seedNight(d: DatabaseSync, now: string, dateOf: (off: number) => string) {
+export function seedNight(d: DatabaseSync, now: string, dateOf: (off: number) => string, set = "night") {
+  SET = set;
+  const cfg = SETS[set] ?? SETS.night;
+  const MEMO = cfg.memo ?? "备注";
   const { sessions } = read<{ sessions: Session[] }>("chats.json");
   const items = fs.existsSync(path.join(SRC(), "items.json")) ? read<Record<string, Ex[]>>("items.json") : {};
   const analysis = fs.existsSync(path.join(SRC(), "analysis.json")) ? read<Record<string, Analysis>>("analysis.json") : {};
@@ -48,16 +56,22 @@ export function seedNight(d: DatabaseSync, now: string, dateOf: (off: number) =>
       CREATE TABLE member(id INTEGER PRIMARY KEY AUTOINCREMENT, platform_id TEXT NOT NULL UNIQUE, account_name TEXT, group_nickname TEXT, aliases TEXT DEFAULT '[]', avatar TEXT, roles TEXT DEFAULT '[]');
       CREATE TABLE message(id INTEGER PRIMARY KEY AUTOINCREMENT, sender_id INTEGER NOT NULL, sender_account_name TEXT, sender_group_nickname TEXT, ts INTEGER NOT NULL, type INTEGER NOT NULL, content TEXT, reply_to_message_id TEXT DEFAULT NULL, platform_message_id TEXT DEFAULT NULL);
       CREATE INDEX idx_message_ts ON message(ts); CREATE INDEX idx_message_platform_id ON message(platform_message_id);`);
-    c.prepare("INSERT INTO meta(name,platform,type,imported_at,owner_id) VALUES(?,?,?,?,?)").run(s.name, "line", "private", Math.floor(Date.now() / 1000), "me");
+    c.prepare("INSERT INTO meta(name,platform,type,imported_at,owner_id) VALUES(?,?,?,?,?)").run(s.name, cfg.platform, "private", Math.floor(Date.now() / 1000), "me");
     const mem = c.prepare("INSERT INTO member(platform_id,account_name) VALUES(?,?)");
-    mem.run("me", "あかり"); mem.run(s.id, s.name); mem.run("memo", MEMO);
+    mem.run("me", cfg.me); mem.run(s.id, s.name); mem.run("memo", MEMO);
     const who = { A: 1, C: 2, M: 3 } as const;
     const ins = c.prepare("INSERT INTO message(sender_id,sender_account_name,ts,type,content,platform_message_id) VALUES(?,?,?,?,?,?)");
     c.exec("BEGIN");
-    s.messages.forEach(([off, hm, from, text], i) => ins.run(who[from], from === "A" ? "あかり" : from === "M" ? MEMO : s.name, epoch(off, hm), 0, text, String(i + 1)));
+    s.messages.forEach(([off, hm, from, text], i) => ins.run(who[from], from === "A" ? cfg.me : from === "M" ? MEMO : s.name, epoch(off, hm), typeOf(text), text, String(i + 1)));
     c.exec("COMMIT");
     c.close();
   }
+
+  // tags for the demo people (恋人 / 朋友 / 客人…)
+  d.exec("CREATE TABLE IF NOT EXISTS person_tags(mode TEXT NOT NULL, person_key TEXT NOT NULL, tag TEXT NOT NULL, PRIMARY KEY(mode, person_key, tag))");
+  d.exec("DELETE FROM person_tags WHERE mode='demo'");
+  const tagIns = d.prepare("INSERT OR IGNORE INTO person_tags(mode, person_key, tag) VALUES('demo', ?, ?)");
+  for (const s of sessions) tagIns.run(s.id, s.tag ?? cfg.tag);
 
   // 2) items + evidence (原话从聊天里取)
   const insItem = d.prepare(`INSERT INTO items(mode,source_key,person_key,person_name,is_group,title,summary,why,next_step,category,status,certainty,kind,event_date,event_time,created_at,updated_at,subject,facet,milestone,origin)
@@ -94,6 +108,12 @@ export function seedNight(d: DatabaseSync, now: string, dateOf: (off: number) =>
       items: (p.items ?? []).map((i) => ids.get(list[i]?.tmp ?? "")).filter((v): v is number => v != null) })) }));
     ins.run(s.id, JSON.stringify({ summary: a.summary, sections }), list.length, now, now);
   }
+}
+
+// [图片] / [表情] / [语音] placeholders get the matching message type, so the chat report counts them right
+function typeOf(text: string) {
+  const t = text.trim();
+  return /^\[(图片|写真|照片)\]$/.test(t) ? 1 : /^\[(表情|スタンプ|动画表情)\]$/.test(t) ? 5 : /^\[(语音|ボイスメッセージ)\]$/.test(t) ? 2 : /^\[(视频通话|语音通话|通話)/.test(t) ? 23 : 0;
 }
 
 // 有日期的事项之后由 maintain() 按天重算；这里给没日期的一个合理初值
