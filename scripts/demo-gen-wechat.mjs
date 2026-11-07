@@ -4,16 +4,18 @@
 //   node scripts/demo-gen-wechat.mjs love chats     写 150 天的微信聊天（分段并发，每段结果缓存，可中断重跑）
 //   node scripts/demo-gen-wechat.mjs love extract   用和真实数据相同的整理规则，从聊天里整理事项（带原话编号）
 //   node scripts/demo-gen-wechat.mjs love analyze   每个人的「分析」页
+//   node scripts/demo-gen-wechat.mjs love dedupe    合并整理时同一件事被记了两次的记录（和 App 里整理后的查重同一套规则）
 //   node scripts/demo-gen-wechat.mjs love spice     按真实比例补表情包和小表情（模型写得太少），整理出的事项引用的消息编号会一起对齐
 // 场景：love（恋人与朋友）、work（职场）。产物：demo/<场景>/chats.json、items.json、analysis.json（日期都用相对天数，导入时按当天换算）
 import fs from "node:fs";
 import path from "node:path";
 import { AI, extraBody, requireKey } from "./lib/env.mjs";
+import { candidatePairs } from "./lib/dupes.mjs";
 
 const SET = process.argv[2];
 const ROOT = path.join(path.dirname(new URL(import.meta.url).pathname), "..");
 const OUT = path.join(ROOT, "demo", SET ?? "");
-if (!SET || !fs.existsSync(path.join(OUT, "cast.mjs"))) { console.log("usage: demo-gen-wechat.mjs love|work refs|chats|extract|analyze|spice"); process.exit(1); }
+if (!SET || !fs.existsSync(path.join(OUT, "cast.mjs"))) { console.log("usage: demo-gen-wechat.mjs love|work refs|chats|extract|analyze|dedupe|spice"); process.exit(1); }
 const { CAST, ME, ME_NAME, STYLE, SAMPLES = {}, SEARCH = {}, SPICE = {} } = await import(path.join(OUT, "cast.mjs"));
 const CACHE = path.join(OUT, ".cache", "v3");
 fs.mkdirSync(CACHE, { recursive: true });
@@ -216,6 +218,45 @@ async function analyze() {
   fs.writeFileSync(path.join(OUT, "analysis.json"), JSON.stringify(out, null, 1));
 }
 
+// ---------- 3b. dedupe ----------
+// Organizing chunk by chunk writes some things twice ("别外传跳槽的事" / "请我保密跳槽的事"). Same rules as `radar-ai dupes`:
+// pairs are picked mechanically (scripts/lib/dupes.mjs), the model only confirms each pair. SHOW=1 prints every merge.
+async function dedupe() {
+  const file = path.join(OUT, "items.json");
+  const items = JSON.parse(fs.readFileSync(file, "utf8"));
+  await pool(CAST.map((c) => async () => {
+    const all = items[c.id] ?? [];
+    const sup = new Set(all.map((x) => x.supersedes).filter(Boolean));
+    const pairs = candidatePairs(all.filter((x) => !sup.has(x.tmp)).map((x) => ({ ...x, id: x.tmp, date: x.event_day })));
+    if (!pairs.length) return;
+    const sys = `下面每一对记录，判断是不是同一件事的两种说法。只有意思完全一样才算；只是话题相近、内容不同的不算（比如「帮他盯流程」和「帮他挡酒」是两件事）。
+只输出 JSON：{"same":[对的编号],"titles":{"对的编号":"可选：合并后更准确的标题"}}`;
+    const lines = pairs.map(([a, b], k) => `${k + 1}. 「${a.title}」 ↔ 「${b.title}」`);
+    let res = null;
+    for (let t = 0; t < 3 && !res; t++) {
+      try { res = JSON.parse((await ds(sys, `对方：${c.name}（我的${c.tag}）\n${lines.join("\n")}`, { max: 1500, temp: 0.1 })).match(/\{[\s\S]*\}/)[0]); } catch { res = null; }
+    }
+    const gone = new Set();
+    for (const n of res?.same ?? []) {
+      const p = pairs[Number(n) - 1];
+      if (!p) continue;
+      const [a, b] = p, keep = b.title.length >= a.title.length ? b : a, drop = keep === a ? b : a;
+      if (gone.has(keep.tmp) || gone.has(drop.tmp)) continue;
+      if (process.env.SHOW) console.log(`   ${c.name}：「${drop.title}」→ 并入「${keep.title}」`);
+      keep.refs = [...new Set([...keep.refs, ...drop.refs])].sort((x, y) => x - y);
+      for (const y of all) if (y.supersedes === drop.tmp) y.supersedes = keep.tmp;
+      const t = res.titles?.[String(n)];
+      if (typeof t === "string" && t.trim()) keep.title = t.trim().slice(0, 60);
+      gone.add(drop.tmp);
+    }
+    // the objects in `pairs` are copies: write the changes back
+    for (const [a, b] of pairs) for (const x of [a, b]) { const o = all.find((y) => y.tmp === x.tmp); if (o) { o.refs = x.refs; o.title = x.title; } }
+    items[c.id] = all.filter((x) => !gone.has(x.tmp));
+    console.log(`✓ ${c.name}: ${pairs.length} 对候选，合并 ${gone.size} 条`);
+  }), 6);
+  fs.writeFileSync(file, JSON.stringify(items, null, 1));
+}
+
 // ---------- 4. spice ----------
 // 真实聊天里表情包约占 1 成（情侣更多，和上司、客户很少），模型怎么提示都写不够，这里按比例补上。
 // SPICE[tag] = { sticker: { W, T }, code: { W, T }, codes: { W: [...], T: [...] } }，人物可以用 c.codes 覆盖 T 的小表情。
@@ -257,5 +298,6 @@ else if (cmd === "chats") await chats();
 else if (cmd === "extract") await extract();
 else if (cmd === "analyze") await analyze();
 else if (cmd === "spice") spice();
-else { console.log("usage: demo-gen-wechat.mjs love|work refs|chats|extract|analyze|spice"); process.exit(1); }
+else if (cmd === "dedupe") await dedupe();
+else { console.log("usage: demo-gen-wechat.mjs love|work refs|chats|extract|analyze|dedupe|spice"); process.exit(1); }
 console.log(`DeepSeek: ${usage.calls} calls, in ${usage.in} / out ${usage.out} tokens, ${Math.round((Date.now() - t0) / 1000)}s`);

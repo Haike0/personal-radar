@@ -6,7 +6,7 @@ import {
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCurrentPerson } from "@/components/PersonSwitcher";
 import { ChatMemory } from "@/components/ChatMemory";
 import { TagEditor } from "@/components/TagEditor";
@@ -37,9 +37,9 @@ function Section({ title, extra, children }: { title: string; extra?: React.Reac
   );
 }
 
-function Row({ item, right }: { item: Item; right?: React.ReactNode }) {
+function Row({ item, right, flash }: { item: Item; right?: React.ReactNode; flash?: boolean }) {
   return (
-    <Group renderRoot={(props) => <Link href={`/items/${item.id}`} {...props} />} className="pressable" wrap="nowrap" gap="sm" px="md" py={12}
+    <Group renderRoot={(props) => <Link href={`/items/${item.id}`} {...props} />} id={`mem-item-${item.id}`} data-flash={flash || undefined} className="pressable mem-row" wrap="nowrap" gap="sm" px="md" py={12}
       style={{ borderTop: "1px solid light-dark(rgba(20,24,39,.06), rgba(255,255,255,.05))" }}>
       <Box style={{ flex: 1, minWidth: 0 }}>
         <Text size="sm" lh={1.45} c={item.status === "open" ? undefined : "dimmed"}>{item.title}</Text>
@@ -65,6 +65,19 @@ export default function PersonPage() {
   // set the AI's scope from the URL right away — before, it kept the previous page's person until this page's data arrived
   usePageContext({ page: "person", personKey: key, personName: p?.name ?? contacts.find((c) => c.key === key)?.name });
   const [memDate, setMemDate] = useState<string | null>(null);
+  // tapping a line of the portrait opens 记忆 at that exact line (or at its group), and lights it up for a moment
+  const [focus, setFocus] = useState<{ facet: string; item?: number; at: number } | null>(null);
+  const [flash, setFlash] = useState<number | string | null>(null);
+  const jump = (facet: string, item?: number) => { setTab("memory"); setFocus((f) => ({ facet, item, at: (f?.at ?? 0) + 1 })); };
+  useEffect(() => {
+    if (!focus || tab !== "memory") return;
+    const t = setTimeout(() => {
+      document.getElementById(focus.item ? `mem-item-${focus.item}` : `mem-facet-${focus.facet}`)?.scrollIntoView({ behavior: "smooth", block: focus.item ? "center" : "start" });
+      setFlash(focus.item ?? focus.facet);
+    }, 80);
+    const u = setTimeout(() => setFlash(null), 3000);
+    return () => { clearTimeout(t); clearTimeout(u); };
+  }, [focus, tab]);
   const { data: mem } = useApi<{ days: { date: string; messages: number; items: number; summary: string | null }[] }>(`/api/people/${encodeURIComponent(key)}/memory`);
 
   if (loading && !p) return <Stack><Skeleton h={220} radius="xl" /><Skeleton h={40} radius="md" /><Skeleton h={200} radius="xl" /></Stack>;
@@ -73,7 +86,8 @@ export default function PersonPage() {
   const short = p.name.replace(/^演示·/, "");
   // newest first: what you learned most recently is what you want to see first
   const when = (i: Item) => i.observedAt ?? i.eventDate ?? i.createdAt;
-  const aboutThem = p.items.filter((i) => isKnowledge(i) && i.subject !== "self").sort((a, b) => when(b).localeCompare(when(a)));
+  // an older version of something (已有新版本) is reachable from the newer item; listing both reads like a repeat
+  const aboutThem = p.items.filter((i) => isKnowledge(i) && i.subject !== "self" && i.status !== "superseded").sort((a, b) => when(b).localeCompare(when(a)));
   const aboutMe = p.items.filter((i) => isKnowledge(i) && i.subject === "self");
   const actions = p.items.filter((i) => !isKnowledge(i));
   const openActions = actions.filter((i) => i.status === "open");
@@ -132,16 +146,20 @@ export default function PersonPage() {
             <Section title={`${short}的画像`} extra={<Text size="xs" className="faint">每条都有原话出处</Text>}>
               <Paper className="surface" radius="xl" py={4}>
                 {facets.length ? facets.map((f, i) => (
-                  <UnstyledButton key={f.key} onClick={() => setTab("memory")} className="pressable" w="100%" px="md" py={12}
+                  <Group key={f.key} wrap="nowrap" align="flex-start" gap="sm" px="md" py={12}
                     style={{ borderTop: i ? "1px solid light-dark(rgba(20,24,39,.06), rgba(255,255,255,.05))" : undefined }}>
-                    <Group wrap="nowrap" align="flex-start" gap="sm">
+                    <UnstyledButton onClick={() => jump(f.key)} aria-label={`看全部${f.key}`}>
                       <ThemeIcon size={30} radius="md" variant="light" color={f.color}><f.icon size={17} /></ThemeIcon>
-                      <Box style={{ flex: 1, minWidth: 0 }}>
-                        <Text size="xs" className="faint">{f.key}</Text>
-                        <Text size="sm" lh={1.5} lineClamp={2}>{f.list.slice(0, 2).map((x) => x.title).join("；")}{f.list.length > 2 ? ` 等 ${f.list.length} 条` : ""}</Text>
-                      </Box>
-                    </Group>
-                  </UnstyledButton>
+                    </UnstyledButton>
+                    <Box style={{ flex: 1, minWidth: 0 }}>
+                      <UnstyledButton onClick={() => jump(f.key)}><Text size="xs" className="faint">{f.key}{f.list.length > 2 ? ` · ${f.list.length} 条 ›` : ""}</Text></UnstyledButton>
+                      {f.list.slice(0, 2).map((x) => (
+                        <UnstyledButton key={x.id} onClick={() => jump(f.key, x.id)} className="portrait-line" display="block" w="100%">
+                          <Text size="sm" lh={1.5} truncate>{x.title}</Text>
+                        </UnstyledButton>
+                      ))}
+                    </Box>
+                  </Group>
                 )) : <Text size="sm" className="faint" p="md">还没有记录到关于{short}的信息</Text>}
               </Paper>
             </Section>
@@ -258,11 +276,13 @@ export default function PersonPage() {
         <Tabs.Panel value="memory">
           <Stack gap="lg">
             {facets.map((f) => (
-              <Section key={f.key} title={f.key} extra={<ThemeIcon size={22} radius="sm" variant="light" color={f.color}><f.icon size={13} /></ThemeIcon>}>
-                <Paper className="surface" radius="xl" style={{ overflow: "hidden" }}>
-                  {f.list.map((i) => <Row key={i.id} item={i} right={i.status !== "open" ? <Badge size="xs" color="gray">{STATUS_LABEL[i.status]}</Badge> : undefined} />)}
-                </Paper>
-              </Section>
+              <div key={f.key} id={`mem-facet-${f.key}`} className="mem-facet" data-flash={flash === f.key || undefined}>
+                <Section title={f.key} extra={<ThemeIcon size={22} radius="sm" variant="light" color={f.color}><f.icon size={13} /></ThemeIcon>}>
+                  <Paper className="surface" radius="xl" style={{ overflow: "hidden" }}>
+                    {f.list.map((i) => <Row key={i.id} item={i} flash={flash === i.id} right={i.status !== "open" ? <Badge size="xs" color="gray">{STATUS_LABEL[i.status]}</Badge> : undefined} />)}
+                  </Paper>
+                </Section>
+              </div>
             ))}
             {!facets.length && <Text className="faint" ta="center" py="xl">还没有记录</Text>}
             {aboutMe.length > 0 && (

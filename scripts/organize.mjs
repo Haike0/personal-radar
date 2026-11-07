@@ -5,7 +5,7 @@
 //   npm run organize -- --dry-run → show what would be sent, call nothing
 //   npm run organize -- --yes     → skip the confirmation (for scheduled runs)
 //
-// It only drives `radar-ai.mjs` (next / submit / digest / analysis), so every guarantee there still holds:
+// It only drives `radar-ai.mjs` (next / submit / dupes / merge / digest / analysis), so every guarantee there still holds:
 // chat databases stay read-only, the cursor moves only on a successful submit, items keep message IDs (no chat text).
 import { DatabaseSync } from "node:sqlite";
 import { spawnSync } from "node:child_process";
@@ -126,6 +126,23 @@ async function organize(K, sid) {
   }
 }
 
+// After organizing: the same thing written twice from different stretches of chat gets merged (one small call per person).
+async function dedupe(K, sid) {
+  const list = radarAi("dupes", "--session", sid);
+  if (list.status !== 0 || list.stdout.startsWith("NONE")) return;
+  if (DRY) { log(`[dry-run] 查重 ${sid} · ${list.stdout.length} chars`); return; }
+  try {
+    const text = await chat(K, [{ role: "system", content: "你在帮用户给整理出的记录查重。只输出 JSON 对象，不要解释。" }, { role: "user", content: list.stdout }], 2000);
+    const res = JSON.parse(text.match(/\{[\s\S]*\}/)?.[0] ?? "{}");
+    if (!Array.isArray(res.groups) || !res.groups.length) return;
+    res.session = sid;
+    const f = path.join(DATA, "ai-chunks/merge-result.json");
+    fs.writeFileSync(f, JSON.stringify(res), { mode: 0o600 });
+    const m = radarAi("merge", "--file", f);
+    log(m.status === 0 ? `${sid} 合并了 ${JSON.parse(m.stdout).merged} 条重复记录` : `${sid} 查重没合并：${m.stderr.trim()}`);
+  } catch (e) { log(`${sid} 查重跳过：${e.message}`); }
+}
+
 // Person analysis: once a chat is fully organized (and again after enough new items), the model reads the digest
 // (organized items + one key quote each + plain interaction counts) and writes a sourced analysis.
 async function analyze(K, sid, name = sid) {
@@ -168,7 +185,7 @@ try {
     rl.close();
     if (!ok) { console.log("已取消，什么都没发。"); process.exit(0); }
   }
-  for (const s of todo) await organize(K, s.session);
+  for (const s of todo) { await organize(K, s.session); await dedupe(K, s.session); }
   for (const s of sessionsStatus()) if (s.analysisDue) await analyze(K, s.session, s.name);
   if (usage.calls) log(`${MODEL}：${usage.calls} 次调用，输入 ${usage.in}（缓存命中 ${usage.hit}）/ 输出 ${usage.out} tokens`);
   for (const s of sessionsStatus()) log(`${s.name}：还剩 ${s.remainingTextMessages} 条没整理，已有 ${s.aiItems} 条记录${s.analysisAt ? `，分析 ${s.analysisAt.slice(0, 10)}` : ""}`);

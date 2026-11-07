@@ -3460,28 +3460,6 @@
    "supersedes": null
   },
   {
-   "tmp": "demo_xiaoyu:49",
-   "title": "小雨说回头给我做饭",
-   "kind": "promise",
-   "facet": null,
-   "subject": "them",
-   "certainty": "tentative",
-   "milestone": null,
-   "event_day": null,
-   "event_time": null,
-   "summary": "我总吃面，小雨说回头给我做点，自称会一点点、别抱太大期望。",
-   "why": "她主动答应的事，虽带玩笑但值得记。",
-   "refs": [
-    2729,
-    2732,
-    2734,
-    2735,
-    4011,
-    4013
-   ],
-   "supersedes": null
-  },
-  {
    "tmp": "demo_xiaoyu:50",
    "title": "小雨房东问续租，她想换房",
    "kind": "fact",
@@ -4412,7 +4390,7 @@
   },
   {
    "tmp": "demo_xiaoyu:94",
-   "title": "小雨说考完职称一起去日本玩",
+   "title": "小雨说考完职称一起去日本旅行",
    "kind": "plan",
    "facet": null,
    "subject": "both",
@@ -4429,7 +4407,11 @@
     5083,
     5084,
     6881,
-    7182
+    6884,
+    7182,
+    7185,
+    7607,
+    7610
    ],
    "supersedes": null
   },
@@ -4980,6 +4962,12 @@
    "summary": "她带了自己跟视频学做的饭，说下次做给我吃。",
    "why": "她主动承诺的小事，可择日兑现。",
    "refs": [
+    2729,
+    2732,
+    2734,
+    2735,
+    4011,
+    4013,
     6503,
     6506,
     6507
@@ -5141,27 +5129,6 @@
     6858,
     6859,
     6866
-   ],
-   "supersedes": null
-  },
-  {
-   "tmp": "demo_xiaoyu:130",
-   "title": "小雨说考完一起去日本旅行",
-   "kind": "plan",
-   "subject": "both",
-   "certainty": "tentative",
-   "milestone": null,
-   "event_day": null,
-   "event_time": null,
-   "summary": "小雨说考完试想去日本，之前一直说；周远答应考完就安排，她说更有动力复习了。",
-   "why": "两人反复确认的考后计划，是她的期待。",
-   "refs": [
-    6881,
-    6884,
-    7182,
-    7185,
-    7607,
-    7610
    ],
    "supersedes": null
   },

@@ -68,7 +68,8 @@ radar ai submit --file <结果.json>        # 交回整理结果；校验通过�
 2. 对每个人循环：`next` → 按整理规则写结果 JSON 到一个临时文件 → `submit`。`next` 显示 `DONE` 就换下一个人。
 3. `submit` 报错时，按错误信息改好再交同一份；整理没成功不会推进进度，下次会重新给你同一段，不会漏也不会重复。
 4. 一次最多整理每个人 6 段，剩下的留给下次，避免一次用掉太多额度。
-5. 有新记录的人，再更新一下人物分析：`radar ai digest --session <id>` 取材料，按 `radar guide analysis` 里的规则写好，`radar ai analysis --file <分析.json>` 交回。
+5. 每个人整理完后查一次重：`radar ai dupes --session <id>` 列出几对看起来重复的记录（显示 NONE 就跳过）。逐对判断，只有意思完全一样才合并，话题相近但内容不同的不要合并；把确定重复的写成 `{"session":"<id>","groups":[{"keep":留下的编号,"drop":[合并掉的编号],"title":"可选的新标题"}]}`，用 `radar ai merge --file <文件>` 交回。没有重复就跳过。
+6. 有新记录的人，再更新一下人物分析：`radar ai digest --session <id>` 取材料，按 `radar guide analysis` 里的规则写好，`radar ai analysis --file <分析.json>` 交回。
 
 ## 三、按时自动运行
 

@@ -9,6 +9,8 @@
 //   node scripts/radar-ai.mjs next --session S --backfill                   → reads only those messages, own cursor
 //   node scripts/radar-ai.mjs digest --session <id>                           → all organized items + interaction facts, for the person analysis
 //   node scripts/radar-ai.mjs analysis --file analysis.json                   → validates (every point cites item ids) and stores the analysis
+//   node scripts/radar-ai.mjs dupes --session <id>                            → pairs of open records that look like the same thing written twice
+//   node scripts/radar-ai.mjs merge --file merge.json                         → {session, groups:[{keep, drop:[…], title?}]}: moves the quotes, removes the repeats
 //
 // Guarantees: chat databases are opened read-only. Only the app's own radar.db is written. The cursor moves only
 // when a submit succeeds (one transaction), so an interrupted run just repeats the same chunk next time.
@@ -20,6 +22,7 @@ import os from "node:os";
 import path from "node:path";
 
 import { CHATS_DIR, RADAR_DB, scrub } from "./lib/env.mjs";
+import { candidatePairs } from "./lib/dupes.mjs";
 
 const HOME = os.homedir();
 // ChatLab is opt-in: only read when CHATLAB_DATA_DIR points at its data folder (usually ~/.chatlab/data).
@@ -433,6 +436,68 @@ function cmdAnalysis() {
   console.log(JSON.stringify({ ok: true, session: sid, sections: a.sections.length, points, basisItems: basis.n }));
 }
 
+// The same thing often gets written twice, from different stretches of chat ("别外传跳槽的事" / "请我保密跳槽的事").
+// Candidate pairs are chosen mechanically (scripts/lib/dupes.mjs); the model only says yes or no to each pair,
+// and `merge` refuses anything that isn't one of those pairs.
+const DUPES_RULES = `下面每一对记录，判断是不是同一件事的两种说法。
+只输出 JSON：{"session":"<照抄>","groups":[{"keep":保留的编号,"drop":[合并掉的编号],"title":"可选：更准确的一句话标题"}]}
+- 只有意思完全一样才合并；只是话题相近、但内容不同的不合并（比如「帮他盯流程」和「帮他挡酒」是两件事）
+- keep 选说得更完整的那条；拿不准就不合并；一对都不是就输出 {"session":"<照抄>","groups":[]}`;
+function dupePairs(r, sid) {
+  const rows = r.prepare(`SELECT id, kind, facet, title, event_date date FROM items WHERE mode='real' AND person_key=? AND status IN ('open','snoozed')
+                          AND COALESCE(review,'')<>'rejected'`).all(sid);
+  return candidatePairs(rows);
+}
+function cmdDupes() {
+  const sid = arg("session") ?? die("--session required");
+  const pairs = dupePairs(radar(), sid);
+  if (!pairs.length) { console.log(`NONE ${sid}: 没有看起来重复的记录`); return; }
+  const out = [`# 查重 · session ${sid} · ${pairs.length} 对可能重复的记录`, DUPES_RULES, ""];
+  pairs.forEach(([a, b], k) => out.push(`${k + 1}. #${a.id}「${a.title}」 ↔ #${b.id}「${b.title}」`));
+  console.log(scrub(out.join("\n")));
+}
+function cmdMerge() {
+  const file = arg("file") ?? die("--file required");
+  const res = JSON.parse(fs.readFileSync(file, "utf8"));
+  const sid = res.session ?? die("session required");
+  const r = radar();
+  const own = (id) => r.prepare("SELECT id, title FROM items WHERE id=? AND person_key=? AND mode='real'").get(id, sid);
+  const groups = (Array.isArray(res.groups) ? res.groups : []).map((g) => ({ keep: Number(g.keep), drop: [...new Set((g.drop ?? []).map(Number))].filter((x) => x !== Number(g.keep)), title: typeof g.title === "string" ? g.title.trim().slice(0, 60) : "" }));
+  const seen = new Set();
+  const allowed = new Set(dupePairs(r, sid).flatMap(([a, b]) => [`${a.id}:${b.id}`, `${b.id}:${a.id}`]));
+  for (const g of groups) {
+    if (!own(g.keep)) die(`not this person's record: #${g.keep}`);
+    for (const x of g.drop) if (!allowed.has(`${g.keep}:${x}`)) die(`#${g.keep} 和 #${x} 不是 dupes 列出的候选对，不能合并`);
+    for (const x of [g.keep, ...g.drop]) { if (seen.has(x)) die(`record used twice: #${x}`); seen.add(x); }
+    for (const x of g.drop) if (!own(x)) die(`not this person's record: #${x}`);
+  }
+  const t = now();
+  let merged = 0;
+  r.exec("BEGIN");
+  try {
+    for (const g of groups) {
+      if (!g.drop.length) continue;
+      const before = r.prepare("SELECT * FROM items WHERE id=?").get(g.keep);
+      for (const x of g.drop) {
+        const gone = own(x);
+        // quotes move over (no duplicates), anything that pointed at the repeat now points at the keeper
+        r.prepare(`UPDATE evidence SET item_id=? WHERE item_id=? AND COALESCE(message_id,'') NOT IN (SELECT COALESCE(message_id,'') FROM evidence WHERE item_id=?)`).run(g.keep, x, g.keep);
+        r.prepare("DELETE FROM evidence WHERE item_id=?").run(x);
+        r.prepare("UPDATE items SET supersedes_id=? WHERE supersedes_id=?").run(g.keep, x);
+        r.prepare("DELETE FROM history WHERE item_id=?").run(x);
+        r.prepare("DELETE FROM items WHERE id=?").run(x);
+        r.prepare("INSERT INTO history(item_id,action,actor,note,before_json,after_json,at) VALUES(?,?,?,?,?,?,?)")
+          .run(g.keep, "merge", "ai", `合并了重复的记录「${gone.title}」`, JSON.stringify(before), "{}", t);
+        merged++;
+      }
+      if (g.title) r.prepare("UPDATE items SET title=?, updated_at=? WHERE id=?").run(g.title, t, g.keep);
+      r.prepare("UPDATE items SET observed_at=(SELECT MAX(ts) FROM evidence WHERE item_id=? AND ts<>'') WHERE id=? AND EXISTS (SELECT 1 FROM evidence WHERE item_id=? AND ts<>'')").run(g.keep, g.keep, g.keep);
+    }
+    r.exec("COMMIT");
+  } catch (e) { r.exec("ROLLBACK"); die(`merge failed: ${e.message}`); }
+  console.log(JSON.stringify({ ok: true, session: sid, merged }));
+}
+
 const cmd = process.argv[2];
 if (cmd === "status") arg("source") === "voice" ? cmdVoiceStatus() : cmdStatus();
 else if (cmd === "next") cmdNext();
@@ -440,4 +505,6 @@ else if (cmd === "submit") cmdSubmit();
 else if (cmd === "digest") cmdDigest();
 else if (cmd === "backfill-start") cmdBackfillStart();
 else if (cmd === "analysis") cmdAnalysis();
+else if (cmd === "dupes") cmdDupes();
+else if (cmd === "merge") cmdMerge();
 else die("usage: status | next --session S [--max N] | submit --file F | digest --session S | analysis --file F");
