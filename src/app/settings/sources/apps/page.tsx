@@ -4,6 +4,7 @@ import { Paper } from "@mantine/core";
 import { WatchFolder } from "@/components/setup/AutoImport";
 import { WechatDb } from "@/components/setup/WechatDb";
 import { ImessageCard } from "@/components/setup/ImessageCard";
+import { WhatsappMacCard } from "@/components/setup/WhatsappMacCard";
 import { ImportPanel } from "@/components/setup/ImportPanel";
 import { SubPage } from "@/components/settings/kit";
 
@@ -13,6 +14,7 @@ export default function AppsPage() {
       <Paper className="surface" radius="xl" p="lg"><ImportPanel /></Paper>
       <Paper className="surface" radius="xl" p="lg"><WechatDb /></Paper>
       <Paper className="surface" radius="xl" p="lg"><ImessageCard /></Paper>
+      <Paper className="surface" radius="xl" p="lg"><WhatsappMacCard /></Paper>
       <Paper className="surface" radius="xl" p="lg"><WatchFolder /></Paper>
     </SubPage>
   );

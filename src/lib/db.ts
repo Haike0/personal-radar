@@ -101,6 +101,12 @@ const DEFAULT_SETTINGS: Record<string, string> = {
   imessage_mark: "0",
   imessage_last: "",
   imessage_result: "",
+  // WhatsApp Desktop for Mac's own database, read-only (not tested on a real install yet)
+  whatsapp_on: "off",
+  whatsapp_groups: "off",
+  whatsapp_mark: "0",
+  whatsapp_last: "",
+  whatsapp_result: "",
   // first run: "" → show the welcome page; "demo" = chose to look around; "done" = finished setup
   onboarded: "",
   update_check: "on",
