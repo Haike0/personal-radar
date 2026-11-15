@@ -163,7 +163,7 @@
     581,
     582,
     583,
-    613
+    617
    ],
    "supersedes": null
   },
@@ -242,11 +242,11 @@
    "summary": "姐姐说三亚酒店订了两间，先垫钱回头再算；春节初二机票她也在看，一家五口（爸妈、她、豆豆、我）。",
    "why": "春节三亚行程从提议变成已落地的预订，涉及垫钱要记。",
    "refs": [
-    616,
-    618,
-    620,
-    655,
-    656
+    626,
+    628,
+    630,
+    694,
+    695
    ],
    "supersedes": null
   },
@@ -263,10 +263,10 @@
    "summary": "姐姐追问小雨去不去，我说她春节要回自己家，姐姐确认那就是不去了。",
    "why": "三亚同行人数由此定为五口，也牵动姐姐对我感情进展的关心。",
    "refs": [
-    640,
-    641,
-    642,
-    643
+    654,
+    655,
+    656,
+    657
    ],
    "supersedes": null
   },
@@ -283,10 +283,10 @@
    "summary": "我当晚跟爸妈说了，他们同意而且挺高兴；姐姐此前一直催我去说。",
    "why": "三亚计划的关键一环落实了，之前让我转达的事已完成。",
    "refs": [
-    631,
-    633,
-    634,
-    635
+    641,
+    643,
+    644,
+    645
    ],
    "supersedes": null
   },
@@ -303,12 +303,12 @@
    "summary": "姐姐说不是尽量是必须，让我把和小雨的关系定下来；后来追问进展，我说别查户口，她说行我不管了。",
    "why": "姐姐对我感情状态的明确态度和不满，值得留意。",
    "refs": [
-    636,
-    638,
-    644,
     646,
-    647,
-    648
+    648,
+    658,
+    660,
+    661,
+    662
    ],
    "supersedes": null
   },
@@ -325,7 +325,7 @@
    "summary": "姐姐说十七那周你别忘了，具体指什么事聊天里没说明。",
    "why": "是个待确认的约定，别漏掉。",
    "refs": [
-    649
+    668
    ],
    "supersedes": null
   },
@@ -342,8 +342,8 @@
    "summary": "姐姐说北京比上海冷，让我到北京记得带厚衣服。",
    "why": "她对我出行的具体叮嘱，说明北京比上海冷。",
    "refs": [
-    652,
-    653
+    691,
+    692
    ],
    "supersedes": null
   },
@@ -360,8 +360,175 @@
    "summary": "姐姐说豆豆把客房收拾出来，说要给我铺床，还天天数日子盼我去。",
    "why": "能看出豆豆对我的期待，是家里近况的温暖细节。",
    "refs": [
+    680,
+    698
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_sister:19",
+   "title": "给豆豆带上海蝴蝶酥",
+   "kind": "promise",
+   "facet": null,
+   "subject": "self",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 3,
+   "event_time": "19:00",
+   "summary": "出发去北京前在南京东路买蝴蝶酥和梨膏糖，豆豆点名要蝴蝶酥",
+   "why": "已经答应孩子，上飞机前记得买",
+   "refs": [
+    612,
+    613,
+    614,
+    615
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_sister:20",
+   "title": "帮姐姐查北京律所会议室的投影",
+   "kind": "promise",
+   "facet": null,
+   "subject": "self",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 5,
+   "event_time": "21:00",
+   "summary": "姐姐开案之前要汇报，我帮她把投影和转接头的事确认好",
+   "why": "她忙起来顾不上，我答应盯",
+   "refs": [
+    620,
+    621,
+    622,
+    623,
+    624,
+    625
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_sister:21",
+   "title": "提醒姐姐交豆豆的幼儿园材料",
+   "kind": "promise",
+   "facet": null,
+   "subject": "them",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 8,
+   "event_time": "09:00",
+   "summary": "姐姐答应那天早上把豆豆的体检表拍照发我存档，我再提醒她一次",
+   "why": "容易忘，得留个手",
+   "refs": [
     650,
-    659
+    651,
+    652,
+    653
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_sister:22",
+   "title": "姐姐去三亚前带爸妈体检",
+   "kind": "plan",
+   "facet": null,
+   "subject": "them",
+   "certainty": "tentative",
+   "milestone": null,
+   "event_day": 11,
+   "event_time": "08:30",
+   "summary": "姐姐趁不忙带爸妈去医院做常规检查，顺便问问医生能不能长途飞行",
+   "why": "爸妈年纪大了，去三亚前先查一遍",
+   "refs": [
+    669,
+    670,
+    671,
+    672,
+    673,
+    674
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_sister:23",
+   "title": "给姐姐寄徐汇那家咖啡豆",
+   "kind": "promise",
+   "facet": null,
+   "subject": "self",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 14,
+   "event_time": "18:00",
+   "summary": "姐姐说北京喝不到好豆子，我把常买的那款浅烘寄两包过去",
+   "why": "说过好几次了，别又忘",
+   "refs": [
+    686,
+    687,
+    688,
+    689,
+    690
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_sister:24",
+   "title": "问姐姐三亚酒店钱怎么算",
+   "kind": "pending",
+   "facet": null,
+   "subject": "both",
+   "certainty": "tentative",
+   "milestone": null,
+   "event_day": 16,
+   "event_time": "21:30",
+   "summary": "两间房她先垫了，得问清楚怎么分，别装没事",
+   "why": "拖着不说容易别扭",
+   "refs": [
+    682,
+    683,
+    684,
+    685
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_sister:25",
+   "title": "姐姐所里年度汇报",
+   "kind": "plan",
+   "facet": null,
+   "subject": "them",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 22,
+   "event_time": "14:00",
+   "summary": "姐姐那天下午在所做年度汇报，一整天别去烦她",
+   "why": "她最紧张这个，别在那天找她",
+   "refs": [
+    663,
+    664,
+    665,
+    666,
+    667
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_sister:26",
+   "title": "给爸妈挑三亚过年的礼物",
+   "kind": "plan",
+   "facet": null,
+   "subject": "both",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 28,
+   "event_time": "20:00",
+   "summary": "晚上跟姐姐视频，一起商量给爸妈买什么带去三亚，别买重",
+   "why": "两人各买各的容易买重复",
+   "refs": [
+    675,
+    676,
+    677,
+    678,
+    679
    ],
    "supersedes": null
   }
@@ -643,10 +810,10 @@
     717,
     719,
     721,
-    768,
-    769,
-    770,
-    771
+    792,
+    793,
+    795,
+    797
    ],
    "supersedes": null
   },
@@ -833,9 +1000,9 @@
    "summary": "妈妈说爸爸早上量血压138，她天天盯着他按时吃药。",
    "why": "爸爸血压的日常近况，妈妈在持续照看。",
    "refs": [
-    758,
-    759,
-    760
+    767,
+    769,
+    771
    ],
    "supersedes": null
   },
@@ -852,10 +1019,171 @@
    "summary": "妈妈养的月季开得很好，还得意地说比我强多了。",
    "why": "妈妈日常的小乐趣，聊天时能接上话。",
    "refs": [
-    754,
-    755,
+    762,
+    763,
+    764,
+    765
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_mom:24",
+   "title": "给妈妈生日订饭店",
+   "kind": "promise",
+   "facet": null,
+   "subject": "self",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 3,
+   "event_time": "19:00",
+   "summary": "妈妈让我订生日那天的饭店，说好晚点给她准信。",
+   "why": "妈妈已经订了饭店，我得确认菜单和人数。",
+   "refs": [
+    798,
+    801,
+    802,
+    803,
+    804
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_mom:25",
+   "title": "提醒妈妈给爸爸量血压",
+   "kind": "pending",
+   "facet": null,
+   "subject": "them",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 5,
+   "event_time": "09:30",
+   "summary": "爸爸这两天血压有点高，让妈妈盯着他按时吃药。",
+   "why": "爸爸血压 138，妈妈天天盯着吃药，我得问一句。",
+   "refs": [
+    784,
+    785,
+    786,
+    787
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_mom:26",
+   "title": "问妈妈要不要带南京特产回上海",
+   "kind": "pending",
+   "facet": null,
+   "subject": "them",
+   "certainty": "tentative",
+   "milestone": null,
+   "event_day": 7,
+   "event_time": "10:00",
+   "summary": "妈妈问我回南京想带点啥，我说看看再说。",
+   "why": "妈妈想给我带东西，我还没想好。",
+   "refs": [
+    780,
+    781,
+    782,
+    783
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_mom:27",
+   "title": "妈妈给我转养生文章",
+   "kind": "plan",
+   "facet": null,
+   "subject": "them",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 9,
+   "event_time": "08:00",
+   "summary": "妈妈早上又转来一篇养生文章，让我看看。",
+   "why": "妈妈总转养生文章，我得回一句。",
+   "refs": [
+    752,
+    753,
     756,
     757
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_mom:28",
+   "title": "和妈妈视频看她养的月季",
+   "kind": "plan",
+   "facet": null,
+   "subject": "both",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 12,
+   "event_time": "19:30",
+   "summary": "妈妈说阳台月季开了一大朵，让我视频看看。",
+   "why": "妈妈养的花开了，想跟我显摆。",
+   "refs": [
+    766,
+    768,
+    770,
+    772
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_mom:29",
+   "title": "让妈妈帮我收快递",
+   "kind": "promise",
+   "facet": null,
+   "subject": "self",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 15,
+   "event_time": "14:00",
+   "summary": "我给家里买了点东西，让妈妈留意收一下。",
+   "why": "快递寄到南京家里，得让妈妈知道。",
+   "refs": [
+    788,
+    789,
+    790,
+    791
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_mom:30",
+   "title": "妈妈生日当天我到家",
+   "kind": "plan",
+   "facet": null,
+   "subject": "both",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 6,
+   "event_time": "11:00",
+   "summary": "妈妈生日，我答应回去吃顿饭，她做一桌菜。",
+   "why": "已经答应妈妈回去过生日，别忘买票。",
+   "refs": [
+    794,
+    796,
+    799,
+    800
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_mom:31",
+   "title": "妈妈问我小语加微信的事",
+   "kind": "pending",
+   "facet": null,
+   "subject": "self",
+   "certainty": "tentative",
+   "milestone": null,
+   "event_day": 20,
+   "event_time": "20:00",
+   "summary": "妈妈又问小语加她微信没有，让我再问问。",
+   "why": "妈妈一直惦记这事，得给她个回话。",
+   "refs": [
+    748,
+    749,
+    750,
+    751
    ],
    "supersedes": null
   }
@@ -1136,9 +1464,9 @@
     792,
     793,
     794,
-    832,
-    833,
-    834
+    874,
+    875,
+    876
    ],
    "supersedes": null
   },
@@ -1266,9 +1594,9 @@
    "refs": [
     804,
     805,
-    834,
-    835,
-    836
+    876,
+    877,
+    878
    ],
    "supersedes": null
   },
@@ -1347,6 +1675,176 @@
     650,
     772,
     774
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_laoxu:23",
+   "title": "给老许改好小程序用的咖啡零食logo",
+   "kind": "promise",
+   "facet": null,
+   "subject": "self",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 3,
+   "event_time": "20:00",
+   "summary": "把之前改好的logo再做一版适配小程序的，老许自己搞副业用",
+   "why": "答应了这周给他，他这次是真要搞小程序卖咖啡零食",
+   "refs": [
+    843,
+    844,
+    845,
+    846,
+    847
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_laoxu:24",
+   "title": "老许带娃去社区医院打疫苗",
+   "kind": "plan",
+   "facet": null,
+   "subject": "them",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 4,
+   "event_time": "09:30",
+   "summary": "老许和老婆带儿子去社区医院打第二针疫苗，排队人多",
+   "why": "他儿子的事，可以到时候问一句打完了没",
+   "refs": [
+    848,
+    849,
+    850,
+    851,
+    852
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_laoxu:25",
+   "title": "老许冲这个月存款任务",
+   "kind": "plan",
+   "facet": null,
+   "subject": "them",
+   "certainty": "tentative",
+   "milestone": null,
+   "event_day": 7,
+   "event_time": "21:00",
+   "summary": "老许月底前要冲存款指标，说可能要加班打电话拉客户",
+   "why": "他每次冲业绩都烦，过两天可以问问拉得怎么样",
+   "refs": [
+    869,
+    870,
+    871,
+    872,
+    873
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_laoxu:26",
+   "title": "回老许：他弟来上海找工作要不要我留意",
+   "kind": "pending",
+   "facet": null,
+   "subject": "them",
+   "certainty": "tentative",
+   "milestone": null,
+   "event_day": 5,
+   "event_time": "12:30",
+   "summary": "老许说他弟可能来上海找工作，问我能不能帮忙看看有没有合适的",
+   "why": "得回复他，帮不帮、怎么帮，别一直拖着",
+   "refs": [
+    858,
+    859,
+    860,
+    861,
+    862,
+    863
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_laoxu:27",
+   "title": "约老许晚上视频喝两杯",
+   "kind": "plan",
+   "facet": null,
+   "subject": "both",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 10,
+   "event_time": "21:30",
+   "summary": "各在家开一罐，视频聊高中和各自最近的破事",
+   "why": "好久没正经聊了，老许爱喝酒爱回忆高中",
+   "refs": [
+    832,
+    833,
+    834,
+    835,
+    836,
+    837
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_laoxu:28",
+   "title": "回南京和老许吃鸭血粉丝",
+   "kind": "plan",
+   "facet": null,
+   "subject": "both",
+   "certainty": "tentative",
+   "milestone": null,
+   "event_day": 14,
+   "event_time": "18:30",
+   "summary": "我回南京一趟，老许说带我去老门东那家老店吃鸭血粉丝，顺路走走",
+   "why": "他念叨好几次了，这次回去得把时间定下来",
+   "refs": [
+    853,
+    854,
+    855,
+    856,
+    857
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_laoxu:29",
+   "title": "老许记得把改好的logo发给奶茶店老板（改主意版）",
+   "kind": "promise",
+   "facet": null,
+   "subject": "them",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 8,
+   "event_time": "15:00",
+   "summary": "老许说要把logo发给之前奶茶店那个老板看看，说不定还能用上；他答应发完告诉我",
+   "why": "他答应的事常拖，到点问问发没发",
+   "refs": [
+    838,
+    839,
+    840,
+    841,
+    842
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_laoxu:30",
+   "title": "问老许儿子百日宴照片要不要我帮忙修",
+   "kind": "pending",
+   "facet": null,
+   "subject": "self",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 12,
+   "event_time": "20:00",
+   "summary": "百日宴拍了不少照片，我提过可以帮忙挑几张修一下，得问他要不要",
+   "why": "答应过帮忙，得主动问一句，别等他来催",
+   "refs": [
+    864,
+    865,
+    866,
+    867,
+    868
    ],
    "supersedes": null
   }
@@ -2035,7 +2533,7 @@
     1529,
     1531,
     2319,
-    2416
+    2438
    ],
    "supersedes": null
   },
@@ -2396,8 +2894,8 @@
    "summary": "老板又加需求，他说忍到婚礼完再说，跳槽再想想，婚礼前不动",
    "why": "他职业动向的关键态度",
    "refs": [
-    2415,
-    2417
+    2437,
+    2439
    ]
   },
   {
@@ -2413,9 +2911,152 @@
    "summary": "14号我到杭州他请我吃顿好的，补偿我当苦力",
    "why": "他明确答应的请客",
    "refs": [
-    2451,
-    2453
+    2482,
+    2484
    ]
+  },
+  {
+   "tmp": "demo_azhe:52",
+   "title": "给阿哲的份子钱",
+   "kind": "promise",
+   "facet": null,
+   "subject": "self",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 4,
+   "event_time": "12:00",
+   "summary": "婚礼前把份子钱转给阿哲，说好数字吉利点。",
+   "why": "答应过的事，别拖到婚礼当天才想起来。",
+   "refs": [
+    2397,
+    2398,
+    2399,
+    2400,
+    2401
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_azhe:53",
+   "title": "陪阿哲试伴郎服",
+   "kind": "plan",
+   "facet": null,
+   "subject": "both",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 5,
+   "event_time": "19:00",
+   "summary": "到杭州后晚上去阿哲家试伴郎服，顺便对一下流程。",
+   "why": "伴郎服不合身得提前调，别婚礼当天抓瞎。",
+   "refs": [
+    2440,
+    2441,
+    2442,
+    2443,
+    2444
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_azhe:54",
+   "title": "帮阿哲写伴郎发言",
+   "kind": "promise",
+   "facet": null,
+   "subject": "self",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 6,
+   "event_time": "22:00",
+   "summary": "婚礼前一晚把伴郎发言写好，说好要有真情实感但不能太损。",
+   "why": "他媳妇点名要真情实感，我答应的事得办。",
+   "refs": [
+    2411,
+    2412,
+    2413,
+    2414,
+    2415
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_azhe:55",
+   "title": "约阿哲打篮球",
+   "kind": "plan",
+   "facet": null,
+   "subject": "both",
+   "certainty": "tentative",
+   "milestone": null,
+   "event_day": 12,
+   "event_time": "19:30",
+   "summary": "婚礼忙完约一场球，地点在杭州还是上海待定。",
+   "why": "俩人都憋了一阵没动，得活动活动。",
+   "refs": [
+    2407,
+    2408,
+    2409,
+    2410
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_azhe:56",
+   "title": "问阿哲借充电宝",
+   "kind": "pending",
+   "facet": null,
+   "subject": "both",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 8,
+   "event_time": "10:00",
+   "summary": "我充电宝落他那儿了，得问一下在不在。",
+   "why": "东西得拿回来，顺便看他忙完没。",
+   "refs": [
+    2454,
+    2455,
+    2456,
+    2457
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_azhe:57",
+   "title": "阿哲跳槽面试",
+   "kind": "plan",
+   "facet": null,
+   "subject": "them",
+   "certainty": "tentative",
+   "milestone": null,
+   "event_day": 20,
+   "event_time": "11:00",
+   "summary": "阿哲说婚礼后想动一动，有个面试在线上。",
+   "why": "他的人生大事，得记着问结果。",
+   "refs": [
+    2416,
+    2417,
+    2418,
+    2419
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_azhe:58",
+   "title": "回阿哲：他弟来上海找工作",
+   "kind": "pending",
+   "facet": null,
+   "subject": "both",
+   "certainty": "tentative",
+   "milestone": null,
+   "event_day": 15,
+   "event_time": null,
+   "summary": "阿哲问我他弟来上海找工作要不要帮忙留意，我还没回。",
+   "why": "得给人一个答复。",
+   "refs": [
+    2431,
+    2432,
+    2433,
+    2434
+   ],
+   "supersedes": null
   }
  ],
  "demo_xiaoyu": [
@@ -2519,9 +3160,9 @@
     3586,
     7135,
     7242,
-    8264,
-    8322,
-    8525
+    8275,
+    8333,
+    8553
    ],
    "supersedes": null
   },
@@ -4239,8 +4880,8 @@
     4930,
     5802,
     5806,
-    8341,
-    8353
+    8352,
+    8364
    ]
   },
   {
@@ -5285,9 +5926,9 @@
     7747,
     7943,
     7946,
-    8286,
-    8287,
-    8289
+    8297,
+    8298,
+    8300
    ],
    "supersedes": null
   },
@@ -5307,8 +5948,8 @@
     7761,
     7767,
     7875,
-    8364,
-    8536
+    8375,
+    8564
    ],
    "supersedes": null
   },
@@ -5424,15 +6065,15 @@
    "summary": "周日下午两点开始看三家医院附近的房子，她提醒我别迟到；看完房我去她那修电脑。",
    "why": "周末安排明确，且她反复强调别迟到，是关系里的敏感点。",
    "refs": [
-    8590,
-    8592,
-    8596,
-    8597,
-    8601,
-    8602,
-    8697,
-    8698,
-    8701
+    8628,
+    8630,
+    8634,
+    8635,
+    8639,
+    8640,
+    8756,
+    8757,
+    8760
    ],
    "supersedes": null
   },
@@ -5449,16 +6090,16 @@
    "summary": "她妈问了我情况后想见我，定在后天晚上五点半，她让我别空手，带水果或茶叶，别穿破洞裤。",
    "why": "第一次正式见她家人，是关系里的重要节点。",
    "refs": [
-    8341,
-    8349,
-    8354,
-    8356,
-    8606,
-    8610,
-    8614,
-    8703,
-    8704,
-    8705
+    8352,
+    8360,
+    8365,
+    8367,
+    8644,
+    8648,
+    8652,
+    8762,
+    8763,
+    8764
    ],
    "supersedes": null
   },
@@ -5475,12 +6116,12 @@
    "summary": "小雨说考试前没心思，想改时间；我说我来弄，第二天告诉她已改到考完那周。",
    "why": "旅行计划正式变动，且由我代办完成。",
    "refs": [
-    8362,
-    8364,
-    8365,
+    8373,
+    8375,
     8376,
-    8413,
-    8414
+    8387,
+    8430,
+    8431
    ],
    "supersedes": "demo_xiaoyu:136"
   },
@@ -5497,13 +6138,13 @@
    "summary": "她嗓子痒、发冷、37度8，头晕还坚持到十点下班，回家出汗后退了些；第二天又上夜班。",
    "why": "她带病连轴转，身体状态值得持续关心。",
    "refs": [
-    8408,
-    8442,
-    8444,
-    8448,
+    8425,
     8459,
-    8466,
-    8474
+    8461,
+    8465,
+    8476,
+    8483,
+    8497
    ],
    "supersedes": null
   },
@@ -5520,11 +6161,11 @@
    "summary": "夜班中她说又有点烧、难受，没量体温，药也不敢多吃；不让我过去，说扛到下班。",
    "why": "感冒反复且还在夜班，是当下最该关心的事。",
    "refs": [
-    8652,
-    8654,
-    8656,
-    8662,
-    8666
+    8711,
+    8713,
+    8715,
+    8721,
+    8725
    ],
    "supersedes": null
   },
@@ -5541,11 +6182,11 @@
    "summary": "她说进度太慢、才看了一半，不让我安慰，说心里有数；白天补觉也常被吵。",
    "why": "考试临近而进度落后，压力是她自己反复提到的。",
    "refs": [
-    8536,
-    8537,
-    8539,
-    8540,
-    8542
+    8564,
+    8565,
+    8567,
+    8568,
+    8570
    ],
    "supersedes": null
   },
@@ -5562,13 +6203,13 @@
    "summary": "她妈问她有没有对象，她照实说我在上海做设计，她妈只哦了一声；她让我别多想，说等我去杭州。",
    "why": "她家人对我的初步态度，影响后面见面。",
    "refs": [
-    8114,
-    8118,
-    8123,
+    8120,
     8124,
-    8126,
-    8127,
-    8131
+    8129,
+    8130,
+    8132,
+    8133,
+    8137
    ],
    "supersedes": null
   },
@@ -5587,11 +6228,11 @@
    "refs": [
     8060,
     8071,
-    8078,
-    8080,
-    8221,
+    8084,
+    8086,
     8227,
-    8229
+    8233,
+    8235
    ],
    "supersedes": null
   },
@@ -5608,14 +6249,14 @@
    "summary": "她说电脑还是开不了机，让我周末带适配器去修；我答应看完房去她那弄，她提醒别又忘。",
    "why": "拖了很久的事，她已两次拿「上次」敲打我。",
    "refs": [
-    8282,
-    8283,
-    8286,
-    8288,
-    8507,
-    8510,
-    8600,
-    8601
+    8293,
+    8294,
+    8297,
+    8299,
+    8530,
+    8533,
+    8638,
+    8639
    ],
    "supersedes": null
   },
@@ -5632,11 +6273,11 @@
    "summary": "我说紧张，她回「要紧张的应该是我」，让我别想太多，到时候再说。",
    "why": "她表面淡定其实有压力，需要我稳住。",
    "refs": [
-    8558,
-    8559,
-    8560,
-    8563,
-    8564
+    8591,
+    8592,
+    8593,
+    8596,
+    8597
    ],
    "supersedes": null
   },
@@ -5653,9 +6294,9 @@
    "summary": "她难受时我说多喝热水，她回「就知道多喝热水」；之前也说过这句最没用。",
    "why": "她明确表达对敷衍式关心的不满，提醒我换方式。",
    "refs": [
-    8426,
-    8657,
-    8658
+    8443,
+    8716,
+    8717
    ],
    "supersedes": null
   },
@@ -5672,10 +6313,10 @@
    "summary": "小雨约好了看房，房子下月到期，我一点半到她楼下接她。",
    "why": "当天明确的看房安排，关系到她搬家。",
    "refs": [
-    8697,
-    8698,
-    8701,
-    8702
+    8756,
+    8757,
+    8760,
+    8761
    ],
    "supersedes": null
   },
@@ -5692,11 +6333,11 @@
    "summary": "小雨提醒我别忘了晚上五点半吃饭的事，让我认真准备礼物和自我介绍。",
    "why": "见家长是关系里的大事，当天确定。",
    "refs": [
-    8703,
-    8704,
-    8705,
-    8716,
-    8718
+    8762,
+    8763,
+    8764,
+    8775,
+    8777
    ],
    "supersedes": null
   },
@@ -5713,9 +6354,9 @@
    "summary": "小雨说水果茶叶都行，买车厘子因为她爸爱吃，别买太贵免得她妈说我乱花钱。",
    "why": "她对见家长礼物的具体要求，值得照做。",
    "refs": [
-    8710,
-    8711,
-    8714
+    8769,
+    8770,
+    8773
    ],
    "supersedes": null
   },
@@ -5732,9 +6373,9 @@
    "summary": "小雨要我准备说说自己做什么、多大、家里情况，别一紧张结巴。",
    "why": "她明确提出的准备要求，关系到今晚表现。",
    "refs": [
-    8716,
-    8718,
-    8722
+    8775,
+    8777,
+    8781
    ],
    "supersedes": null
   },
@@ -5751,10 +6392,245 @@
    "summary": "小雨凌晨三点多才下班，上午醒来仍说头有点沉，但坚持不改看房。",
    "why": "她身体还没缓过来，值得关心。",
    "refs": [
+    8742,
+    8752,
+    8753,
+    8756
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_xiaoyu:161",
+   "title": "给小雨送夜班后的早饭",
+   "kind": "promise",
+   "facet": null,
+   "subject": "self",
+   "certainty": "tentative",
+   "milestone": null,
+   "event_day": 9,
+   "event_time": "07:30",
+   "summary": "小雨下夜班，说好早上七点半把粥和包子送到她楼下",
+   "why": "上次夜班后她饿到中午，我答应这回去送",
+   "refs": [
+    8077,
+    8078,
+    8079,
+    8080,
+    8081,
+    8082
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_xiaoyu:162",
+   "title": "和小雨看那部新综艺的收官",
+   "kind": "plan",
+   "facet": null,
+   "subject": "both",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 11,
+   "event_time": "19:30",
+   "summary": "晚上七点半去小雨那一起看综艺收官，顺便带火锅外卖不加香菜",
+   "why": "她追了一整季，说收官必须有人陪看",
+   "refs": [
+    8576,
+    8577,
+    8578,
+    8579,
+    8580
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_xiaoyu:163",
+   "title": "回小雨：她爸妈想来上海看看",
+   "kind": "pending",
+   "facet": null,
+   "subject": "them",
+   "certainty": "tentative",
+   "milestone": null,
+   "event_day": 16,
+   "event_time": null,
+   "summary": "小雨说她爸妈想找时间过来看看她新房子，也顺便见见我，让我想个时间",
+   "why": "这事得我给个回复，拖着她不好跟家里说",
+   "refs": [
+    8612,
+    8613,
+    8614,
+    8615,
+    8616
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_xiaoyu:164",
+   "title": "和小雨吃顿考完的庆功火锅",
+   "kind": "plan",
+   "facet": null,
+   "subject": "both",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 19,
+   "event_time": "18:30",
+   "summary": "小雨考完当天晚上六点半，去吃她念叨很久的那家火锅",
+   "why": "她考完最想干的就是吃火锅，我提前订位",
+   "refs": [
+    8706,
+    8707,
+    8708,
+    8709,
+    8710
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_xiaoyu:165",
+   "title": "陪小雨签新房合同",
+   "kind": "plan",
+   "facet": null,
+   "subject": "both",
+   "certainty": "tentative",
+   "milestone": null,
+   "event_day": 4,
+   "event_time": "11:00",
+   "summary": "小雨看中的那套要交定金签合同，让我一起去把把关，房东说上午都在。",
+   "why": "租房这件事我答应了要一起看合同，别到时候又说加班。",
+   "refs": [
+    8489,
+    8490,
+    8491,
+    8492,
+    8493,
+    8494
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_xiaoyu:166",
+   "title": "给馒头预约体检打疫苗",
+   "kind": "promise",
+   "facet": null,
+   "subject": "self",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 6,
+   "event_time": "10:30",
+   "summary": "馒头的疫苗本快到期了，我答应带它去徐汇那家宠物医院，顺便剪个指甲。",
+   "why": "拖了一个多月了，小雨每次提都笑我。",
+   "refs": [
+    8248,
+    8249,
+    8250,
+    8251,
+    8252
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_xiaoyu:167",
+   "title": "小雨夜班前给她送一顿饭",
+   "kind": "plan",
+   "facet": null,
+   "subject": "both",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 8,
+   "event_time": "17:00",
+   "summary": "小雨连着三个夜班，我下班路过她医院，给她送份不加香菜的麻辣烫和少糖去冰的奶茶。",
+   "why": "她说夜班前那顿吃不好整晚都难受。",
+   "refs": [
+    8539,
+    8540,
+    8541,
+    8542,
+    8543
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_xiaoyu:168",
+   "title": "给小雨送复习用的台灯",
+   "kind": "promise",
+   "facet": null,
+   "subject": "self",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 10,
+   "event_time": "20:00",
+   "summary": "小雨说合租房那盏灯太暗看书眼睛疼，我答应把我那盏护眼台灯给她送过去。",
+   "why": "她考试在即，眼睛熬坏了不值当。",
+   "refs": [
+    8389,
+    8390,
+    8391,
+    8393,
+    8395,
+    8397
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_xiaoyu:169",
+   "title": "陪小雨去考场踩点",
+   "kind": "plan",
+   "facet": null,
+   "subject": "both",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 17,
+   "event_time": "15:00",
+   "summary": "小雨考点在浦东一个卫校，她怕第二天找不到路，让我陪她提前去看看考场和交通。",
+   "why": "考试当天不能再出岔子。",
+   "refs": [
     8683,
-    8693,
-    8694,
-    8697
+    8684,
+    8685,
+    8686,
+    8687
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_xiaoyu:170",
+   "title": "给小雨考试当天准备东西",
+   "kind": "promise",
+   "facet": null,
+   "subject": "self",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 18,
+   "event_time": "07:00",
+   "summary": "考试当天我提前把准考证、身份证、2B铅笔和水都装进一个文件袋，早上叫她起床。",
+   "why": "她紧张容易丢三落四，我盯一遍比较保险。",
+   "refs": [
+    8688,
+    8689,
+    8690,
+    8691,
+    8692,
+    8694
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_xiaoyu:171",
+   "title": "和小雨视频看她爸妈发来的照片",
+   "kind": "plan",
+   "facet": null,
+   "subject": "them",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 25,
+   "event_time": "20:30",
+   "summary": "小雨爸妈说想来上海看看，她让我晚上一起视频，商量住哪、待几天。",
+   "why": "这事她提过一次我还没正经回，别让她一个人应付。",
+   "refs": [
+    8678,
+    8679,
+    8680,
+    8681,
+    8682
    ],
    "supersedes": null
   }

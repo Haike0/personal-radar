@@ -208,5 +208,89 @@
   "result": "done",
   "proof": 325,
   "reason": "他说钱转了，姐姐也确认已给"
+ },
+ "demo_xiaoyu:170": {
+  "who": "me",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没提考试装东西的事"
+ },
+ "demo_xiaoyu:161": {
+  "who": "me",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没提送早饭的事"
+ },
+ "demo_xiaoyu:166": {
+  "who": "me",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没提体检疫苗的事"
+ },
+ "demo_azhe:52": {
+  "who": "me",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没提份子钱给没给"
+ },
+ "demo_azhe:54": {
+  "who": "me",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面只问写没写，没提写完或念了"
+ },
+ "demo_xiaoyu:168": {
+  "who": "me",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没再提台灯的事"
+ },
+ "demo_laoxu:23": {
+  "who": "me",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没提logo改没改"
+ },
+ "demo_laoxu:29": {
+  "who": "them",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没提logo发没发"
+ },
+ "demo_mom:24": {
+  "who": "me",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没聊天，没提订没订"
+ },
+ "demo_sister:20": {
+  "who": "me",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没再提投影转接头的事"
+ },
+ "demo_mom:29": {
+  "who": "them",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没提快递收没收到"
+ },
+ "demo_sister:21": {
+  "who": "me",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没提提醒交材料的事"
+ },
+ "demo_sister:19": {
+  "who": "me",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没再提蝴蝶酥买没买"
+ },
+ "demo_sister:23": {
+  "who": "me",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没再提寄豆子的事"
  }
 }

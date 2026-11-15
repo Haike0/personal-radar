@@ -44,7 +44,7 @@
  "demo_xiaolin:48": {
   "who": "them",
   "result": "done",
-  "proof": 2767,
+  "proof": 2776,
   "reason": "她说材料都理好了"
  },
  "demo_xiaolin:41": {
@@ -94,5 +94,89 @@
   "result": "done",
   "proof": 523,
   "reason": "我说能做加一天，没提收费"
+ },
+ "demo_heboss:11": {
+  "who": "me",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没再提剧本的事"
+ },
+ "demo_heboss:10": {
+  "who": "me",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没提材料过没过"
+ },
+ "demo_daliu:29": {
+  "who": "me",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没提带饭的事"
+ },
+ "demo_xiaolin:58": {
+  "who": "me",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没再提看作品集的事"
+ },
+ "demo_heboss:15": {
+  "who": "me",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面只说今天碰一下，没提演示成没成"
+ },
+ "demo_zhoujie:27": {
+  "who": "me",
+  "result": "done",
+  "proof": 1220,
+  "reason": "他说顺手更新了，周姐收到"
+ },
+ "demo_daliu:30": {
+  "who": "me",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没提变更单发没发"
+ },
+ "demo_wangzong:14": {
+  "who": "me",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没再提发票的事"
+ },
+ "demo_daliu:34": {
+  "who": "them",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面只聊bug，没提方案"
+ },
+ "demo_wangzong:12": {
+  "who": "me",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面只提合同，没提框架报价"
+ },
+ "demo_wangzong:11": {
+  "who": "me",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没再提排期发没发"
+ },
+ "demo_wangzong:17": {
+  "who": "me",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面只聊框架报价和合同，没提演示"
+ },
+ "demo_amy:25": {
+  "who": "me",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没提静态标注版发没发"
+ },
+ "demo_amy:27": {
+  "who": "me",
+  "result": "unclear",
+  "proof": null,
+  "reason": "后面没再提排期表的事"
  }
 }

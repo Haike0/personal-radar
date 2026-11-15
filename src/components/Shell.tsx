@@ -13,7 +13,7 @@ import { Companion } from "./Companion";
 const TABS = [
   { href: "/", label: "今天", icon: IconRadar2 },
   { href: "/people", label: "人物", icon: IconUsers },
-  { href: "/timeline", label: "时间线", icon: IconCalendarEvent },
+  { href: "/timeline", label: "日历", icon: IconCalendarEvent },
   { href: "/companion", label: "AI", icon: IconSparkles },
   { href: "/settings", label: "设置", icon: IconSettings },
 ];

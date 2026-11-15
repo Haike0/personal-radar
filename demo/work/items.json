@@ -151,9 +151,9 @@
    "summary": "王总二期试点回款节点已确认，月底先到第一笔，何总要求盯住这笔钱。",
    "why": "涉及现金流的关键节点，何总特别强调。",
    "refs": [
-    221,
-    222,
-    223
+    227,
+    228,
+    229
    ],
    "supersedes": null
   },
@@ -168,10 +168,152 @@
    "summary": "王总来电说二期想加两个模块，周远今天去碰，明早会上一起说，何总叮嘱别再让对方觉得慢。",
    "why": "新变化待跟进，且何总表达了怕拖慢的担忧。",
    "refs": [
-    228,
-    229,
+    258,
+    259,
+    260,
+    261
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_heboss:10",
+   "title": "跟何总过一遍改版项目材料",
+   "kind": "promise",
+   "facet": null,
+   "subject": "self",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 1,
+   "event_time": "09:30",
+   "summary": "何总要求明天上会前先把材料给他看一遍，重点讲客户反馈。",
+   "why": "何总反复强调客户反馈要讲清楚，别在会上被问住。",
+   "refs": [
+    217,
+    218,
+    219,
+    250,
+    251
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_heboss:11",
+   "title": "把年会小品剧本给何总审",
+   "kind": "promise",
+   "facet": null,
+   "subject": "self",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 7,
+   "event_time": "15:00",
+   "summary": "答应何总这周把年会小品剧本定稿发他审，他说别太低俗。",
+   "why": "何总催过好几次节目的事，不能拖。",
+   "refs": [
+    221,
+    223,
+    225,
+    234,
+    235
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_heboss:12",
+   "title": "回复何总产品岗招聘的候选人情况",
+   "kind": "pending",
+   "facet": null,
+   "subject": "self",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 9,
+   "event_time": "11:00",
+   "summary": "何总之前让我留意产品岗，我约了人面试，得跟他同步进展。",
+   "why": "何总提过年后要扩产品岗，这事他记着。",
+   "refs": [
+    236,
+    237,
+    238,
+    239
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_heboss:13",
+   "title": "跟何总汇报二期回款和客户关系",
+   "kind": "plan",
+   "facet": null,
+   "subject": "both",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 13,
+   "event_time": "10:00",
+   "summary": "何总让我专门汇报下王总二期回款节点和客户关系维护情况。",
+   "why": "何总最在意能赚钱的项目和客户投诉，回款要盯住。",
+   "refs": [
     230,
-    231
+    231,
+    232,
+    233
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_heboss:14",
+   "title": "何总去参加行业论坛",
+   "kind": "plan",
+   "facet": null,
+   "subject": "them",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 18,
+   "event_time": "14:00",
+   "summary": "何总要去一个行业论坛，让我把公司改版的案例整理一页给他带上。",
+   "why": "何总想在论坛上推公司案例，顺便看看有没有合作机会。",
+   "refs": [
+    244,
+    245,
+    246,
+    248
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_heboss:15",
+   "title": "何总让我约王总看新模块演示",
+   "kind": "promise",
+   "facet": null,
+   "subject": "self",
+   "certainty": "tentative",
+   "milestone": null,
+   "event_day": 22,
+   "event_time": "15:00",
+   "summary": "何总让我安排王总来看二期新模块的演示，时间还没最后定。",
+   "why": "何总想推进二期，展示我们响应快。",
+   "refs": [
+    240,
+    241,
+    242,
+    243
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_heboss:16",
+   "title": "何总生日小聚",
+   "kind": "plan",
+   "facet": null,
+   "subject": "them",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 27,
+   "event_time": "19:00",
+   "summary": "何总生日，公司几个人私下约了一起吃个饭，让我张罗。",
+   "why": "何总喜欢热闹，这种场合不能少。",
+   "refs": [
+    252,
+    253,
+    254,
+    255
    ],
    "supersedes": null
   }
@@ -198,8 +340,8 @@
     408,
     413,
     415,
-    418,
-    426
+    422,
+    435
    ],
    "supersedes": null
   },
@@ -394,6 +536,167 @@
    "refs": [
     341,
     348
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_wangzong:11",
+   "title": "把二期会员体系的排期发给王总",
+   "kind": "promise",
+   "facet": null,
+   "subject": "self",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 1,
+   "event_time": "20:00",
+   "summary": "王总让我把二期会员体系的排期排出来发他，方便他先跟老板对齐。",
+   "why": "答应客户的事，拖了会影响二期启动节奏。",
+   "refs": [
+    426,
+    427,
+    428,
+    429,
+    434
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_wangzong:12",
+   "title": "把二期的框架和报价区间发王总",
+   "kind": "promise",
+   "facet": null,
+   "subject": "self",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 3,
+   "event_time": "17:00",
+   "summary": "王总让我把二期的框架和大概的报价区间整理好发他，他先内部过一下。",
+   "why": "报价区间是王总拿去跟老板汇报的，不能拖。",
+   "refs": [
+    449,
+    450,
+    451,
+    452
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_wangzong:13",
+   "title": "王总请吃饭聊二期合作",
+   "kind": "plan",
+   "facet": null,
+   "subject": "both",
+   "certainty": "tentative",
+   "milestone": null,
+   "event_day": 6,
+   "event_time": "18:30",
+   "summary": "王总说二期如果启动，一起吃个饭聊后续合作。",
+   "why": "客户主动提吃饭，二期的事基本有戏，别掉链子。",
+   "refs": [
+    441,
+    442,
+    443,
+    444
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_wangzong:14",
+   "title": "把一期验收的尾款发票开出来",
+   "kind": "promise",
+   "facet": null,
+   "subject": "self",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 9,
+   "event_time": "14:00",
+   "summary": "王总催一期验收的尾款发票，让我尽快开出来寄过去。",
+   "why": "尾款卡在发票上，客户财务催得紧。",
+   "refs": [
+    418,
+    419,
+    420,
+    421
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_wangzong:15",
+   "title": "回复王总二期合同条款的修改意见",
+   "kind": "pending",
+   "facet": null,
+   "subject": "self",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 12,
+   "event_time": "10:00",
+   "summary": "王总发来二期合同里几处条款的修改意见，等我这边回复确认。",
+   "why": "合同条款没定，二期启动不了。",
+   "refs": [
+    457,
+    458,
+    459,
+    460
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_wangzong:16",
+   "title": "王总去总部汇报二期方案",
+   "kind": "plan",
+   "facet": null,
+   "subject": "them",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 15,
+   "event_time": "09:30",
+   "summary": "王总自己去总部汇报二期方案，走之前让我把演示文件再发他一份。",
+   "why": "王总汇报的结果直接决定二期批不批。",
+   "refs": [
+    437,
+    438,
+    439,
+    440
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_wangzong:17",
+   "title": "给王总准备二期新模块的小演示",
+   "kind": "promise",
+   "facet": null,
+   "subject": "self",
+   "certainty": "tentative",
+   "milestone": null,
+   "event_day": 22,
+   "event_time": "15:00",
+   "summary": "王总说想看看二期新模块，让我准备个小演示，时间还没定死。",
+   "why": "新模块是二期重点，演示得好能推动签约。",
+   "refs": [
+    445,
+    446,
+    447,
+    448
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_wangzong:18",
+   "title": "王总出差去外地看新工厂",
+   "kind": "plan",
+   "facet": null,
+   "subject": "them",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 28,
+   "event_time": "08:00",
+   "summary": "王总要去外地看新工厂，走之前让我把二期进度同步给他。",
+   "why": "王总出差期间不方便联系，进度要提前同步。",
+   "refs": [
+    453,
+    454,
+    455,
+    456
    ],
    "supersedes": null
   }
@@ -834,10 +1137,10 @@
    "summary": "老板周末发消息要求周一上午会上过两个不同感觉的首页方向，我答应周一上午给初稿。",
    "why": "周末临时压下来的硬节点，直接影响本周工作安排。",
    "refs": [
-    991,
-    995,
-    997,
-    998
+    996,
+    1000,
+    1002,
+    1003
    ]
   },
   {
@@ -853,10 +1156,179 @@
    "summary": "老板改口周一会上要看能点的原型，Amy争取后改为静态稿但需标清交互。",
    "why": "需求临时加码，交付形式被迫调整。",
    "refs": [
+    1055,
+    1056,
+    1062,
+    1063
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_amy:25",
+   "title": "给 Amy 发两个首页方向的静态标注版",
+   "kind": "promise",
+   "facet": null,
+   "subject": "self",
+   "certainty": "tentative",
+   "milestone": null,
+   "event_day": 1,
+   "event_time": "11:30",
+   "summary": "我答应上午把带交互标注的静态稿发 Amy，但手头还有别的会，时间有点悬。",
+   "why": "客户上午会上要看，不能拖。",
+   "refs": [
+    990,
+    991,
+    992,
+    993,
+    994
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_amy:26",
+   "title": "Amy 老板拉会对首页方向提意见",
+   "kind": "plan",
+   "facet": null,
+   "subject": "them",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 3,
+   "event_time": "15:00",
+   "summary": "Amy 那边老板要拉会过首页方向，她会把会上的意见整理给我。",
+   "why": "后续改稿全看这个会的结果。",
+   "refs": [
+    1009,
+    1010,
+    1011,
+    1012,
+    1013
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_amy:27",
+   "title": "把改稿排期同步给 Amy",
+   "kind": "promise",
+   "facet": null,
+   "subject": "self",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 6,
+   "event_time": "17:00",
+   "summary": "我答应给 Amy 一份改稿排期表，让她能看到每一步的时间点。",
+   "why": "她最烦进度不透明，得提前给个准。",
+   "refs": [
+    1017,
+    1018,
+    1019,
+    1020,
+    1021
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_amy:28",
+   "title": "跟 Amy 过一遍品牌手册细节",
+   "kind": "plan",
+   "facet": null,
+   "subject": "both",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 8,
+   "event_time": "14:30",
+   "summary": "约 Amy 线上过品牌手册，确认色值和字体规范，免得后面返工。",
+   "why": "手册细节直接决定改稿质量。",
+   "refs": [
     1029,
     1030,
-    1036,
-    1037
+    1031,
+    1032,
+    1033,
+    1034
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_amy:29",
+   "title": "Amy 去总部做品牌汇报",
+   "kind": "plan",
+   "facet": null,
+   "subject": "them",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 12,
+   "event_time": "10:00",
+   "summary": "Amy 要去总部汇报品牌方向，提前跟我打了招呼，那两天回消息会慢。",
+   "why": "她汇报前没空对接，我得避开那两天催她。",
+   "refs": [
+    1045,
+    1046,
+    1047,
+    1048,
+    1049
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_amy:30",
+   "title": "给 Amy 发第二版改稿反馈汇总",
+   "kind": "pending",
+   "facet": null,
+   "subject": "both",
+   "certainty": "tentative",
+   "milestone": null,
+   "event_day": 16,
+   "event_time": "16:00",
+   "summary": "我这边需要 Amy 把会上零散的意见汇总一下，她答应整理但还没给。",
+   "why": "没有汇总反馈没法往下改。",
+   "refs": [
+    1073,
+    1074,
+    1075,
+    1076,
+    1077
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_amy:31",
+   "title": "请 Amy 喝咖啡聊后续合作",
+   "kind": "plan",
+   "facet": null,
+   "subject": "both",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 21,
+   "event_time": "16:30",
+   "summary": "约 Amy 在客户楼下的咖啡店坐坐，聊聊后续合作和她的想法。",
+   "why": "关系得维护，后面还得长期对接。",
+   "refs": [
+    1078,
+    1079,
+    1080,
+    1081,
+    1082
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_amy:32",
+   "title": "Amy 休年假出去几天",
+   "kind": "plan",
+   "facet": null,
+   "subject": "them",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 27,
+   "event_time": null,
+   "summary": "Amy 休年假出去玩几天，期间不回工作消息，有事找她同事。",
+   "why": "那几天没人对接，得提前把要确认的事清掉。",
+   "refs": [
+    1083,
+    1084,
+    1085,
+    1086,
+    1087
    ],
    "supersedes": null
   }
@@ -923,8 +1395,8 @@
     337,
     873,
     874,
-    1164,
-    1173
+    1192,
+    1205
    ],
    "supersedes": null
   },
@@ -1047,9 +1519,9 @@
     482,
     1083,
     1084,
-    1133,
-    1179,
-    1180
+    1148,
+    1211,
+    1212
    ],
    "supersedes": null
   },
@@ -1326,8 +1798,8 @@
     1019,
     1020,
     1023,
-    1128,
-    1129
+    1143,
+    1144
    ],
    "supersedes": null
   },
@@ -1362,9 +1834,153 @@
    "summary": "我提议让小林独立跟一个模块，周姐说可以试试，出问题我兜着。",
    "why": "小林培养进入新阶段，也涉及我的责任。",
    "refs": [
+    1188,
+    1189,
+    1190
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_zhoujie:26",
+   "title": "和周姐过一遍二期报价和范围",
+   "kind": "plan",
+   "facet": null,
+   "subject": "both",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 2,
+   "event_time": "15:00",
+   "summary": "周姐约我后天下午三点在她办公室对二期报价和范围，让我带上王总那边聊完的要点。",
+   "why": "王总明天聊二期，回来得先跟周姐对齐，不然报价容易漏。",
+   "refs": [
+    1106,
+    1107,
+    1108,
+    1109,
+    1110
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_zhoujie:27",
+   "title": "把分享入口的需求文档更新给周姐",
+   "kind": "promise",
+   "facet": null,
+   "subject": "self",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 3,
+   "event_time": "17:00",
+   "summary": "我答应后天下午五点前把分享入口更新后的需求文档发给周姐，她要看细节部分。",
+   "why": "我下午随口说了顺手更新，周姐记着了，得给个准时间。",
+   "refs": [
+    1118,
+    1119,
+    1127,
+    1128,
+    1129
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_zhoujie:28",
+   "title": "周姐去客户那边做中期汇报",
+   "kind": "plan",
+   "facet": null,
+   "subject": "them",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 5,
+   "event_time": "10:00",
+   "summary": "周姐自己要去客户那边做中期汇报，上午十点，让我提前把设计稿和改版数据整理给她。",
+   "why": "周姐的汇报，我得提前把材料备齐，别到时候缺东西。",
+   "refs": [
+    1132,
+    1133,
+    1134,
+    1137,
+    1138
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_zhoujie:29",
+   "title": "跟周姐提小林独立跟模块的排期",
+   "kind": "pending",
+   "facet": null,
+   "subject": "self",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 6,
+   "event_time": "14:00",
+   "summary": "周姐让我在下周找个时间跟她碰一下小林独立跟模块的具体排期和风险，我还没定时间。",
+   "why": "周姐说过出问题我兜着，得先把排期和风险跟她对清楚。",
+   "refs": [
+    1152,
+    1153,
+    1154,
+    1165
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_zhoujie:30",
+   "title": "周姐去参加行业设计沙龙",
+   "kind": "plan",
+   "facet": null,
+   "subject": "them",
+   "certainty": "tentative",
+   "milestone": null,
+   "event_day": 9,
+   "event_time": "19:00",
+   "summary": "周姐说可能下周去一个行业设计沙龙，晚上七点，还没完全定，让我有空也去看看。",
+   "why": "周姐难得提这种活动，去不去得给个话。",
+   "refs": [
     1160,
     1161,
-    1162
+    1162,
+    1163,
+    1164
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_zhoujie:31",
+   "title": "请周姐喝咖啡谢她带项目",
+   "kind": "plan",
+   "facet": null,
+   "subject": "both",
+   "certainty": "tentative",
+   "milestone": null,
+   "event_day": 14,
+   "event_time": "16:00",
+   "summary": "我想请周姐喝杯咖啡，谢她这段时间带项目，顺便聊聊后面的事，时间还没定。",
+   "why": "周姐爱喝咖啡，这段时间她也护着我，得表示一下。",
+   "refs": [
+    1174,
+    1175,
+    1176,
+    1178
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_zhoujie:32",
+   "title": "周姐提醒我交季度绩效自评",
+   "kind": "pending",
+   "facet": null,
+   "subject": "self",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 16,
+   "event_time": "18:00",
+   "summary": "周姐让我在季度绩效截止前把自评填了发她，还要写一句小林和实习生的表现。",
+   "why": "绩效自评关系到调薪，周姐催了就得按时交。",
+   "refs": [
+    1193,
+    1195,
+    1197,
+    1199
    ],
    "supersedes": null
   }
@@ -1478,8 +2094,8 @@
     503,
     561,
     563,
-    1332,
-    1333
+    1340,
+    1341
    ],
    "supersedes": null
   },
@@ -1849,11 +2465,11 @@
    "summary": "周四没弄完，改口周一给；周五说本地已修好，周一能回归。",
    "why": "关键交付承诺，且已从周四顺延到周一，影响回归排期。",
    "refs": [
-    1350,
-    1357,
     1358,
-    1367,
-    1370
+    1368,
+    1370,
+    1396,
+    1399
    ],
    "supersedes": "demo_daliu:15"
   },
@@ -1870,11 +2486,11 @@
    "summary": "大刘周三承诺周四前弄完，周四下午说可能弄不完，复现太慢并道歉。",
    "why": "原定回归节点被打破，是排期变化的关键节点。",
    "refs": [
-    1330,
-    1349,
-    1350,
-    1354,
-    1355
+    1338,
+    1357,
+    1358,
+    1362,
+    1363
    ],
    "supersedes": null
   },
@@ -1891,9 +2507,9 @@
    "summary": "周四下班时说周六来公司弄，早上早点弄完；周五已本地修好。",
    "why": "周末加班是对方近期状态，也解释了交付节奏。",
    "refs": [
-    1361,
-    1363,
-    1367
+    1382,
+    1384,
+    1396
    ],
    "supersedes": null
   },
@@ -1908,10 +2524,10 @@
    "summary": "说一天一变顶不住，我答应这次锁死并去跟客户说死。",
    "why": "反复出现的核心不满，影响后续协作方式。",
    "refs": [
-    1332,
-    1333,
-    1334,
-    1335
+    1340,
+    1341,
+    1342,
+    1343
    ],
    "supersedes": null
   },
@@ -1928,9 +2544,9 @@
    "refs": [
     1298,
     1311,
-    1313,
     1321,
-    1323
+    1329,
+    1331
    ],
    "supersedes": null
   },
@@ -1946,7 +2562,148 @@
    "why": "反映他近期家庭负担重、按时下班的习惯。",
    "refs": [
     1300,
-    1338
+    1346
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_daliu:29",
+   "title": "帮大刘带饭到公司",
+   "kind": "promise",
+   "facet": null,
+   "subject": "self",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 1,
+   "event_time": "12:00",
+   "summary": "大刘加班修 bug，答应给他带楼下那家牛肉饭，加蛋。",
+   "why": "答应的事要做到，别让兄弟饿着干活。",
+   "refs": [
+    1385,
+    1387,
+    1388,
+    1389
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_daliu:30",
+   "title": "给大刘同步客户需求变更单",
+   "kind": "promise",
+   "facet": null,
+   "subject": "self",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 2,
+   "event_time": "15:00",
+   "summary": "整理一份客户新提的需求变更清单，标清楚优先级和排期影响，发给大刘。",
+   "why": "大刘最烦需求变来变去，先给他个准信。",
+   "refs": [
+    1372,
+    1373,
+    1374,
+    1375,
+    1376
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_daliu:31",
+   "title": "大刘老婆产检，他提前走",
+   "kind": "plan",
+   "facet": null,
+   "subject": "them",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 4,
+   "event_time": "15:30",
+   "summary": "大刘老婆怀二胎产检，他下午三点半就得走，当天不加班。",
+   "why": "别在那天给他塞急活。",
+   "refs": [
+    1317,
+    1318,
+    1319,
+    1320
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_daliu:32",
+   "title": "和大刘吃饭聊二期排期",
+   "kind": "plan",
+   "facet": null,
+   "subject": "both",
+   "certainty": "tentative",
+   "milestone": null,
+   "event_day": 8,
+   "event_time": "18:30",
+   "summary": "约大刘下班吃个饭，聊聊二期他那边要投入多少人天。",
+   "why": "二期范围快定了，得提前跟他通个气。",
+   "refs": [
+    1377,
+    1378,
+    1379,
+    1380
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_daliu:33",
+   "title": "回复大刘的接口联调问题",
+   "kind": "pending",
+   "facet": null,
+   "subject": "self",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 11,
+   "event_time": "11:00",
+   "summary": "大刘说联调环境又挂了，我得找运维看下，并回他。",
+   "why": "不回复他就卡在那儿干不了活。",
+   "refs": [
+    1313,
+    1314,
+    1315,
+    1316
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_daliu:34",
+   "title": "让大刘准备二期的技术方案",
+   "kind": "promise",
+   "facet": null,
+   "subject": "them",
+   "certainty": "tentative",
+   "milestone": null,
+   "event_day": 15,
+   "event_time": "14:00",
+   "summary": "跟大刘约好，让他出个二期前端技术方案，我先看看。",
+   "why": "二期启动前得有个底。",
+   "refs": [
+    1364,
+    1365,
+    1367,
+    1369
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_daliu:35",
+   "title": "大刘孩子幼儿园报名",
+   "kind": "plan",
+   "facet": null,
+   "subject": "them",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 20,
+   "event_time": "09:00",
+   "summary": "大刘早上要给孩子去幼儿园交报名材料，会晚到。",
+   "why": "那天早会别等他。",
+   "refs": [
+    1390,
+    1391,
+    1392,
+    1393
    ],
    "supersedes": null
   }
@@ -2930,7 +3687,7 @@
     2619,
     2620,
     2715,
-    2790
+    2803
    ],
    "supersedes": "demo_xiaolin:35"
   },
@@ -2986,8 +3743,8 @@
    "refs": [
     2625,
     2627,
-    2763,
-    2764
+    2767,
+    2768
    ],
    "supersedes": "demo_xiaolin:42"
   },
@@ -3038,10 +3795,10 @@
    "summary": "客户回音是加三个页面、预算不变，小林直呼神仙也画不出来；会上又被要求「更有呼吸感」。",
    "why": "需求再次膨胀，她的工作量压力会继续上升。",
    "refs": [
-    2745,
     2749,
-    2770,
-    2772
+    2753,
+    2779,
+    2781
    ],
    "supersedes": null
   },
@@ -3058,9 +3815,9 @@
    "summary": "定好六点半老地方烤肉，她先占位，我收尾后赶过去。",
    "why": "已兑现的约饭，可作相处记录。",
    "refs": [
-    2759,
-    2775,
-    2777
+    2763,
+    2784,
+    2786
    ],
    "supersedes": null
   },
@@ -3075,7 +3832,7 @@
    "summary": "她确认我没外传后说回头请我喝奶茶。",
    "why": "她主动提的答谢，可记着别让她忘。",
    "refs": [
-    2765
+    2769
    ],
    "supersedes": null
   },
@@ -3090,9 +3847,9 @@
    "summary": "她问充电宝和键盘是不是还在我这，提醒下班记得还。",
    "why": "东西还在我桌上，别忘了。",
    "refs": [
-    2808,
-    2809,
-    2810
+    2821,
+    2822,
+    2823
    ],
    "supersedes": "demo_xiaolin:37"
   },
@@ -3111,6 +3868,67 @@
     2682,
     2683,
     2684
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_xiaolin:57",
+   "title": "和小林拼单奶茶，她请",
+   "kind": "plan",
+   "facet": null,
+   "subject": "both",
+   "certainty": "confirmed",
+   "milestone": null,
+   "event_day": 3,
+   "event_time": "15:00",
+   "summary": "小林说回头请我喝奶茶，就定后天下午三点，楼下那家新开的。",
+   "why": "上次说好的，正好摸鱼休息一下。",
+   "refs": [
+    2770,
+    2771,
+    2772,
+    2773,
+    2774
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_xiaolin:58",
+   "title": "帮小林看跳槽作品集",
+   "kind": "promise",
+   "facet": null,
+   "subject": "self",
+   "certainty": "tentative",
+   "milestone": null,
+   "event_day": 8,
+   "event_time": "20:00",
+   "summary": "小林想让我帮她看作品集，说晚上线上过一遍，时间还没完全定。",
+   "why": "她偷偷看机会，这事得保密，我答应帮忙。",
+   "refs": [
+    2742,
+    2743,
+    2744,
+    2745
+   ],
+   "supersedes": null
+  },
+  {
+   "tmp": "demo_xiaolin:59",
+   "title": "约小林下班吃烤肉",
+   "kind": "plan",
+   "facet": null,
+   "subject": "both",
+   "certainty": "tentative",
+   "milestone": null,
+   "event_day": 17,
+   "event_time": "19:00",
+   "summary": "说好下周找天晚上去吃烤肉，具体哪天再看，老地方。",
+   "why": "上次没吃爽，补一顿，也聊聊她面试结果。",
+   "refs": [
+    2788,
+    2789,
+    2790,
+    2791
    ],
    "supersedes": null
   }

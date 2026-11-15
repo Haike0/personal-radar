@@ -2,6 +2,7 @@
 import { Box, Skeleton, Text } from "@mantine/core";
 import Link from "next/link";
 import { useState } from "react";
+import { CalendarView } from "@/components/CalendarView";
 import { PersonBar, useCurrentPerson } from "@/components/PersonSwitcher";
 import { usePageContext } from "@/components/Shell";
 import { useApi } from "@/lib/client";
@@ -53,6 +54,7 @@ export default function TimelinePage() {
   const person = who.person;
   usePageContext(person ? { page: "person", personKey: person.key, personName: person.name } : { page: "timeline" });
   const { data: p, loading } = useApi<PersonProfile>(person ? `/api/people/${encodeURIComponent(person.key)}` : null);
+  const [view, setView] = useState<"cal" | "line">("cal");
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>("全部");
   const [shown, setShown] = useState(PAGE);
   const now = new Date();
@@ -63,12 +65,29 @@ export default function TimelinePage() {
   const count = (f: (typeof FILTERS)[number]) => (f === "全部" ? all.length : all.filter((e) => e.type === f).length);
 
   if (!who.loading && !person) return <Text className="faint" ta="center" py="xl">还没有联系人</Text>;
+  const switcher = (
+    <div className="view-switch" role="group" aria-label="切换视图">
+      <button type="button" aria-pressed={view === "cal"} onClick={() => setView("cal")}>日历</button>
+      <button type="button" aria-pressed={view === "line"} onClick={() => setView("line")}>时间线</button>
+    </div>
+  );
+  // 日历: everyone's dated things by month, filtered by group. 时间线: one person's history, newest first.
+  if (view === "cal") return (
+    <div className="apl fade-in">
+      <p className="apl-kicker">{now.getFullYear()}年{now.getMonth() + 1}月</p>
+      <h1 className="apl-title">日历</h1>
+      <p className="apl-lead">每个人接下来要你面对的事，按恋人、朋友、同事、客户这些分组看。点一天看当天的安排，虚线框的是还没定下来的。</p>
+      {switcher}
+      <CalendarView />
+    </div>
+  );
   return (
     <div className="apl fade-in">
       <p className="apl-kicker">{now.getFullYear()}年{now.getMonth() + 1}月</p>
       <h1 className="apl-title">时间线</h1>
       <p className="apl-lead">按时间回看你和{person?.name ?? "TA"}之间记下来的事，每条都能点开看原话。标「待判断」「待定」的还没确定。</p>
-      <Box mt={22}><PersonBar {...who} subtitle={p ? `${all.length} 个节点` : undefined} /></Box>
+      {switcher}
+      <Box mt={18}><PersonBar {...who} subtitle={p ? `${all.length} 个节点` : undefined} /></Box>
 
       <div className="apl-filters" role="group" aria-label="筛选时间线">
         {FILTERS.map((f) => (
