@@ -16,13 +16,13 @@
     "wechat"
   ],
   "license": "AGPL-3.0-only",
-  "homepage": "https://github.com/Ikarishinji00/personal-radar#readme",
+  "homepage": "https://github.com/Haike0/personal-radar#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Ikarishinji00/personal-radar.git"
+    "url": "git+https://github.com/Haike0/personal-radar.git"
   },
   "bugs": {
-    "url": "https://github.com/Ikarishinji00/personal-radar/issues"
+    "url": "https://github.com/Haike0/personal-radar/issues"
   },
   "bin": {
     "readme-app": "bin/radar.mjs",

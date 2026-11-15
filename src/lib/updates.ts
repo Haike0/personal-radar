@@ -4,7 +4,7 @@ import { getSetting } from "./db";
 
 // Checks GitHub once a day for a newer release, so self-hosted installs don't silently fall behind.
 // Turn off with update_check = off (设置 → 关于). Sends one anonymous GET to api.github.com; nothing about you.
-export const REPO = "Ikarishinji00/personal-radar";
+export const REPO = "Haike0/personal-radar";
 let cache: { at: number; latest: string | null; url: string | null } | null = null;
 const newer = (a: string, b: string) => {
   const pa = a.replace(/^v/, "").split(/[.-]/).map(Number), pb = b.replace(/^v/, "").split(/[.-]/).map(Number);

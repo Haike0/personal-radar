@@ -92,7 +92,7 @@ function draw(cv: HTMLCanvasElement, data: LedgerData, name: string, quotes: num
   section(end1 + 70, t("我答应{0}的", name), tl.me, lists[1]);
 
   ctx.fillStyle = C.muted; ctx.font = `500 24px ${FONT}`;
-  const url = "github.com/Ikarishinji00/personal-radar";
+  const url = "github.com/Haike0/personal-radar";
   const urlW = ctx.measureText(url).width;
   ctx.fillText(fit(ctx, t("从聊天记录里翻出来的 · ReadMe"), W - PAD * 2 - urlW - 32), PAD, H - 64);
   ctx.textAlign = "right"; ctx.fillText(url, W - PAD, H - 64); ctx.textAlign = "left";

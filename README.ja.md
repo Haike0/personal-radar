@@ -10,18 +10,18 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Ikarishinji00/personal-radar/releases/latest"><img alt="Release" src="https://img.shields.io/github/v/release/Ikarishinji00/personal-radar?style=for-the-badge&logo=github&label=Release&color=1F6FD6&logoColor=white"></a>
-  <a href="https://github.com/Ikarishinji00/personal-radar/actions/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/Ikarishinji00/personal-radar/ci.yml?style=for-the-badge&label=CI&logo=githubactions&logoColor=white"></a>
+  <a href="https://github.com/Haike0/personal-radar/releases/latest"><img alt="Release" src="https://img.shields.io/github/v/release/Haike0/personal-radar?style=for-the-badge&logo=github&label=Release&color=1F6FD6&logoColor=white"></a>
+  <a href="https://github.com/Haike0/personal-radar/actions/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/Haike0/personal-radar/ci.yml?style=for-the-badge&label=CI&logo=githubactions&logoColor=white"></a>
   <img alt="macOS · Windows · Linux" src="https://img.shields.io/badge/macOS%20·%20Windows%20·%20Linux-111216?style=for-the-badge&logo=apple&logoColor=white">
   <a href="LICENSE"><img alt="License AGPL-3.0" src="https://img.shields.io/badge/License-AGPL--3.0-2F8BFF?style=for-the-badge"></a>
-  <a href="https://github.com/Ikarishinji00/personal-radar/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/Ikarishinji00/personal-radar?style=for-the-badge&logo=github&color=FFD23F&logoColor=white&labelColor=555"></a>
+  <a href="https://github.com/Haike0/personal-radar/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/Haike0/personal-radar?style=for-the-badge&logo=github&color=FFD23F&logoColor=white&labelColor=555"></a>
 </p>
 
 <p align="center">
   <a href="README.md">English</a> ·
   <a href="README.zh-CN.md">简体中文</a> ·
   <b>日本語</b> ·
-  <a href="https://ikarishinji00.github.io/personal-radar/?lang=ja">公式サイト</a> ·
+  <a href="https://haike0.github.io/personal-radar/?lang=ja">公式サイト</a> ·
   <a href="#download">ダウンロード</a> ·
   <a href="docs/troubleshooting.md">ヘルプ</a>
 </p>
@@ -61,10 +61,10 @@ ReadMe はトーク履歴を読み、大事なことだけを拾い出します�
 
 | | |
 |---|---|
-| **macOS**（Apple シリコン） | [ReadMe-mac-arm64.dmg](https://github.com/Ikarishinji00/personal-radar/releases/latest/download/ReadMe-mac-arm64.dmg) |
-| **macOS**（Intel） | [ReadMe-mac-x64.dmg](https://github.com/Ikarishinji00/personal-radar/releases/latest/download/ReadMe-mac-x64.dmg) |
-| **Windows** 10 / 11 | [ReadMe-windows-x64.zip](https://github.com/Ikarishinji00/personal-radar/releases/latest/download/ReadMe-windows-x64.zip) |
-| **Linux**（x64） | [ReadMe-linux-x64.tar.gz](https://github.com/Ikarishinji00/personal-radar/releases/latest/download/ReadMe-linux-x64.tar.gz) |
+| **macOS**（Apple シリコン） | [ReadMe-mac-arm64.dmg](https://github.com/Haike0/personal-radar/releases/latest/download/ReadMe-mac-arm64.dmg) |
+| **macOS**（Intel） | [ReadMe-mac-x64.dmg](https://github.com/Haike0/personal-radar/releases/latest/download/ReadMe-mac-x64.dmg) |
+| **Windows** 10 / 11 | [ReadMe-windows-x64.zip](https://github.com/Haike0/personal-radar/releases/latest/download/ReadMe-windows-x64.zip) |
+| **Linux**（x64） | [ReadMe-linux-x64.tar.gz](https://github.com/Haike0/personal-radar/releases/latest/download/ReadMe-linux-x64.tar.gz) |
 
 実行環境は同梱しているので、ほかに何もインストールする必要はありません。
 
@@ -76,7 +76,7 @@ ReadMe はトーク履歴を読み、大事なことだけを拾い出します�
 <summary>開発者向け：Node.js、Docker、AI アシスタントに任せる</summary>
 
 ```bash
-npx github:Ikarishinji00/personal-radar      # Node.js 22.13 以上
+npx github:Haike0/personal-radar      # Node.js 22.13 以上
 ```
 
 - **Docker**：`docker compose up -d` のあと http://localhost:3210 を開く（データは `./radar-data`）。
@@ -146,10 +146,10 @@ ReadMe は読むだけです。トークのアカウントにログインせず�
 
 ## Star の推移
 
-<a href="https://star-history.com/#Ikarishinji00/personal-radar&Date">
+<a href="https://star-history.com/#Haike0/personal-radar&Date">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Ikarishinji00/personal-radar&type=Date&theme=dark">
-    <img alt="Star の推移" src="https://api.star-history.com/svg?repos=Ikarishinji00/personal-radar&type=Date" width="600">
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Haike0/personal-radar&type=Date&theme=dark">
+    <img alt="Star の推移" src="https://api.star-history.com/svg?repos=Haike0/personal-radar&type=Date" width="600">
   </picture>
 </a>
 

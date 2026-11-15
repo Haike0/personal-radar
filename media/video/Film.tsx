@@ -210,7 +210,7 @@ const End: React.FC<{ lang: Lang; portrait: boolean }> = ({ lang, portrait }) =>
         <div style={{ fontSize: TY(portrait).mark, fontWeight: 800, color: "#0f1115", letterSpacing: -3 }}>ReadMe</div>
       </div>
       <div style={{ fontSize: TY(portrait).sub, color: "#5d6370", marginTop: 30, opacity: b }}>{C[lang].end2}</div>
-      <div style={{ fontSize: TY(portrait).small, color: "#2f8bff", marginTop: 18, opacity: b, fontWeight: 600 }}>github.com/Ikarishinji00/personal-radar</div>
+      <div style={{ fontSize: TY(portrait).small, color: "#2f8bff", marginTop: 18, opacity: b, fontWeight: 600 }}>github.com/Haike0/personal-radar</div>
     </AbsoluteFill>
   );
 };

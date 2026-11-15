@@ -19,7 +19,7 @@ Verify: `node -e "require('node:sqlite')"` exits without error.
 
 ## 2. Get the code and build
 ```bash
-git clone https://github.com/Ikarishinji00/personal-radar.git ~/personal-radar
+git clone https://github.com/Haike0/personal-radar.git ~/personal-radar
 cd ~/personal-radar
 npm ci                 # also builds the app (the prepare step)
 npx next build

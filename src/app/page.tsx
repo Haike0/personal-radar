@@ -234,7 +234,7 @@ export default function Home() {
 
       <UpdateNotice />
       {d.mode === "demo" && (
-        <Paper component={Link} href={demoOnly ? "https://github.com/Ikarishinji00/personal-radar" : "/setup"} className="surface setup-banner" radius="xl" p="md">
+        <Paper component={Link} href={demoOnly ? "https://github.com/Haike0/personal-radar" : "/setup"} className="surface setup-banner" radius="xl" p="md">
           <Group justify="space-between" wrap="nowrap" gap="sm">
             <div style={{ minWidth: 0 }}>
               <Text size="sm" fw={650}>{demoOnly ? t("这是在线演示，数据全是编的") : t("现在看的是编出来的演示数据")}</Text>

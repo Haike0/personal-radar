@@ -2,7 +2,7 @@
 
 ReadMe handles private conversations, so security reports are very welcome.
 
-**Report privately:** open a [GitHub security advisory](https://github.com/Ikarishinji00/personal-radar/security/advisories/new) for this repository. Please don't open a public issue for a vulnerability, and never include real chat content in a report.
+**Report privately:** open a [GitHub security advisory](https://github.com/Haike0/personal-radar/security/advisories/new) for this repository. Please don't open a public issue for a vulnerability, and never include real chat content in a report.
 
 **Design boundaries**
 - The server listens on `127.0.0.1` by default and has no login. Exposing it to the internet without your own access control (e.g. Tailscale, Cloudflare Access) is unsafe.

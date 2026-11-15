@@ -63,8 +63,8 @@ export function About() {
         <Switch checked={data ? !data.off : true} onChange={(e) => toggle(e.currentTarget.checked)} />
       </Group>
       <Group gap="md">
-        <Anchor href="https://github.com/Ikarishinji00/personal-radar" target="_blank" size="xs">GitHub</Anchor>
-        <Anchor href="https://github.com/Ikarishinji00/personal-radar/issues" target="_blank" size="xs">{t("反馈问题")}</Anchor>
+        <Anchor href="https://github.com/Haike0/personal-radar" target="_blank" size="xs">GitHub</Anchor>
+        <Anchor href="https://github.com/Haike0/personal-radar/issues" target="_blank" size="xs">{t("反馈问题")}</Anchor>
         <Text size="xs" className="faint">{t("AGPL-3.0 开源")}</Text>
       </Group>
     </Stack>

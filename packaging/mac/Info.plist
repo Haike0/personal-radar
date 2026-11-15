@@ -4,7 +4,7 @@
 <dict>
   <key>CFBundleName</key><string>ReadMe</string>
   <key>CFBundleDisplayName</key><string>ReadMe</string>
-  <key>CFBundleIdentifier</key><string>io.github.ikarishinji00.readme</string>
+  <key>CFBundleIdentifier</key><string>io.github.haike0.readme</string>
   <key>CFBundleExecutable</key><string>ReadMe</string>
   <key>CFBundleIconFile</key><string>AppIcon</string>
   <key>CFBundlePackageType</key><string>APPL</string>
