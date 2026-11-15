@@ -16,7 +16,7 @@ import { plan, read, write, writeState } from "../../scripts/lib/import-core.mjs
 //     and every new export dropped there is imported. Files are read, never moved or changed.
 
 export const expand = (p: string) => (p.startsWith("~") ? path.join(os.homedir(), p.slice(1)) : p);
-export const defaultWatchDir = () => path.join(os.homedir(), "Documents", "Radar 导入");
+export const defaultWatchDir = () => path.join(os.homedir(), "Documents", "ReadMe 导入");
 
 type Seen = { file: string; size: number; mtime: number; at: string; result: string; ok: boolean };
 function table() {
@@ -94,7 +94,7 @@ export async function autoTick() {
     lastWhatsapp = Date.now();
     out.whatsapp = (await import("./whatsapp-sync")).sync();
   }
-  // Telegram: a live listener brings new messages in as they arrive; an hourly catch-up covers time Radar was off
+  // Telegram: a live listener brings new messages in as they arrive; an hourly catch-up covers time ReadMe was off
   if (getSetting("tg_on") === "on" && Date.now() - lastTelegram > 60 * 60e3) {
     lastTelegram = Date.now();
     const tg = await import("./telegram");

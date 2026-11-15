@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2FD8B4"/>
+      <stop offset="1" stop-color="#2F8BFF"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="228" fill="url(#bg)"/>
+  <!-- radar rings -->
+  <circle cx="500" cy="530" r="330" fill="none" stroke="#fff" stroke-opacity=".9" stroke-width="40"/>
+  <circle cx="500" cy="530" r="196" fill="none" stroke="#fff" stroke-opacity=".9" stroke-width="40"/>
+  <!-- the line joining you and them -->
+  <path d="M520 510 L716 314" stroke="#fff" stroke-width="40" stroke-linecap="round"/>
+  <!-- you: a chat bubble in the middle -->
+  <path d="M440 456h120a44 44 0 0 1 44 44v56a44 44 0 0 1-44 44h-62l-46 38 8-38h-20a44 44 0 0 1-44-44v-56a44 44 0 0 1 44-44z" fill="#fff"/>
+  <circle cx="462" cy="528" r="17" fill="#2FB6C8"/><circle cx="500" cy="528" r="17" fill="#2FB6C8"/><circle cx="538" cy="528" r="17" fill="#2FB6C8"/>
+  <!-- them: a chat bubble at the far end -->
+  <path d="M700 168h118a50 50 0 0 1 50 50v62a50 50 0 0 1-50 50h-46l-58 44 12-44h-26a50 50 0 0 1-50-50v-62a50 50 0 0 1 50-50z" fill="#FFC53D"/>
+  <path d="M759 287c-30-20-48-36-48-56a24 24 0 0 1 48-8 24 24 0 0 1 48 8c0 20-18 36-48 56z" fill="#fff"/>
+</svg>

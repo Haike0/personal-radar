@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Personal Radar — import chat exports from the command line (the app's 设置 → 导入聊天 does the same in the browser).
+// ReadMe — import chat exports from the command line (the app's 设置 → 导入聊天 does the same in the browser).
 //
 //   npm run import -- <file> [more files…] [--me "your name in the chat"] [--name "display name"] [--date-order dmy|mdy] [--dry-run]
 //

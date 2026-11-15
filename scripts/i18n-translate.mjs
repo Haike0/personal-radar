@@ -32,9 +32,9 @@ const GLOSSARY = {
   ja: "说话算数账本→約束帳；聊天记忆→トーク履歴；画像→プロフィール；演示数据→デモデータ；整理（AI）→AI整理；待核对→要確認；没下文→音沙汰なし；晒图→シェア画像；今天→今日；人物→人物；日历→カレンダー；时间线→タイムライン；设置→設定；恋人→恋人；同事→同僚；客户→お客様；上司→上司",
   en: "说话算数账本→Promise Ledger；聊天记忆→Chat history；画像→Profile；演示数据→Demo data；整理（AI）→organize；待核对→To check；没下文→No follow-up；晒图→Share card；今天→Today；人物→People；日历→Calendar；时间线→Timeline；设置→Settings；恋人→Partner；同事→Coworker；客户→Client；上司→Boss",
 };
-const sys = (lang) => `You translate the interface of "Personal Radar", a local app that reads exported chats and reminds you of plans, promises and what people care about.
+const sys = (lang) => `You translate the interface of "ReadMe", a local app that reads exported chats and reminds you of plans, promises and what people care about.
 Translate each Simplified Chinese UI string into ${NAME[lang]}. Keep it short like UI text, keep the tone friendly and plain.
-Rules: keep placeholders like {0} {1} exactly (you may reorder them); keep product names (Personal Radar, Radar, LINE, WhatsApp, Telegram, DeepSeek, ChatLab, Ollama, AI, agent) and code/URLs as they are; keep leading/trailing spaces and symbols like · › → as in the source.
+Rules: keep placeholders like {0} {1} exactly (you may reorder them); keep product names (ReadMe, ReadMe, LINE, WhatsApp, Telegram, DeepSeek, ChatLab, Ollama, AI, agent) and code/URLs as they are; keep leading/trailing spaces and symbols like · › → as in the source.
 Glossary: ${GLOSSARY[lang]}
 Output only a JSON object mapping each source string to its translation.`;
 

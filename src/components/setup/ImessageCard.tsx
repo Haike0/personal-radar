@@ -9,7 +9,7 @@ import { t } from "@/lib/i18n";
 type Status = { on: boolean; groups: boolean; oneWay: boolean; last: string | null; result: string | null; runner: string; platform: string;
   found: { ok: boolean; error?: string; noAccess?: boolean; chats?: number; groups?: number; conversations?: number } };
 
-/** 信息（iMessage / 短信）on this Mac. Without Full Disk Access it shows how to grant it — Radar never works around it. */
+/** 信息（iMessage / 短信）on this Mac. Without Full Disk Access it shows how to grant it — ReadMe never works around it. */
 export function ImessageCard() {
   const { data, reload } = useApi<Status>("/api/imessage");
   const [busy, setBusy] = useState(false);
@@ -29,10 +29,10 @@ export function ImessageCard() {
         <Alert color="orange" radius="lg" icon={<IconLock size={18} />} title={t("需要你在系统设置里开一个权限")} styles={{ body: { minWidth: 0 }, message: { minWidth: 0, overflowWrap: "anywhere" } }}>
           <List size="sm" spacing={4} type="ordered" styles={{ itemWrapper: { display: "inline", whiteSpace: "normal" }, item: { whiteSpace: "normal" } }}>
             <List.Item>{t("打开「系统设置 → 隐私与安全性 → 完全磁盘访问」")}</List.Item>
-            <List.Item>{t("点 +，加上你用来启动 Radar 的程序：在终端里运行的就加「终端」（或 iTerm 等）；也可以直接加 node：")} <Code block mt={4} style={{ whiteSpace: "pre-wrap", wordBreak: "break-all" }}>{data.runner}</Code></List.Item>
-            <List.Item>{t("打开它旁边的开关，然后退出并重新启动 Radar")}</List.Item>
+            <List.Item>{t("点 +，加上你用来启动 ReadMe 的程序：在终端里运行的就加「终端」（或 iTerm 等）；也可以直接加 node：")} <Code block mt={4} style={{ whiteSpace: "pre-wrap", wordBreak: "break-all" }}>{data.runner}</Code></List.Item>
+            <List.Item>{t("打开它旁边的开关，然后退出并重新启动 ReadMe")}</List.Item>
           </List>
-          <Text size="xs" mt="xs" className="muted">{t("这个权限只能你自己开，Radar 不会也没办法绕过它。")}</Text>
+          <Text size="xs" mt="xs" className="muted">{t("这个权限只能你自己开，ReadMe 不会也没办法绕过它。")}</Text>
           <Button size="xs" radius="xl" variant="light" mt="sm" onClick={() => reload()}>{t("开好了，重新检查")}</Button>
         </Alert>
       ) : !f.ok ? (

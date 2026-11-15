@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Personal Radar in one command:
-//   npx personal-radar         (or `npm start` inside a clone)
+// ReadMe in one command:
+//   npx readme-app         (or `npm start` inside a clone)
 // The package ships the built app (npm runs `prepare` → next build when installing from GitHub), so it starts in seconds.
 // In a clone without a build, the first run builds it (about a minute).
 // Options: --port 3210   --rebuild   --no-open   --host 127.0.0.1
@@ -27,7 +27,7 @@ const HOST = String(opt("host", process.env.RADAR_HOST ?? "127.0.0.1"));
 
 const [maj, min] = process.versions.node.split(".").map(Number);
 if (maj < 22 || (maj === 22 && min < 13)) {
-  console.error(`Personal Radar 需要 Node.js 22.13 或更新版本（你现在是 ${process.versions.node}）。到 https://nodejs.org 下载 LTS 版本后再试。`);
+  console.error(`ReadMe 需要 Node.js 22.13 或更新版本（你现在是 ${process.versions.node}）。到 https://nodejs.org 下载 LTS 版本后再试。`);
   process.exit(1);
 }
 
@@ -50,7 +50,8 @@ if (SUB[args[0]]) {
 // an installed package carries the slim standalone server; a clone has next itself
 const SA = path.join(ROOT, ".next", "standalone", "server.js");
 const nextBin = () => createRequire(path.join(ROOT, "package.json")).resolve("next/dist/bin/next");
-const inPackage = ROOT.split(path.sep).includes("node_modules");
+// the desktop downloads (packaging/) carry a prebuilt server and a ".packaged" marker, like an npm install
+const inPackage = ROOT.split(path.sep).includes("node_modules") || fs.existsSync(path.join(ROOT, ".packaged"));
 const BUILD_ID = path.join(ROOT, ".next", "BUILD_ID");
 // in a clone, rebuild after `git pull` changed the code
 const newest = (dir) => fs.readdirSync(dir, { withFileTypes: true }).reduce((t, e) => {
@@ -62,7 +63,7 @@ const built = fs.existsSync(BUILD_ID) && !stale;
 if (!built || args.includes("--rebuild")) {
   // Next.js can't compile source that sits inside node_modules, so an installed copy must come prebuilt
   if (inPackage) {
-    console.error("这个安装包里缺少构建好的程序。请重新安装：npx personal-radar ，还不行就到 GitHub 提 issue。");
+    console.error("这个安装包里缺少构建好的程序。请重新安装：npx readme-app ，还不行就到 GitHub 提 issue。");
     process.exit(1);
   }
   console.log(stale ? "代码有更新，正在重新准备（大约一分钟）…" : "第一次运行，正在准备（大约一分钟）…");
@@ -87,7 +88,7 @@ for (let i = 0; i < 60; i++) {
   await new Promise((r) => setTimeout(r, 500));
 }
 const dataDir = (process.env.RADAR_DATA_DIR ?? path.join(os.homedir(), ".personal-radar")).replace(os.homedir(), "~");
-console.log(`\n  Personal Radar 已经开好：${url}\n  聊天和记录都在你自己的电脑上（${dataDir}）。按 Ctrl+C 关闭。\n`);
+console.log(`\n  ReadMe 已经开好：${url}\n  聊天和记录都在你自己的电脑上（${dataDir}）。按 Ctrl+C 关闭。\n`);
 if (HOST !== "127.0.0.1" && HOST !== "localhost") console.log(`  注意：现在监听的是 ${HOST}，同一网络里的人也能打开这个页面、看到你的聊天整理结果。\n`);
 if (!args.includes("--no-open")) {
   const cmd = process.platform === "darwin" ? "open" : process.platform === "win32" ? "cmd" : "xdg-open";

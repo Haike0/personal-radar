@@ -1,13 +1,13 @@
 {
-  "name": "Personal Radar",
-  "short_name": "Radar",
-  "description": "私人关系与重要事项",
+  "name": "ReadMe",
+  "short_name": "ReadMe",
+  "description": "ReadMe：从聊天里记住身边每个人",
   "lang": "zh-CN",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#141827",
-  "theme_color": "#141827",
+  "background_color": "#2FB6C8",
+  "theme_color": "#2FB6C8",
   "icons": [
     { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },

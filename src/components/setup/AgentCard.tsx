@@ -7,7 +7,7 @@ import { useApi } from "@/lib/client";
 type Agent = { run: string; prompt: string };
 const AGENTS = ["Claude Code", "Codex", "WorkBuddy", "Hermes"];
 
-/** Hand Radar to the agent you already use: one sentence to paste, and it imports, organizes and schedules itself. */
+/** Hand ReadMe to the agent you already use: one sentence to paste, and it imports, organizes and schedules itself. */
 export function AgentCard() {
   const { data } = useApi<Agent>("/api/agent");
   return (

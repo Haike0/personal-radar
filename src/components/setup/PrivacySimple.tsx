@@ -21,7 +21,7 @@ const SAMPLES: Record<string, string> = {
   network: t("店在这儿 https://map.example.com/place?id=8812&from=share"),
 };
 const PROMISES = [
-  t("聊天记录只存在这台电脑上。Radar 没有服务器，也没有账号。"),
+  t("聊天记录只存在这台电脑上。ReadMe 没有服务器，也没有账号。"),
   t("不收集你的任何数据。"),
   t("只有整理聊天和你提问的时候，才把要用的那几段发给你自己选的 AI。"),
   t("想一条都不发出去：换成本机模型（Ollama），完全不联网。"),

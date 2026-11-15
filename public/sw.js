@@ -1,4 +1,4 @@
-// Personal Radar service worker: shows push notifications, opens the right page when one is tapped,
+// ReadMe service worker: shows push notifications, opens the right page when one is tapped,
 // and keeps the hashed build files (/_next/static) on the phone so the app opens instantly.
 // Pages and /api are never cached: the data is always live from the Mac.
 const STATIC = "radar-static-v1";
@@ -31,8 +31,8 @@ self.addEventListener("fetch", (e) => {
 
 self.addEventListener("push", (e) => {
   let d = {};
-  try { d = e.data ? e.data.json() : {}; } catch { d = { title: "Radar", body: e.data ? e.data.text() : "" }; }
-  e.waitUntil(self.registration.showNotification(d.title || "Radar", {
+  try { d = e.data ? e.data.json() : {}; } catch { d = { title: "ReadMe", body: e.data ? e.data.text() : "" }; }
+  e.waitUntil(self.registration.showNotification(d.title || "ReadMe", {
     body: d.body || "",
     tag: d.tag,
     icon: "/icons/icon-192.png",

@@ -4,7 +4,7 @@ import { closeDemo, closeReal } from "@/lib/chatlab";
 import { DATA_DIR, DEMO_ONLY, demoOnlyResponse } from "@/lib/config";
 import { closeDb } from "@/lib/db";
 
-// "Delete everything": removes only files Radar created inside its data folder, never anything else there,
+// "Delete everything": removes only files ReadMe created inside its data folder, never anything else there,
 // and never touches ChatLab / Beeper or the original export files. Cannot be undone.
 const OURS = ["radar.db", "radar.db-wal", "radar.db-shm", "keys.json", "voice-transcripts.db", "vapid.json", "import-state.json", "organize-run.json", "chats", "demo-chats", "ai-chunks", "logs"];
 

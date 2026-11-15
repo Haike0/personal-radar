@@ -1,4 +1,4 @@
-# Personal Radar in a container. Data lives in the /data volume; nothing is written inside the image.
+# ReadMe in a container. Data lives in the /data volume; nothing is written inside the image.
 #   docker compose up -d   → http://localhost:3210
 FROM node:24-slim AS build
 WORKDIR /app

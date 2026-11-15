@@ -11,7 +11,7 @@ export default function DataPage() {
       <SettingsGroup title={t("数据健康")}>
         <Stack className="set-pad"><DataHealth /></Stack>
       </SettingsGroup>
-      <SettingsGroup title={t("带走或清空")} footer={t("数据都在这台电脑的数据目录里（默认 ~/.personal-radar）。导出的是 Radar 写下的记录、分析和设置，不含密钥。")}>
+      <SettingsGroup title={t("带走或清空")} footer={t("数据都在这台电脑的数据目录里（默认 ~/.personal-radar）。导出的是 ReadMe 写下的记录、分析和设置，不含密钥。")}>
         <Stack className="set-pad"><DataControls /></Stack>
       </SettingsGroup>
     </SubPage>

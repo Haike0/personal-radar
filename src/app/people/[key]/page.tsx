@@ -17,17 +17,19 @@ import { useBack } from "@/lib/nav";
 import { dayDiff, initial, relDate, sinceText } from "@/lib/format";
 import { isKnowledge, STATUS_LABEL, type Item, type PersonProfile } from "@/lib/types";
 
+// Facet keys are the stored (Chinese) values; labels are translated when drawn, so other UI languages still match.
 const FACETS: { key: string; icon: typeof IconHeart; color: string }[] = [
-  { key: t("作息与工作"), icon: IconClock, color: "blue" },
-  { key: t("情况"), icon: IconUser, color: "radar" },
-  { key: t("近况"), icon: IconBriefcase, color: "radar" },
-  { key: t("喜好"), icon: IconHeart, color: "pink" },
-  { key: t("明确需求"), icon: IconMessageHeart, color: "orange" },
-  { key: t("相处约定"), icon: IconHeartHandshake, color: "violet" },
-  { key: t("观点与判断"), icon: IconBulb, color: "yellow" },
-  { key: t("其他"), icon: IconFlag, color: "gray" },
+  { key: "作息与工作", icon: IconClock, color: "blue" },
+  { key: "情况", icon: IconUser, color: "radar" },
+  { key: "近况", icon: IconBriefcase, color: "radar" },
+  { key: "家人与朋友", icon: IconHeartHandshake, color: "grape" },
+  { key: "喜好", icon: IconHeart, color: "pink" },
+  { key: "明确需求", icon: IconMessageHeart, color: "orange" },
+  { key: "相处约定", icon: IconHeartHandshake, color: "violet" },
+  { key: "观点与判断", icon: IconBulb, color: "yellow" },
+  { key: "其他", icon: IconFlag, color: "gray" },
 ];
-const facetOf = (i: Item) => i.facet ?? t("其他");
+const facetOf = (i: Item) => (i.facet && FACETS.some((f) => f.key === i.facet) ? i.facet : "其他");
 
 function Section({ title, extra, children }: { title: string; extra?: React.ReactNode; children: React.ReactNode }) {
   return (
@@ -152,11 +154,11 @@ export default function PersonPage() {
                 {facets.length ? facets.map((f, i) => (
                   <Group key={f.key} wrap="nowrap" align="flex-start" gap="sm" px="md" py={12}
                     style={{ borderTop: i ? "1px solid light-dark(rgba(20,24,39,.06), rgba(255,255,255,.05))" : undefined }}>
-                    <UnstyledButton onClick={() => jump(f.key)} aria-label={t("看全部{0}", f.key)}>
+                    <UnstyledButton onClick={() => jump(f.key)} aria-label={t("看全部{0}", t(f.key))}>
                       <ThemeIcon size={30} radius="md" variant="light" color={f.color}><f.icon size={17} /></ThemeIcon>
                     </UnstyledButton>
                     <Box style={{ flex: 1, minWidth: 0 }}>
-                      <UnstyledButton onClick={() => jump(f.key)}><Text size="xs" className="faint">{f.key}{f.list.length > 2 ? t(" · {0} 条 ›", f.list.length) : ""}</Text></UnstyledButton>
+                      <UnstyledButton onClick={() => jump(f.key)}><Text size="xs" className="faint">{t(f.key)}{f.list.length > 2 ? t(" · {0} 条 ›", f.list.length) : ""}</Text></UnstyledButton>
                       {f.list.slice(0, 2).map((x) => (
                         <UnstyledButton key={x.id} onClick={() => jump(f.key, x.id)} className="portrait-line" display="block" w="100%">
                           <Text size="sm" lh={1.5} truncate>{x.title}</Text>
@@ -292,7 +294,7 @@ export default function PersonPage() {
           <Stack gap="lg">
             {facets.map((f) => (
               <div key={f.key} id={`mem-facet-${f.key}`} className="mem-facet" data-flash={flash === f.key || undefined}>
-                <Section title={f.key} extra={<ThemeIcon size={22} radius="sm" variant="light" color={f.color}><f.icon size={13} /></ThemeIcon>}>
+                <Section title={t(f.key)} extra={<ThemeIcon size={22} radius="sm" variant="light" color={f.color}><f.icon size={13} /></ThemeIcon>}>
                   <Paper className="surface" radius="xl" style={{ overflow: "hidden" }}>
                     {f.list.map((i) => <Row key={i.id} item={i} flash={flash === i.id} right={i.status !== "open" ? <Badge size="xs" color="gray">{STATUS_LABEL[i.status]}</Badge> : undefined} />)}
                   </Paper>

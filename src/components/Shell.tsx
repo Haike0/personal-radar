@@ -1,6 +1,6 @@
 "use client";
 import { t } from "@/lib/i18n";
-import { AppShell, Box, Group, NavLink, Stack, Text, ThemeIcon, useComputedColorScheme } from "@mantine/core";
+import { AppShell, Box, Group, NavLink, Stack, Text, useComputedColorScheme } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconCalendarEvent, IconRadar2, IconSettings, IconSparkles, IconUsers } from "@tabler/icons-react";
 import Link from "next/link";
@@ -80,12 +80,10 @@ export function Shell({ children }: { children: ReactNode }) {
       <AppShell navbar={{ width: 232, breakpoint: "sm", collapsed: { mobile: true, desktop: bare } }} padding={0}>
         <AppShell.Navbar p="md" style={{ background: "transparent", borderRight: "1px solid light-dark(rgba(20,24,39,.06), rgba(255,255,255,.05))" }}>
           <Group gap={10} mb="xl" px={6} mt={4}>
-            <ThemeIcon size={34} radius="md" variant="gradient" gradient={{ from: "radar.5", to: "violet.6", deg: 135 }}>
-              <IconRadar2 size={20} />
-            </ThemeIcon>
+            <img src="/brand/icon.svg" alt="" width={34} height={34} style={{ display: "block", borderRadius: 9 }} />
             <div>
-              <Text fw={650} lh={1.1}>Personal Radar</Text>
-              <Text size="xs" className="faint">{t("私人关注中心")}</Text>
+              <Text fw={650} lh={1.1}>ReadMe</Text>
+              <Text size="xs" className="faint">{t("记住 TA 说过的话")}</Text>
             </div>
           </Group>
           <Stack gap={4}>

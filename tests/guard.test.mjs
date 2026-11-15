@@ -10,7 +10,7 @@ test("only local and Tailscale host names are answered (DNS rebinding)", () => {
   assert.equal(checkRequest({ path: "/", host: "evil.example:3210" }), "host");
 });
 
-test("API calls from other pages are refused (CSRF), Radar's own pages and local scripts are not", () => {
+test("API calls from other pages are refused (CSRF), ReadMe's own pages and local scripts are not", () => {
   const api = { method: "POST", path: "/api/data/delete", host: "localhost:3210" };
   assert.equal(checkRequest({ ...api, origin: "https://evil.example" }), "origin");
   assert.equal(checkRequest({ ...api, origin: "http://localhost:5173" }), "origin");

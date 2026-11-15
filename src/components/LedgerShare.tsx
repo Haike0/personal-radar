@@ -86,7 +86,7 @@ function draw(cv: HTMLCanvasElement, data: LedgerData, name: string, quotes: num
   section(end1 + 70, t("我答应{0}的", name), tl.me, lists[1]);
 
   ctx.fillStyle = C.muted; ctx.font = `500 24px ${FONT}`;
-  ctx.fillText(t("从聊天记录里翻出来的 · Personal Radar"), PAD, H - 64);
+  ctx.fillText(t("从聊天记录里翻出来的 · ReadMe"), PAD, H - 64);
   ctx.textAlign = "right"; ctx.fillText("github.com/Ikarishinji00/personal-radar", W - PAD, H - 64); ctx.textAlign = "left";
 }
 

@@ -1,8 +1,8 @@
 # Agent setup runbook
 
-**给不会编程的人：** 把这个文件交给你的 AI 编程助手（Claude Code、Codex、Cursor 等），对它说「照 AGENT_SETUP.md 帮我在这台电脑上装好 Personal Radar」。它会一步步装好、设成开机自动运行，最后打开网页交给你。API 密钥你自己在网页里填，不要发给它。
+**给不会编程的人：** 把这个文件交给你的 AI 编程助手（Claude Code、Codex、Cursor 等），对它说「照 AGENT_SETUP.md 帮我在这台电脑上装好 ReadMe」。它会一步步装好、设成开机自动运行，最后打开网页交给你。API 密钥你自己在网页里填，不要发给它。
 
-**For the agent:** install Personal Radar on the user's own computer and hand over a running app. Work through the phases in order, verify each one, and report in the user's language.
+**For the agent:** install ReadMe on the user's own computer and hand over a running app. Work through the phases in order, verify each one, and report in the user's language.
 
 ## Rules
 - Never ask the user to paste API keys, tokens or passwords into the chat. They enter them in the app (Settings → AI). Do not read `keys.json` or `radar.db`.
@@ -61,8 +61,8 @@ Tell the user: if the Mac sleeps, reminders wait until it wakes (System Settings
 **Docker (any OS, if Docker is installed)** — `docker compose up -d` in the repo; data goes to `./radar-data`.
 
 ## 5. Phone (optional)
-Radar only answers localhost, 127.0.0.1 and `*.ts.net` host names. If you put it behind any other name, add it to `RADAR_ALLOWED_HOSTS` (comma-separated, `*.example` allowed) in the service environment.
-Only if the user wants Radar on their phone. Install Tailscale on the computer and phone (same account). The user enables MagicDNS and HTTPS certificates once in the Tailscale admin console (they must click it themselves). Then `tailscale serve --bg 3210` and give them the `https://<machine>.<tailnet>.ts.net` address. On the phone: open it in Safari/Chrome → Add to Home Screen → open from the icon → Settings → turn on notifications.
+ReadMe only answers localhost, 127.0.0.1 and `*.ts.net` host names. If you put it behind any other name, add it to `RADAR_ALLOWED_HOSTS` (comma-separated, `*.example` allowed) in the service environment.
+Only if the user wants ReadMe on their phone. Install Tailscale on the computer and phone (same account). The user enables MagicDNS and HTTPS certificates once in the Tailscale admin console (they must click it themselves). Then `tailscale serve --bg 3210` and give them the `https://<machine>.<tailnet>.ts.net` address. On the phone: open it in Safari/Chrome → Add to Home Screen → open from the icon → Settings → turn on notifications.
 
 ## 6. Hand over
 Open http://localhost:3210. The user sees the welcome page and does the rest in the browser: import chats, pick an AI service and paste their own key, set privacy, organize. Tell them where the data lives and how to update.

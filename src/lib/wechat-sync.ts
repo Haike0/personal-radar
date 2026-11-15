@@ -6,8 +6,8 @@ import { getSetting, nowStr, setSettings } from "./db";
 import { plan, write, writeState } from "../../scripts/lib/import-core.mjs";
 import { inspect, read } from "../../scripts/lib/wechat-db.mjs";
 
-// 微信（已解密的数据库）: the user points Radar at a folder of WeChat databases they already decrypted with other tools.
-// Radar opens them read-only and copies new messages every few minutes. Which messages are new is decided by the
+// 微信（已解密的数据库）: the user points ReadMe at a folder of WeChat databases they already decrypted with other tools.
+// ReadMe opens them read-only and copies new messages every few minutes. Which messages are new is decided by the
 // message's own id (duplicates are skipped), with a one-day look-back from the last message seen in each chat, so a
 // file whose modified time didn't change is still read. Nothing about people (wxid, names, text) goes into logs.
 

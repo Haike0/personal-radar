@@ -10,10 +10,10 @@ import { Shell } from "@/components/Shell";
 import { ClientOnly } from "@/components/ClientOnly";
 
 export const metadata: Metadata = {
-  title: "Personal Radar",
+  title: "ReadMe",
   description: "私人关系与重要事项：记住重要的事，发现遗漏，用 AI 帮你理解和处理",
-  applicationName: "Radar",
-  appleWebApp: { capable: true, title: "Radar", statusBarStyle: "black-translucent" },
+  applicationName: "ReadMe",
+  appleWebApp: { capable: true, title: "ReadMe", statusBarStyle: "black-translucent" },
   icons: { icon: "/icons/icon-192.png", apple: "/icons/apple-touch-icon.png" },
   manifest: "/manifest.webmanifest",
 };

@@ -9,7 +9,7 @@ export default function NotificationsPage() {
   if (!s) return <Skeleton h={300} radius="xl" />;
   const toggle = (k: string) => <Switch checked={s[k] === "on"} onChange={(e) => save({ [k]: e.currentTarget.checked ? "on" : "off" })} />;
   return (
-    <SubPage title={t("通知")} intro={t("把 Radar 加到手机主屏幕后，到日子的事会推送给你。")}>
+    <SubPage title={t("通知")} intro={t("把 ReadMe 加到手机主屏幕后，到日子的事会推送给你。")}>
       <Paper className="surface" radius="xl" p="md"><PushControl /></Paper>
       <SettingsGroup title={t("提醒什么")}>
         <Line label={t("快到日子的事")} hint={t("当天提醒一次")}>{toggle("notify_urgent")}</Line>
@@ -22,7 +22,7 @@ export default function NotificationsPage() {
           </Group>
         </Line>
       </SettingsGroup>
-      <SettingsGroup title={t("打扰程度")} footer={t("内容端到端加密，苹果和谷歌的推送服务器看不到正文。不想在锁屏上露出内容，可以在手机的通知设置里把 Radar 的预览改成「解锁时」。")}>
+      <SettingsGroup title={t("打扰程度")} footer={t("内容端到端加密，苹果和谷歌的推送服务器看不到正文。不想在锁屏上露出内容，可以在手机的通知设置里把 ReadMe 的预览改成「解锁时」。")}>
         <Line label={t("免打扰")}>
           <Group gap={4} wrap="nowrap">
             <TextInput type="time" size="xs" w={92} value={s.quiet_start} onChange={(e) => save({ quiet_start: e.currentTarget.value })} />

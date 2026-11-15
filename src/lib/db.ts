@@ -94,7 +94,7 @@ const DEFAULT_SETTINGS: Record<string, string> = {
   wechat_marks: "{}",
   wechat_last: "",
   wechat_result: "",
-  // Messages (iMessage / SMS) on this Mac, read-only; needs Full Disk Access for whatever runs Radar
+  // Messages (iMessage / SMS) on this Mac, read-only; needs Full Disk Access for whatever runs ReadMe
   imessage_on: "off",
   imessage_groups: "off",
   imessage_oneway: "off",

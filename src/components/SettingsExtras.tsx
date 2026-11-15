@@ -70,14 +70,14 @@ export function PushControl() {
           <Text size="sm" fw={600}>{t("iPhone 只给主屏幕上的 App 发通知")}</Text>
           <Text size="xs" className="muted" lh={1.7}>
             {" "}{t("1. 在 Safari 里点底部的")}{" "} <IconShare2 size={13} style={{ verticalAlign: -2 }} /> {" "}{t("分享按钮 → 「添加到主屏幕」")}<br />
-            {" "}{t("2. 从主屏幕的 Radar 图标打开（不要再用 Safari）")}<br />
+            {" "}{t("2. 从主屏幕的 ReadMe 图标打开（不要再用 Safari）")}<br />
             {" "}{t("3. 回到「设置」点「开启通知」，在弹窗里选「允许」")}{" "}
           </Text>
         </Stack>
       )}
-      {st?.kind === "unsupported" && st.reason === "browser" && <Text size="xs" className="faint">{t("这个浏览器不支持网页推送。iPhone 请用主屏幕上的 Radar 打开。")}</Text>}
+      {st?.kind === "unsupported" && st.reason === "browser" && <Text size="xs" className="faint">{t("这个浏览器不支持网页推送。iPhone 请用主屏幕上的 ReadMe 打开。")}</Text>}
       {st?.kind === "denied" && (
-        <Text size="xs" c="orange" lh={1.7}>{t("之前选了「不允许」，网页没法再弹窗询问。请到 iPhone「设置 → 通知 → Radar」打开「允许通知」，再回来点「重新检查」。")}</Text>
+        <Text size="xs" c="orange" lh={1.7}>{t("之前选了「不允许」，网页没法再弹窗询问。请到 iPhone「设置 → 通知 → ReadMe」打开「允许通知」，再回来点「重新检查」。")}</Text>
       )}
 
       <Group gap="xs">

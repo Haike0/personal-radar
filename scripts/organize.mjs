@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Personal Radar — organize imported chats with your own AI key (DeepSeek by default, any OpenAI-compatible API).
+// ReadMe — organize imported chats with your own AI key (DeepSeek by default, any OpenAI-compatible API).
 //
 //   npm run organize              → organize new private-chat messages, then write person analyses that are due
 //   npm run organize -- --dry-run → show what would be sent, call nothing

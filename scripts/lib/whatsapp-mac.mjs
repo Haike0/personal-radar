@@ -16,7 +16,7 @@ export const chatId = (jid) => `whatsapp_${short(jid, 10)}`;
 // ZMESSAGETYPE values as WhatsApp uses them
 const KIND = { 0: [T.text, ""], 1: [T.image, "[图片]"], 2: [T.video, "[视频]"], 3: [T.voice, "[语音]"], 4: [T.share, "[名片]"], 5: [T.location, "[位置]"], 6: [T.system, ""], 7: [T.link, ""], 8: [T.file, "[文件]"], 10: [T.system, ""], 11: [T.image, "[GIF]"], 14: [T.system, "[消息已删除]"], 15: [T.sticker, "[表情]"] };
 
-/** The ChatStorage.sqlite file, if WhatsApp Desktop is installed and Radar may read it. */
+/** The ChatStorage.sqlite file, if WhatsApp Desktop is installed and ReadMe may read it. */
 export function find(container = CONTAINER) {
   for (const f of ["ChatStorage.sqlite", path.join("Message", "ChatStorage.sqlite")]) { const p = path.join(container, f); if (fs.existsSync(p)) return p; }
   return null;
@@ -24,7 +24,7 @@ export function find(container = CONTAINER) {
 export function open(file) {
   if (!file) return { error: "没找到 WhatsApp 电脑版的数据：先在这台 Mac 上安装并登录 WhatsApp" };
   try { const d = new DatabaseSync(file, { readOnly: true }); d.prepare("SELECT 1 FROM ZWAMESSAGE LIMIT 1").get(); return { d }; }
-  catch (e) { return /authoriz|permission|not permitted|unable to open/i.test(String(e.message)) ? { noAccess: true, error: "没有读取权限：需要给运行 Radar 的程序打开「完全磁盘访问」" } : { error: String(e.message) }; }
+  catch (e) { return /authoriz|permission|not permitted|unable to open/i.test(String(e.message)) ? { noAccess: true, error: "没有读取权限：需要给运行 ReadMe 的程序打开「完全磁盘访问」" } : { error: String(e.message) }; }
 }
 
 /** New messages after Z_PK `after`, as import-core chats. Group chats only when `groups`. */

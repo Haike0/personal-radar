@@ -1,0 +1,19 @@
+{
+  "name": "readme-media",
+  "private": true,
+  "description": "Screenshots, product video and brand assets for ReadMe. Not part of the app.",
+  "type": "module",
+  "scripts": {
+    "shots": "node shots.mjs",
+    "video": "remotion render",
+    "studio": "remotion studio"
+  },
+  "devDependencies": {
+    "@remotion/cli": "^4.0.365",
+    "@remotion/renderer": "^4.0.365",
+    "playwright": "^1.56.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "remotion": "^4.0.365"
+  }
+}

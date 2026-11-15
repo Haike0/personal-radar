@@ -3,7 +3,7 @@ import { db, getSettings, nowStr } from "@/lib/db";
 import { DEMO_ONLY, demoOnlyResponse } from "@/lib/config";
 import pkg from "../../../../../package.json";
 
-// Everything Radar itself wrote (records, evidence links, edits, analyses, day summaries, settings without secrets) as one JSON file.
+// Everything ReadMe itself wrote (records, evidence links, edits, analyses, day summaries, settings without secrets) as one JSON file.
 // The imported chats themselves are SQLite files in the data folder's chats/ and are not repeated here.
 const SECRET = new Set(["ai_key", "chatlab_api_token", "beeper_api_token", "bark_key", "bark_encrypt_key"]);
 const table = (name: string) => { try { return db().prepare(`SELECT * FROM ${name}`).all(); } catch { return []; } };

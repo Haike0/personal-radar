@@ -1,5 +1,5 @@
 // Read WeChat 4.x databases that are already plain SQLite files on this computer (contact.db + message_N.db).
-// Radar only opens plain SQLite files, read-only; an encrypted file is reported and left alone.
+// ReadMe only opens plain SQLite files, read-only; an encrypted file is reported and left alone.
 // Layout (WCDB): one table per conversation, Msg_<md5(username)>, in one or more message_N.db files;
 // Name2Id maps real_sender_id → username; message_content is text, or zstd bytes when WCDB_CT_message_content = 4;
 // local_type keeps the base type in the low 32 bits and the app-message subtype in the high bits (49 + 57 = quote reply).
@@ -36,7 +36,7 @@ export function scan(dir) {
 }
 
 const open = (file) => new DatabaseSync(file, { readOnly: true });
-export const ENCRYPTED = "这个文件夹里的库还是加密的，Radar 不处理解密";
+export const ENCRYPTED = "这个文件夹里的库还是加密的，ReadMe 不处理解密";
 /** A plain SQLite file starts with "SQLite format 3\0"; anything else (an encrypted database) is left alone. */
 export function isPlain(file) {
   try { const fd = fs.openSync(file, "r"); const b = Buffer.alloc(16); fs.readSync(fd, b, 0, 16, 0); fs.closeSync(fd); return b.toString("latin1") === "SQLite format 3\0"; }
@@ -57,7 +57,7 @@ function body(v) {
 const tag = (xml, name) => { const m = xml.match(new RegExp(`<${name}>(?:<!\\[CDATA\\[)?([\\s\\S]*?)(?:\\]\\]>)?</${name}>`)); return m ? m[1].trim() : ""; };
 const unxml = (s) => s.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, "&");
 
-/** One WeChat message → Radar's text and type. */
+/** One WeChat message → ReadMe's text and type. */
 export function convert(base, sub, text) {
   switch (base) {
     case 1: return { type: T.text, text };

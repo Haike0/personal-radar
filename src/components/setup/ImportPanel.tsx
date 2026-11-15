@@ -26,7 +26,7 @@ const FORMAT: Record<string, string> = { line: "LINE", whatsapp: "WhatsApp", tel
 
 // Where the chat comes from → three short steps. Shown only for the app you pick.
 export const SOURCES: { id: string; name: string; color: string; file: string; steps: string[]; note?: string; link?: { label: string; href: string } }[] = [
-  { id: "wechat", name: t("微信"), color: "#07C160", file: t("通用聊天格式 / Markdown / 文本"), steps: [t("微信官方不支持导出聊天记录"), t("怎么拿到聊天记录需要你自己解决，可以参考其他开源项目"), t("整理成通用聊天格式（JSON），或带时间和发送人的 Markdown / 文本，拖到上面")], note: t("Radar 只读取你自己提供的文件，不提供、不内置任何读取微信数据的工具") },
+  { id: "wechat", name: t("微信"), color: "#07C160", file: t("通用聊天格式 / Markdown / 文本"), steps: [t("微信官方不支持导出聊天记录"), t("怎么拿到聊天记录需要你自己解决，可以参考其他开源项目"), t("整理成通用聊天格式（JSON），或带时间和发送人的 Markdown / 文本，拖到上面")], note: t("ReadMe 只读取你自己提供的文件，不提供、不内置任何读取微信数据的工具") },
   { id: "line", name: "LINE", color: "#06C755", file: ".txt", steps: [t("打开要导入的聊天"), t("右上角 ≡ →「设置 / その他」"), t("「发送聊天记录 / トーク履歴を送信」→ 存成文件")], note: t("用手机导出更完整，电脑版只存已加载的消息") },
   { id: "qq", name: "QQ", color: "#12B7F5", file: ".txt / .json / Markdown", steps: [t("旧版 QQ：消息管理器 →「导出消息记录」存成 .txt"), t("新版 QQ 官方没有导出功能，需要你自己解决（可参考其他开源项目）"), t("拖到上面；通用聊天格式、常见的 QQ 导出 JSON、Markdown / 文本都能识别")] },
   { id: "whatsapp", name: "WhatsApp", color: "#25D366", file: t(".zip 或 .txt"), steps: [t("打开聊天，点对方名字"), t("「导出聊天」"), t("选「不含媒体」，保存")], note: t("iPhone 得到 .zip，不用解压") },

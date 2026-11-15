@@ -1,6 +1,6 @@
 // Read Messages (iMessage / SMS) from this Mac's own ~/Library/Messages/chat.db, read-only.
-// macOS only lets a program read it after the user grants Full Disk Access to whatever runs Radar (Terminal, or node);
-// Radar never tries to get around that: it reports `noAccess` and the app shows the steps.
+// macOS only lets a program read it after the user grants Full Disk Access to whatever runs ReadMe (Terminal, or node);
+// ReadMe never tries to get around that: it reports `noAccess` and the app shows the steps.
 // Newer macOS often leaves `text` empty and keeps the words in `attributedBody` (an archived NSAttributedString).
 // Only conversations you've written in are read by default: one-way texts (codes, banks, ads) stay out.
 import crypto from "node:crypto";
@@ -39,7 +39,7 @@ export function open(file = DEFAULT_DB) {
     return { d };
   } catch (e) {
     const m = String(e.message);
-    if (/authoriz|permission|not permitted|unable to open|SQLITE_CANTOPEN|disk I\/O/i.test(m)) return { noAccess: true, error: "没有读取权限：需要给运行 Radar 的程序打开「完全磁盘访问」" };
+    if (/authoriz|permission|not permitted|unable to open|SQLITE_CANTOPEN|disk I\/O/i.test(m)) return { noAccess: true, error: "没有读取权限：需要给运行 ReadMe 的程序打开「完全磁盘访问」" };
     return { error: m };
   }
 }

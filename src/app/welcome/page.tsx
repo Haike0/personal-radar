@@ -2,7 +2,7 @@
 import { t } from "@/lib/i18n";
 import { LangPicker } from "@/components/LangPicker";
 import { Badge, Button, Group, Paper, Stack, Text, ThemeIcon, Title, UnstyledButton } from "@mantine/core";
-import { IconBell, IconBriefcase, IconGlassFull, IconHeart, IconLock, IconMessageCircle, IconRadar2 } from "@tabler/icons-react";
+import { IconBell, IconBriefcase, IconGlassFull, IconHeart, IconLock, IconMessageCircle } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { post, refreshAll } from "@/lib/client";
@@ -13,7 +13,7 @@ const POINTS = [
   { icon: IconLock, text: t("聊天只在你自己的电脑上，AI 用你自己的密钥") },
 ];
 
-// Demo scenarios. Each one is a fictional circle of people, so you can see what Radar does in that part of life.
+// Demo scenarios. Each one is a fictional circle of people, so you can see what ReadMe does in that part of life.
 const SCENES = [
   { id: "love", icon: IconHeart, color: "pink", title: t("生活"), text: t("恋人、朋友、家人：约会和见家长、TA 们的喜好、你答应过的事、生日") },
   { id: "work", icon: IconBriefcase, color: "cyan", title: t("职场"), text: t("上司、同事、客户：截止日期、改了的会、谁答应了什么、尾款") },
@@ -33,10 +33,10 @@ export default function Welcome() {
     <Stack gap={28} maw={560} mx="auto" pt={{ base: 20, sm: 48 }} className="fade-in">
       <Stack gap="sm" align="flex-start">
         <Group justify="space-between" w="100%" align="flex-start">
-          <ThemeIcon size={52} radius="lg" variant="gradient" gradient={{ from: "radar.5", to: "violet.6", deg: 135 }}><IconRadar2 size={30} /></ThemeIcon>
+          <img src="/brand/icon.svg" alt="ReadMe" width={56} height={56} style={{ display: "block", borderRadius: 14 }} />
           <LangPicker compact />
         </Group>
-        <Title order={1} fz={30} lh={1.2}>Personal Radar</Title>
+        <Title order={1} fz={30} lh={1.2}>ReadMe</Title>
         <Text size="lg" className="muted" lh={1.5}>{t("把聊天记录变成你对身边人的记忆。")}</Text>
         <Stack gap={6} mt={4}>
           {POINTS.map((p) => (

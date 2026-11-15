@@ -1,111 +1,162 @@
-# 别再忘了她说过的话
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/banner-en-dark.webp">
+  <img alt="ReadMe" src="docs/assets/banner-en-light.webp">
+</picture>
 
-![导入聊天 → 本机算出聊天分析 → AI 找出约好的事 → 「今天」里出现提醒](docs/media/demo.gif)
+<p align="center">
+  Local-first memory for the people in your life.<br>
+  ReadMe finds the plans, promises and preferences in your chats and reminds you on the day,<br>
+  with every line traced back to the original message.
+</p>
 
-**聊天不离开你的电脑。** 没有账号，没有云端。整理时只把新消息发给你自己选的 AI，发之前先隐藏手机号、卡号这些；换成本机模型，一条都不出门。
+<p align="center">
+  <a href="https://github.com/Ikarishinji00/personal-radar/releases/latest"><img alt="Release" src="https://img.shields.io/github/v/release/Ikarishinji00/personal-radar?style=for-the-badge&logo=github&label=Release&color=2FB6C8&logoColor=white"></a>
+  <a href="https://github.com/Ikarishinji00/personal-radar/actions/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/Ikarishinji00/personal-radar/ci.yml?style=for-the-badge&label=CI&logo=githubactions&logoColor=white"></a>
+  <img alt="macOS · Windows · Linux" src="https://img.shields.io/badge/macOS%20·%20Windows%20·%20Linux-111216?style=for-the-badge&logo=apple&logoColor=white">
+  <a href="LICENSE"><img alt="License AGPL-3.0" src="https://img.shields.io/badge/License-AGPL--3.0-2F8BFF?style=for-the-badge"></a>
+  <a href="https://github.com/Ikarishinji00/personal-radar/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/Ikarishinji00/personal-radar?style=for-the-badge&logo=github&color=FFD23F&logoColor=white&labelColor=555"></a>
+</p>
 
-她说下个月 18 号考试，让你考前少找她玩。你答应周末帮她修电脑。她提醒你明天见她爸妈别空手去，她爸爱喝茶。这些话都在聊天里，过两天就被新消息冲没了。
+<p align="center">
+  <b>English</b> ·
+  <a href="README.zh-CN.md">简体中文</a> ·
+  <a href="README.ja.md">日本語</a> ·
+  <a href="https://ikarishinji00.github.io/personal-radar/">Website</a> ·
+  <a href="#download">Download</a> ·
+  <a href="docs/troubleshooting.md">Help</a>
+</p>
 
-Personal Radar 读你导出的聊天记录，把约好的事、答应过的事、改了的安排找出来，到日子提醒你。每一条都能点回原话核对。
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/hero-en-dark.webp">
+    <img alt="ReadMe on a laptop and a phone" src="docs/assets/hero-en-light.webp" width="100%">
+  </picture>
+</p>
 
-```bash
-npx personal-radar
-```
+She mentioned her exam is on the 18th and asked you to give her some space before it. You promised to fix her laptop this weekend. She reminded you that her dad likes tea, so don't show up empty-handed. All of it is in the chat, and two days later it's buried under new messages.
 
-一条命令，第一次大约下载 12 MB，几秒后浏览器自动打开（需要 [Node.js](https://nodejs.org) 22.13 以上）。先看演示，再导入自己的聊天：导入完马上能看聊天分析，不用填任何密钥；想让它找出约定和承诺时，再填你自己的 AI 密钥。
+ReadMe reads your chat history and pulls out what matters: dates you agreed on, things you promised, plans that changed, what each person likes and can't stand. It puts them on the right day and lets you tap any line to see the exact words. Everything runs on your own computer.
 
-[English](README.en.md) · 界面支持简体中文、繁體中文、日本語、English · AGPL-3.0 · 早期预览版
+## What it does
 
----
+<table>
+  <tr>
+    <td width="33%" align="center"><img src="docs/assets/tile-today-en.webp" width="230" alt="Today"><br><b>Today</b><br><sub>Plans and promises show up on the day they matter. When a plan changes, the old one is replaced.</sub></td>
+    <td width="33%" align="center"><img src="docs/assets/tile-person-en.webp" width="230" alt="Profile"><br><b>A profile for everyone</b><br><sub>Likes, dislikes, family, what's new. Every line keeps the words it came from.</sub></td>
+    <td width="33%" align="center"><img src="docs/assets/tile-card-en.webp" width="230" alt="Promise ledger"><br><b>Promise ledger</b><br><sub>Who promised what, and who actually did it. One tap makes a card you can share.</sub></td>
+  </tr>
+  <tr>
+    <td width="33%" align="center"><img src="docs/assets/tile-report-en.webp" width="230" alt="Chat stats"><br><b>Chat stats</b><br><sub>Who replies faster, who texts first, pet phrases, busiest hours. Computed locally, no AI.</sub></td>
+    <td width="33%" align="center"><img src="docs/assets/tile-ask-en.webp" width="230" alt="Ask"><br><b>Ask</b><br><sub>"What did she say about the new job?" Answers come only from your chats, with sources.</sub></td>
+    <td width="33%" align="center"><img src="docs/assets/tile-calendar-en.webp" width="230" alt="Calendar"><br><b>Calendar</b><br><sub>A month of everyone's dates, grouped by partner, friends, coworkers and clients.</sub></td>
+  </tr>
+</table>
 
-## 三个演示场景
+Nothing is decided for you. Anything the AI writes is marked "to check" until you accept it, and ReadMe never sends a message to anyone.
 
-打开后可以先逛编好的演示数据，人和聊天全是虚构的：
+The built-in demo has three fictional circles to explore before you import anything: **Life** (partner, friends, family), **Work** (boss, coworkers, clients) and **Nightlife** (a hostess and her regulars). The interface speaks English, 简体中文, 繁體中文 and 日本語.
 
-- 生活：女朋友、朋友、家人。见家长、看房、她考试的日子、朋友答应还的钱、妈妈的生日。
-- 职场：上司、同事、客户。评审提前了、周报几点交、开发答应哪天修好 bug、客户的尾款。
-- 夜场接客：常客的喜好、来店和同伴、生日、上次聊到哪。
-
-## 能做什么
-
-- **从聊天里找出要记住的事**：约了几点、答应带什么、下周五面试，按日期提醒你。安排变了，旧的会自动作废。
-- **说话算数账本**：AI 翻出你们俩互相答应过的事，看谁做到了、谁没做，首页一键生成能晒的卡片：「我欠她 7 件，她欠我 5 件」。
-- **聊天分析，不用 AI**：回复率、谁回得快、谁先开口、口头禅、常用表情、什么时候聊得多，导入后马上算好。不打「好感度」之类的分。
-- **每个人的画像**：喜好、忌讳、工作、家人、对你提过的要求，每一条都能点回原话。
-- **问 AI**：「她换工作的事是怎么说的？」可以单独选一个人问，也可以按标签（恋人、同事、客户）问一群人。回答只根据你的记录和原话，并标出处。
-
-AI 整理出的内容在你确认之前都标着「待核对」。它不会替你给任何人发消息。
-
-## 能导入哪些聊天
+<a id="download"></a>
+## Download
 
 | | |
 |---|---|
-| LINE `.txt`（日文、中文、英文界面） | WhatsApp `.txt` 或 `.zip`（iPhone 和安卓） |
-| Telegram Desktop `result.json` | Instagram / Messenger `message_N.json` |
-| Discord JSON 导出 | Google Chat（Google Takeout `.zip`） |
-| QQ 旧版 `.txt` 导出、常见的 QQ 导出 JSON | 通用聊天格式 JSON / JSONL |
-| 每条带时间和发送人的 Markdown / 文本记录，也可以打包成 zip | |
+| **macOS** (Apple Silicon) | [ReadMe-mac-arm64.dmg](https://github.com/Ikarishinji00/personal-radar/releases/latest/download/ReadMe-mac-arm64.dmg) |
+| **macOS** (Intel) | [ReadMe-mac-x64.dmg](https://github.com/Ikarishinji00/personal-radar/releases/latest/download/ReadMe-mac-x64.dmg) |
+| **Windows** 10 / 11 | [ReadMe-windows-x64.zip](https://github.com/Ikarishinji00/personal-radar/releases/latest/download/ReadMe-windows-x64.zip) |
+| **Linux** (x64) | [ReadMe-linux-x64.tar.gz](https://github.com/Ikarishinji00/personal-radar/releases/latest/download/ReadMe-linux-x64.tar.gz) |
 
-微信官方不支持导出聊天记录，需要你自己解决（可以参考其他开源项目）。Radar 不带任何解密或抓取工具，能读通用聊天格式和 Markdown / 文本记录。如果你已经用其他开源工具把微信数据库解密到本机，在「设置 → 聊天来源 → 聊天软件」选那个文件夹，Radar 只读这些文件，并自动持续同步新消息。
+Nothing else to install: each download carries its own runtime.
 
-**自动导入**：设一个文件夹，导出工具存到这里，新文件每 5 分钟自动导入；也可以在「聚合平台」连接 Beeper、ChatLab，每隔几小时同步一次（还没用真实软件测过，欢迎反馈）。
+- **Mac**: open the `.dmg` and drag ReadMe into Applications. The app isn't notarized by Apple yet, so the first time, right-click ReadMe → **Open** (on macOS 15 and later: System Settings → Privacy & Security → **Open Anyway**). ReadMe then sits in the menu bar and opens in your browser.
+- **Windows**: unzip, double-click `ReadMe.cmd`. If SmartScreen appears, choose **More info → Run anyway**. Keep the small window open while you use ReadMe.
+- **Linux**: `tar xzf ReadMe-linux-x64.tar.gz && ./ReadMe/readme`
 
-各个 App 怎么导出见 [导出指南](docs/export-guide.md)，遇到问题看 [常见问题](docs/troubleshooting.md)。
+<details>
+<summary>For developers: Node.js, Docker, or let your AI assistant set it up</summary>
 
-## 怎么用起来
+```bash
+npx github:Ikarishinji00/personal-radar      # Node.js 22.13+
+```
 
-打开后点「用我自己的聊天」，四步，全程不用改配置文件：
+- **Docker**: `docker compose up -d`, then open http://localhost:3210 (data goes to `./radar-data`).
+- **From source**: `git clone`, `npm install`, `npm start`.
+- **Ask your agent**: tell Claude Code, Codex or Cursor *"Read AGENT_SETUP.md and set up ReadMe on this computer."* See [AGENT_SETUP.md](AGENT_SETUP.md).
 
-1. 导入：拖入导出的聊天文件，预览（哪个是你、多少条），确认。导入完马上能看聊天分析。
-2. AI 服务：选 DeepSeek、OpenAI、Gemini、OpenRouter、Kimi、通义千问、智谱，或本机 Ollama，或任何兼容 OpenAI 接口的服务；粘贴密钥，点「测试并保存」。已经在用 Claude Code、Codex、WorkBuddy、Hermes 这类 agent 的话，可以不填密钥：复制 App 里给的一句话发给它，它会替你导入新聊天、整理，还能每天定时做（见 [agent/SKILL.md](agent/SKILL.md)）。
-3. 隐私：选发出去之前要隐藏什么（密钥、邮箱、电话、卡号、证件号、链接），加屏蔽词，或者让某个人完全不发给 AI。
-4. 整理：先看第一段会发出去什么，再开始。可以打开每天自动整理。
+</details>
 
-其他安装方式：
+The first screen lets you look around the demo or start with your own chats. Setup takes four steps and no config files: import, pick an AI service, choose what to hide, organize.
 
-- 让 AI 助手帮你装：对 Claude Code、Codex 或 Cursor 说「读 AGENT_SETUP.md，在这台电脑上装好 Personal Radar」。见 [AGENT_SETUP.md](AGENT_SETUP.md)。
-- Docker：`docker compose up -d`，打开 http://localhost:3210，数据在 `./radar-data`（还没实测）。
-- 手动：
-  ```bash
-  git clone https://github.com/Ikarishinji00/personal-radar.git
-  cd personal-radar
-  npm install
-  npm start
-  ```
+## Where your chats come from
 
-想在手机上用：两台设备放进你自己的私有网络（比如 Tailscale），把页面加到主屏幕。推送通知需要 HTTPS，并设置 `RADAR_PUSH_SUBJECT`。
+| Kept in sync automatically | Imported from an export |
+|---|---|
+| **iMessage** (Mac, read-only) | **LINE** `.txt` (Japanese, Chinese, English UI) |
+| **WhatsApp** desktop on Mac (read-only, not yet tested on a real install) | **WhatsApp** `.txt` / `.zip` |
+| **Telegram** through the official API | **Telegram Desktop** `result.json` |
+| **Beeper** (one local API for many apps, experimental) | **Instagram / Messenger**, **Discord**, **Google Chat** |
+| **WeChat** folders you've already decrypted with other tools | **QQ** exports, Markdown / plain-text logs, standard chat JSON |
+| A folder you point your exporter at | |
 
-## 隐私
+ReadMe only reads. It never logs into your chat accounts, never sends anything through them, and ships no decryption or scraping tools. Step-by-step export instructions for each app are in the [export guide](docs/export-guide.md).
 
-- 聊天、整理结果、密钥都在 `~/.personal-radar`（可用 `RADAR_DATA_DIR` 改），原来的导出文件不会被改动。
-- App 只在本机监听，同一个 Wi-Fi 里的人连不上。它也不理会别的网站借你的浏览器发来的请求：只接受 localhost、127.0.0.1 和 Tailscale 地址，改动数据的操作必须来自 Radar 自己的页面。
-- 只有两种时候会把内容发出去：整理聊天时，和你在 App 里提问时。发出前都按你的规则隐藏敏感信息，屏蔽词所在的消息整条不发；两处都能先预览具体发什么。
-- 设成「不发给 AI」的人，不整理、不分析、不出现在回答里。
-- 用本机 Ollama 模型则完全不联网。默认的 DeepSeek 服务器在中国，可以换成别的服务。
-- 设置 → 数据管理：把 Radar 写下的东西全部导出成 JSON，或者全部删除（不能恢复）。
-- 群聊只导入查看，不会被整理。
+## Your data stays yours
 
-## 和别的工具比
+- Chats, notes and keys live in `~/.personal-radar` on your computer. There's no account and no server.
+- ReadMe listens on your computer only, so nobody on the same Wi-Fi can open it.
+- Content goes out at exactly two moments: when you organize, and when you ask a question. Both pass through your redaction rules first (keys, emails, phone, card and ID numbers, links), and both show a preview of what will be sent.
+- Leave anyone out of AI completely. Use a local model through Ollama and nothing leaves your computer at all.
+- Bring any OpenAI-compatible service (DeepSeek, OpenAI, Gemini, OpenRouter, Kimi, Qwen, GLM…), or let your own agent (Claude Code, Codex) do the organizing without a key.
+- Export everything ReadMe wrote as JSON, or delete it all, from Settings → Data.
 
-| | Personal Radar | [Monica](https://github.com/monicahq/monica) | [PingCRM](https://github.com/sneg55/pingcrm) |
-|---|---|---|---|
-| 主要做什么 | 从聊天里提醒约定、记住每个人 | 手动填写的个人 CRM | 从账号同步的人脉 CRM |
-| 聊天从哪来 | 导出文件，或本机的聚合软件 | — | 登录 Gmail、Telegram、WhatsApp… |
-| AI 找出带日期的约定和承诺 | ✅ 带原话出处 | — | 人生大事、跟进提醒 |
-| 手机推送提醒 | ✅（加到主屏幕的网页） | 邮件提醒 | 网页 |
-| AI 服务 | 你自己的密钥，任何兼容 OpenAI 的服务，或本机 Ollama | — | Anthropic |
-| 运行在哪 | 你自己的电脑 | 自建或付费云 | 自建或云 |
+## Compared with
 
-Radar 读导出文件，不登录你的聊天账号：没那么自动，但没有封号风险，也不用把账号交给谁。
+| | ReadMe | [Monica](https://github.com/monicahq/monica) | [WeClone](https://github.com/xming521/WeClone) | [PingCRM](https://github.com/sneg55/pingcrm) |
+|---|---|---|---|---|
+| Main job | Reminders and per-person memory from your chats | Personal CRM you fill in by hand | Life portrait and an AI clone of you | Networking CRM synced from accounts |
+| Finds dated plans and promises | ✅ with the original words | — | — | Follow-ups |
+| Promise ledger + share card | ✅ | — | — | — |
+| Chat sources | 14, five of them synced automatically | — | Telegram (+ CSV) | Gmail, Telegram, WhatsApp, X, LinkedIn |
+| Desktop download | ✅ macOS · Windows · Linux | Self-host | Python | Self-host / cloud |
+| Runs | On your computer | Self-host or paid cloud | On your computer | Self-host or cloud |
 
-## 参与
+## FAQ
 
-最有用的贡献是新的导入格式（KakaoTalk、Signal、iMessage…）和对真实导出变体的修正，每种格式在 `tests/` 里都有样例和测试。提交前请先看 [CONTRIBUTING.md](CONTRIBUTING.md) 和 [CLA](CLA.md)，不要在 issue 里贴真实聊天记录。
+<details><summary><b>Is it free?</b></summary>Yes. ReadMe is open source (AGPL-3.0). If you use a paid AI service, you pay that service directly for what you use; a local model costs nothing.</details>
+<details><summary><b>Does it work with WeChat?</b></summary>WeChat has no official export. If you have already decrypted your WeChat database with other tools, choose that folder in Settings → Chat sources and ReadMe keeps it in sync, read-only. ReadMe itself doesn't decrypt anything.</details>
+<details><summary><b>Can I use it on my phone?</b></summary>Yes. Put your computer and phone on a private network you control (for example Tailscale) and add the page to your home screen. Reminders can arrive as push notifications, or through the Bark app on iPhone.</details>
+<details><summary><b>Will it ever message someone for me?</b></summary>No. ReadMe has no way to send messages. It reads, organizes and reminds.</details>
+<details><summary><b>What if the AI gets something wrong?</b></summary>Every item links to the messages it came from. Anything new is marked "to check" until you accept it, and you can correct or delete any line.</details>
 
-## 致谢
+## Roadmap
 
-感谢 [ChatLab](https://github.com/ChatLab/ChatLab) 开放的聊天格式和本地接口，让 Radar 能读取大家已经存在 ChatLab 里的聊天。
+- [x] Desktop downloads for macOS, Windows and Linux
+- [x] Automatic sync for iMessage, WhatsApp (Mac), Telegram, Beeper, WeChat folders
+- [x] Promise ledger and share card
+- [x] English, 简体中文, 繁體中文, 日本語
+- [ ] Notarized Mac app
+- [ ] Read-only online demo
+- [ ] KakaoTalk and Signal importers
+- [ ] MCP server, so Claude and other assistants can ask "what did I promise her?"
+- [ ] An accuracy benchmark for the organizing step
 
-## 许可
+## Contributing
 
-Copyright © 2026 Fu Haike。以 [GNU AGPL-3.0](LICENSE) 发布：可以使用、修改、分享；如果把改过的版本作为服务提供给别人，需要用同样的许可公开你的修改。
+The most useful contributions are new importers (KakaoTalk, Signal…) and fixes for real-world export variants; each format has fixtures and tests in `tests/`. Please read [CONTRIBUTING.md](CONTRIBUTING.md) and the [CLA](CLA.md) first, and never put real chat logs in issues.
+
+## Star history
+
+<a href="https://star-history.com/#Ikarishinji00/personal-radar&Date">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Ikarishinji00/personal-radar&type=Date&theme=dark">
+    <img alt="Star history" src="https://api.star-history.com/svg?repos=Ikarishinji00/personal-radar&type=Date" width="600">
+  </picture>
+</a>
+
+## Thanks
+
+Thanks to [ChatLab](https://github.com/ChatLab/ChatLab) for its open chat format and local API.
+
+## License
+
+Copyright © 2026 Fu Haike. Released under the [GNU AGPL-3.0](LICENSE): use it, change it, share it; if you run a modified version as a service for others, publish your changes under the same license.

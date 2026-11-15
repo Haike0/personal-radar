@@ -13,7 +13,7 @@ import { plan, write, writeState, type Chat, type Msg } from "../../scripts/lib/
 
 // Telegram through its official API (MTProto, via the MIT-licensed gramjs). The user brings their own api_id/api_hash
 // from my.telegram.org and logs in here with the code Telegram sends them. The login lives only in DATA_DIR
-// (telegram.session, readable by you alone) and is never logged. Radar only reads: no sending, no marking as read.
+// (telegram.session, readable by you alone) and is never logged. ReadMe only reads: no sending, no marking as read.
 
 const SESSION = path.join(DATA_DIR, "telegram.session");
 const quiet = () => new Logger(LogLevel.NONE);
@@ -153,7 +153,7 @@ export async function sync(history = 3000) {
   }
 }
 
-/** New messages in the chosen chats arrive the moment they're sent (while Radar is running). */
+/** New messages in the chosen chats arrive the moment they're sent (while ReadMe is running). */
 export async function startLive() {
   if (g.__tg?.live || getSetting("tg_on") !== "on" || !readSession()) return false;
   const c = await client();

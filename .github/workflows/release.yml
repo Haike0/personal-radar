@@ -1,0 +1,28 @@
+name: Release
+# Push a tag like v0.13.0 → builds the desktop downloads and attaches them to the GitHub release.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  package:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx next build
+      - name: Desktop downloads (macOS, Windows, Linux)
+        run: node scripts/package-app.mjs mac-arm64,mac-x64,win-x64,linux-x64
+      - name: Attach to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --title "ReadMe $TAG" --generate-notes
+          gh release upload "$TAG" dist/ReadMe-*.dmg dist/ReadMe-*.zip dist/ReadMe-*.tar.gz --clobber

@@ -24,14 +24,14 @@ export function WhatsappMacCard() {
   return (
     <Stack gap="sm">
       <Group gap={8} wrap="nowrap"><IconBrandWhatsapp size={20} color="#25D366" /><Text fw={650}>{t("WhatsApp 电脑版：这台 Mac 上自动同步")}</Text><Badge size="xs" variant="light" color="gray">{t("未实测")}</Badge></Group>
-      <Text size="sm" className="muted" lh={1.6}>{t("WhatsApp 电脑版把聊天存在这台 Mac 上。Radar 只读它，不会发消息。这个功能按公开的数据格式做，还没在真机上测过，遇到问题欢迎反馈。")}</Text>
+      <Text size="sm" className="muted" lh={1.6}>{t("WhatsApp 电脑版把聊天存在这台 Mac 上。ReadMe 只读它，不会发消息。这个功能按公开的数据格式做，还没在真机上测过，遇到问题欢迎反馈。")}</Text>
       {!data.installed ? <Text size="xs" className="faint">{t("没找到 WhatsApp 电脑版的数据：先在这台 Mac 上安装并登录 WhatsApp")}</Text>
       : f.noAccess ? (
         <Alert color="orange" radius="lg" icon={<IconLock size={18} />} title={t("需要你在系统设置里开一个权限")} styles={{ body: { minWidth: 0 }, message: { minWidth: 0, overflowWrap: "anywhere" } }}>
           <List size="sm" spacing={4} type="ordered">
             <List.Item>{t("打开「系统设置 → 隐私与安全性 → 完全磁盘访问」")}</List.Item>
-            <List.Item>{t("点 +，加上你用来启动 Radar 的程序：在终端里运行的就加「终端」（或 iTerm 等）；也可以直接加 node：")} <Code block mt={4} style={{ whiteSpace: "pre-wrap", wordBreak: "break-all" }}>{data.runner}</Code></List.Item>
-            <List.Item>{t("打开它旁边的开关，然后退出并重新启动 Radar")}</List.Item>
+            <List.Item>{t("点 +，加上你用来启动 ReadMe 的程序：在终端里运行的就加「终端」（或 iTerm 等）；也可以直接加 node：")} <Code block mt={4} style={{ whiteSpace: "pre-wrap", wordBreak: "break-all" }}>{data.runner}</Code></List.Item>
+            <List.Item>{t("打开它旁边的开关，然后退出并重新启动 ReadMe")}</List.Item>
           </List>
           <Button size="xs" radius="xl" variant="light" mt="sm" onClick={() => reload()}>{t("开好了，重新检查")}</Button>
         </Alert>

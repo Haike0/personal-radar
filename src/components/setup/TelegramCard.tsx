@@ -30,7 +30,7 @@ export function TelegramCard() {
   return (
     <Stack gap="sm">
       <Group gap={8} wrap="nowrap"><IconBrandTelegram size={20} color="#229ED9" /><Text fw={650}>{t("Telegram：用官方接口自动同步")}</Text>{data.live && <Badge size="xs" color="teal" variant="light">{t("实时")}</Badge>}</Group>
-      <Text size="sm" className="muted" lh={1.6}>{t("用 Telegram 官方提供的接口登录你自己的账号，新消息一来就同步。Radar 只读，不发消息，也不会把消息标成已读。登录凭据只存在这台电脑上。")}</Text>
+      <Text size="sm" className="muted" lh={1.6}>{t("用 Telegram 官方提供的接口登录你自己的账号，新消息一来就同步。ReadMe 只读，不发消息，也不会把消息标成已读。登录凭据只存在这台电脑上。")}</Text>
 
       {!data.hasKeys && (
         <Stack gap="xs">
@@ -74,7 +74,7 @@ export function TelegramCard() {
             </Stack>
           </ScrollArea.Autosize>
           {pick && <Button size="xs" radius="xl" variant="light" w="fit-content" loading={busy} onClick={async () => { await call({ action: "chats", ids: pick }); setPick(null); reload(); }}>{t("保存选择（{0} 个）", pick.length)}</Button>}
-          <Switch checked={data.on} disabled={!data.selected.length} onChange={async (e) => { const r = await call({ action: "on", on: e.currentTarget.checked }); fail(r); reload(); }} label={t("自动同步（Radar 开着时新消息实时进来）")} />
+          <Switch checked={data.on} disabled={!data.selected.length} onChange={async (e) => { const r = await call({ action: "on", on: e.currentTarget.checked }); fail(r); reload(); }} label={t("自动同步（ReadMe 开着时新消息实时进来）")} />
           <Group justify="space-between">
             <Text size="xs" className="faint">{data.last ? t("上次同步 {0}：{1}", data.last.slice(5, 16), data.result ?? "") : t("还没同步过")}</Text>
             <Group gap={4}>

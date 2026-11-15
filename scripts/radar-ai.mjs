@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Personal Radar — AI extraction bridge. `npm run organize` drives it with your own API key;
+// ReadMe — AI extraction bridge. `npm run organize` drives it with your own API key;
 // an agent (Claude Code, Codex…) can also drive it directly with these commands.
 //
 //   node scripts/radar-ai.mjs status
@@ -27,7 +27,7 @@ import { candidatePairs } from "./lib/dupes.mjs";
 const HOME = os.homedir();
 // ChatLab is opt-in: only read when CHATLAB_DATA_DIR points at its data folder (usually ~/.chatlab/data).
 const CHATLAB_DIR = process.env.CHATLAB_DATA_DIR ? path.join(process.env.CHATLAB_DATA_DIR.replace(/^~(?=\/)/, HOME), "databases") : null;
-// Every private chat Radar can see: imported ones, plus ChatLab's if you opted in. Group chats are out of scope.
+// Every private chat ReadMe can see: imported ones, plus ChatLab's if you opted in. Group chats are out of scope.
 // Limit it with RADAR_SESSIONS=id1,id2 if you only want some people organized.
 function sessionFile(sid) {
   for (const dir of [CHATS_DIR, CHATLAB_DIR].filter(Boolean)) { const f = path.join(dir, `${sid}.db`); if (fs.existsSync(f)) return f; }
@@ -80,7 +80,7 @@ const now = () => fmt(Math.floor(Date.now() / 1000)) + ":00";
 const today = () => now().slice(0, 10);
 
 function radar() {
-  if (!fs.existsSync(RADAR_DB)) die("还没有 Radar 的数据库（radar.db）：先打开一次 Personal Radar（npx personal-radar 或 npm start），再运行这个命令 / radar.db not found — start Personal Radar once first");
+  if (!fs.existsSync(RADAR_DB)) die("还没有 ReadMe 的数据库（radar.db）：先打开一次 ReadMe（npx readme-app 或 npm start），再运行这个命令 / radar.db not found — start ReadMe once first");
   const d = new DatabaseSync(RADAR_DB);
   d.exec(`CREATE TABLE IF NOT EXISTS ai_cursor(session_id TEXT PRIMARY KEY, last_ts INTEGER NOT NULL, last_id INTEGER NOT NULL, updated_at TEXT NOT NULL);
           CREATE TABLE IF NOT EXISTS person_analysis(session_id TEXT PRIMARY KEY, content TEXT NOT NULL, basis_items INTEGER NOT NULL, basis_until TEXT, generated_at TEXT NOT NULL);

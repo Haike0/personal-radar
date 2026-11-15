@@ -9,7 +9,7 @@ import { getSetting, setSettings } from "./db";
 import { plan, read, write, writeState } from "../../scripts/lib/import-core.mjs";
 
 // Client for the ChatLab Pull protocol (https://docs.chatlab.fun/cn/standard/chatlab-pull): any tool that exposes
-// GET /sessions and GET /sessions/:id/messages?format=chatlab&since=… can feed Radar.
+// GET /sessions and GET /sessions/:id/messages?format=chatlab&since=… can feed ReadMe.
 type PSession = { id: string; name: string; platform: string; type: string; messageCount?: number };
 const cfg = () => ({ url: getSetting("pull_api_url").replace(/\/+$/, ""), token: getSetting("pull_api_token") });
 

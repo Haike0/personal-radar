@@ -11,7 +11,7 @@ import { plan, write, writeState, type Chat, type Msg } from "../../scripts/lib/
 // Optional bridge to Beeper Desktop (https://www.beeper.com), a free app that connects WhatsApp, Telegram, Signal,
 // Instagram, iMessage (macOS) and more in one place. Its Desktop API runs only on this computer (default port 23373):
 // Settings → Developers → enable Desktop API, then Settings → Integrations → Approved connections → + to create a token.
-// Radar only reads: chats you pick are copied into Radar's own store, and re-syncing adds new messages only.
+// ReadMe only reads: chats you pick are copied into ReadMe's own store, and re-syncing adds new messages only.
 
 type BChat = { id: string; title: string; network: string; type: "single" | "group"; accountID: string };
 type BMsg = { id: string; chatID: string; senderID: string; senderName?: string; timestamp: string; text?: string; type?: string; isSender?: boolean; isDeleted?: boolean; isHidden?: boolean; linkedMessageID?: string };
@@ -51,7 +51,7 @@ const LABEL: Record<number, string> = { 1: "[图片]", 2: "[语音]", 3: "[视�
 const localId = (chatID: string) => `beeper_${crypto.createHash("sha1").update(chatID).digest("hex").slice(0, 12)}`;
 export const selected = (): string[] => { try { return JSON.parse(getSetting("beeper_chats") || "[]"); } catch { return []; } };
 
-/** Copy the chosen Beeper chats into Radar, newest first, stopping where earlier syncs left off. */
+/** Copy the chosen Beeper chats into ReadMe, newest first, stopping where earlier syncs left off. */
 export async function sync(ids = selected(), maxMessages = 30000) {
   const meta = new Map((await status()).sessions.map((s) => [s.id, s]));
   const out: { id: string; name: string; added: number; error?: string }[] = [];

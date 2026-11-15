@@ -1,8 +1,8 @@
-// Radar has no login, so the browser on your own computer is the thing to guard. Two attacks go through it:
+// ReadMe has no login, so the browser on your own computer is the thing to guard. Two attacks go through it:
 //  1. DNS rebinding: a website points its own domain name at 127.0.0.1, and then its scripts can read
-//     http://<its-domain>:3210/api/… as if they were Radar's own pages. → only answer host names we know.
+//     http://<its-domain>:3210/api/… as if they were ReadMe's own pages. → only answer host names we know.
 //  2. Cross-site requests (CSRF): any page you visit can submit a form or fetch() to localhost to change
-//     settings or delete data, even without reading the answer. → API calls must come from Radar's own pages.
+//     settings or delete data, even without reading the answer. → API calls must come from ReadMe's own pages.
 // Scripts on this computer (curl, the CLI, the reminder timer) send no Origin header and are not affected.
 
 const LOCAL = new Set(["localhost", "127.0.0.1", "::1", "[::1]"]);
@@ -29,7 +29,7 @@ export function allowedHost(host, extra = []) {
  */
 export function checkRequest({ method = "GET", path = "/", host, forwardedHost, origin, secFetchSite }, extra = []) {
   if (host && !allowedHost(host, extra)) return "host";
-  if (!path.startsWith("/api/")) return null; // pages: following a link to Radar from anywhere is fine
+  if (!path.startsWith("/api/")) return null; // pages: following a link to ReadMe from anywhere is fine
   const write = !["GET", "HEAD", "OPTIONS"].includes(String(method).toUpperCase());
   if (origin) {
     if (origin === "null") return write ? "origin" : null; // sandboxed frames and file:// pages

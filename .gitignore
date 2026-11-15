@@ -53,3 +53,14 @@ __pycache__/
 radar-data/
 demo/love/.cache/
 demo/work/.cache/
+
+# media tooling
+media/node_modules/
+media/out/
+dist/
+site/assets/
+site/brand/
+site/media/
+media/video/public/
+media/video/lines.json
+media/video/dims.json

@@ -1,7 +1,7 @@
 {
-  "name": "personal-radar",
-  "version": "0.12.0",
-  "description": "Local-first relationship memory: turns your chat exports into reminders, promises and notes about the people you care about.",
+  "name": "readme-app",
+  "version": "0.13.0",
+  "description": "ReadMe — local-first memory for the people you care about: finds plans, promises and preferences in your chats and reminds you, every line traced to the original words.",
   "keywords": [
     "local-first",
     "chat",
@@ -25,6 +25,7 @@
     "url": "https://github.com/Ikarishinji00/personal-radar/issues"
   },
   "bin": {
+    "readme-app": "bin/radar.mjs",
     "personal-radar": "bin/radar.mjs"
   },
   "files": [
@@ -35,7 +36,7 @@
     "scripts/*.mjs",
     "scripts/lib",
     "scripts/*.sh",
-    "demo/*/*.json",
+    "demo/**/*.json",
     "demo/*/*.mjs",
     "docs",
     "examples",
@@ -46,9 +47,10 @@
     ".env.example",
     "LICENSE",
     "README.md",
-    "README.en.md",
     ".next/standalone",
-    ".next/BUILD_ID"
+    ".next/BUILD_ID",
+    "README.ja.md",
+    "README.zh-CN.md"
   ],
   "engines": {
     "node": ">=22.13"

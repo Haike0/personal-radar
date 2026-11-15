@@ -1,0 +1,53 @@
+{
+  "zh-Hans": {
+    "tagline": "TA 说过的话，ReadMe 都记得。",
+    "sub": "从聊天里找出约好的事、答应过的事和 TA 的喜好，到日子提醒你。每一条都能点回原话，聊天不离开你的电脑。",
+    "short": "记住 TA 说过的话",
+    "features": [
+      ["today", "今天要做的事", "约好的时间、答应过的事，到日子出现在第一页。安排改了，旧的自动作废。"],
+      ["person", "每个人的画像", "喜好、忌讳、家人、近况，每一条都附着当时的原话。"],
+      ["card", "说话算数账本", "翻出你们互相答应过的事，谁做到、谁没做，一键生成能晒的卡片。"],
+      ["report", "聊天分析", "谁回得快、谁先开口、口头禅、什么时候聊得最多。本机计算，不用 AI。"],
+      ["ask", "问 AI", "「她换工作的事是怎么说的？」只根据你的聊天回答，并标出处。"],
+      ["calendar", "日历", "按恋人、朋友、同事分组，一个月里谁有什么日子，一眼看全。"]
+    ],
+    "privacy": ["聊天只存在你自己的电脑上，没有账号，没有服务器", "发给 AI 前先隐藏手机号、卡号、证件号", "可以让某个人完全不发给 AI", "用本机模型，一条都不出门"],
+    "sources": "自动同步 iMessage、WhatsApp、Telegram、Beeper 和已解密的微信库；导入 LINE、QQ、Discord、Instagram、Messenger、Google Chat 和文本记录。",
+    "download": "下载",
+    "openSource": "开源 · 免费 · 本地运行"
+  },
+  "en": {
+    "tagline": "Remember everything they told you.",
+    "sub": "ReadMe reads your chats and finds the plans, promises and little preferences, then reminds you on the day. Every line links back to the original message, and your chats never leave your computer.",
+    "short": "Remember what they said",
+    "features": [
+      ["today", "Today", "Plans and promises show up on the day they matter. When a plan changes, the old one is replaced."],
+      ["person", "A profile for everyone", "Likes, dislikes, family, what's new. Every line keeps the words it came from."],
+      ["card", "Promise ledger", "Who promised what, and who actually did it. One tap makes a card you can share."],
+      ["report", "Chat stats", "Who replies faster, who texts first, pet phrases, busiest hours. Computed on your computer, no AI."],
+      ["ask", "Ask", "\"What did she say about the new job?\" Answers come only from your chats, with sources."],
+      ["calendar", "Calendar", "A month of everyone's dates, grouped by partner, friends, coworkers and clients."]
+    ],
+    "privacy": ["Chats stay on your computer. No account, no server", "Phone numbers, card and ID numbers are hidden before anything reaches the AI", "Leave anyone out of AI completely", "Use a local model and nothing leaves at all"],
+    "sources": "Syncs iMessage, WhatsApp, Telegram, Beeper and decrypted WeChat folders automatically; imports LINE, QQ, Discord, Instagram, Messenger, Google Chat and plain-text logs.",
+    "download": "Download",
+    "openSource": "Open source · Free · Runs on your computer"
+  },
+  "ja": {
+    "tagline": "あの人の言葉を、ReadMe が覚えています。",
+    "sub": "トーク履歴から約束や予定、好きなものを見つけて、その日に知らせます。どれも元のメッセージに戻って確かめられます。トークはあなたのパソコンから出ません。",
+    "short": "あの人の言葉を、覚えておく",
+    "features": [
+      ["today", "今日やること", "約束の時間や頼まれごとが、その日のトップに出ます。予定が変われば古いほうは自動で消えます。"],
+      ["person", "人物メモ", "好きなもの、苦手なもの、家族、近況。どれも元の発言つき。"],
+      ["card", "約束帳", "お互いの約束を洗い出し、守れたかどうかを判定。シェアできるカードもワンタップで。"],
+      ["report", "トーク分析", "返信の速さ、どちらが先に話しかけるか、口ぐせ、よく話す時間帯。AIなしで手元で計算。"],
+      ["ask", "AIに聞く", "「転職の話、なんて言ってた？」あなたのトークだけを根拠に、出典つきで答えます。"],
+      ["calendar", "カレンダー", "恋人・友人・同僚などグループごとに、1か月分の予定をまとめて表示。"]
+    ],
+    "privacy": ["トークはあなたのパソコンだけに保存。アカウントもサーバーもありません", "AIに送る前に電話番号やカード番号を隠します", "特定の人をAIから完全に外せます", "ローカルモデルなら一切外に出ません"],
+    "sources": "iMessage・WhatsApp・Telegram・Beeper・復号済みのWeChatフォルダを自動同期。LINE・QQ・Discord・Instagram・Messenger・Google Chat・テキスト履歴も読み込めます。",
+    "download": "ダウンロード",
+    "openSource": "オープンソース・無料・ローカルで動作"
+  }
+}

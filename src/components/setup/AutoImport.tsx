@@ -8,7 +8,7 @@ import { post, refreshAll, useApi } from "@/lib/client";
 type St = { watch: { on: boolean; dir: string; exists: boolean; last: string | null; recent: { file: string; at: string; result: string; ok: boolean }[] }; hubs: { every: number; last: string | null } };
 const oops = (e: unknown) => notifications.show({ color: "red", radius: "lg", message: (e as Error).message });
 
-/** A folder Radar keeps an eye on: point an exporter at it once, and new exports come in by themselves. */
+/** A folder ReadMe keeps an eye on: point an exporter at it once, and new exports come in by themselves. */
 export function WatchFolder() {
   const { data, reload } = useApi<St>("/api/auto-import");
   const [dir, setDir] = useState<string | null>(null);

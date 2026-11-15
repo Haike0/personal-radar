@@ -29,7 +29,7 @@ export function WechatDb() {
         <Text fw={650}>{t("微信：自动同步已解密的数据库")}</Text>
       </Group>
       <Text size="sm" className="muted" lh={1.6}>
-        {t("如果你已经用其他开源工具把微信数据库解密到本机，选那个文件夹，Radar 会自动持续同步。Radar 只读这些文件，不解密、不改动任何东西，也不碰微信本身。")}
+        {t("如果你已经用其他开源工具把微信数据库解密到本机，选那个文件夹，ReadMe 会自动持续同步。ReadMe 只读这些文件，不解密、不改动任何东西，也不碰微信本身。")}
       </Text>
       <Group gap="xs" align="flex-end" wrap="nowrap">
         <TextInput style={{ flex: 1 }} radius="md" size="sm" label={t("文件夹路径")} placeholder="~/…/db_storage" value={value} onChange={(e) => setDir(e.currentTarget.value)} />
@@ -37,7 +37,7 @@ export function WechatDb() {
       </Group>
       {f && (f.ok
         ? <Text size="xs" c="teal">{t("找到 {0} 个私聊、{1} 个群聊", f.private?.length ?? 0, f.groups?.length ?? 0)}{f.files.contact ? "" : t("（没找到 contact.db，名字会显示成「微信好友」）")}</Text>
-        : <Text size="xs" c="red">{f.encrypted ? t("这个文件夹里的库还是加密的，Radar 不处理解密") : f.files.messages ? t(f.error ?? "读不了这个文件夹") : t("这个文件夹里没找到 message_0.db 这类消息库")}</Text>)}
+        : <Text size="xs" c="red">{f.encrypted ? t("这个文件夹里的库还是加密的，ReadMe 不处理解密") : f.files.messages ? t(f.error ?? "读不了这个文件夹") : t("这个文件夹里没找到 message_0.db 这类消息库")}</Text>)}
       {f?.ok && (
         <>
           <Switch checked={data!.on} onChange={(e) => call({ action: "save", on: e.currentTarget.checked })} label={t("每 5 分钟自动同步新消息")} />

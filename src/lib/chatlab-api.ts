@@ -5,7 +5,7 @@ import { getSetting, setSettings } from "./db";
 import { fromChatLab, plan, write, writeState } from "../../scripts/lib/import-core.mjs";
 
 // Optional bridge to ChatLab (https://chatlab.fun) through its documented local API (ChatLab → 设置 → ChatLab API).
-// Selected conversations are copied into Radar's own chat store via the export endpoint; re-syncing only adds new messages.
+// Selected conversations are copied into ReadMe's own chat store via the export endpoint; re-syncing only adds new messages.
 // Nothing is written back to ChatLab.
 
 type Session = { id: string; name: string; platform: string; type: string; messageCount?: number; lastTimestamp?: number | null };
@@ -35,7 +35,7 @@ export async function status(over?: { url?: string; token?: string }) {
 const localId = (id: string) => `chatlab_${id.replace(/[^A-Za-z0-9._@-]/g, "_")}`.slice(0, 120);
 export const selected = (): string[] => { try { return JSON.parse(getSetting("chatlab_sessions") || "[]"); } catch { return []; } };
 
-/** Copy the selected ChatLab conversations (new messages only) into Radar. */
+/** Copy the selected ChatLab conversations (new messages only) into ReadMe. */
 export async function sync(ids = selected()) {
   const out: { id: string; name: string; added: number; error?: string }[] = [];
   for (const id of ids) {

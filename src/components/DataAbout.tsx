@@ -50,7 +50,7 @@ export function About() {
   return (
     <Stack gap="sm">
       <Group justify="space-between">
-        <Text size="sm">Personal Radar {data ? `v${data.current}` : ""}</Text>
+        <Text size="sm">ReadMe {data ? `v${data.current}` : ""}</Text>
         {data?.available ? <Badge color="orange" variant="light">{t("有新版本 {0}", data.latest)}</Badge> : data && !data.off ? <Badge color="gray" variant="light">{t("已是最新")}</Badge> : null}
       </Group>
       {data?.available && data.url && (
@@ -78,7 +78,7 @@ export function UpdateNotice() {
   return (
     <Paper className="hint-box" radius="xl" p="sm">
       <Group justify="space-between" wrap="nowrap" gap="sm">
-        <Text size="sm">{t("Radar 有新版本 {0}", data.latest)}</Text>
+        <Text size="sm">{t("ReadMe 有新版本 {0}", data.latest)}</Text>
         <Anchor href={data.url} target="_blank" size="sm" style={{ flex: "none" }}>{t("看看")}</Anchor>
       </Group>
     </Paper>

@@ -31,7 +31,7 @@ const nextConfig: NextConfig = {
   output: "standalone",
   // the code reads demo/, docs/ and scripts/ from the package folder at run time (RADAR_ROOT), so they needn't be
   // copied into the server; images are never resized, so the image library isn't needed either
-  outputFileTracingExcludes: { "*": ["demo/**", "docs/**", "src/**", "tests/**", "examples/**", "agent/**", "scripts/**", "bin/**", "*.md", "Dockerfile", "docker-compose.yml", "tsconfig*", "eslint.config.mjs", "package-lock.json", "node_modules/@img/**", "node_modules/sharp/**", "node_modules/typescript/**"] },
+  outputFileTracingExcludes: { "*": ["demo/**", "docs/**", "media/**", "dist/**", "src/**", "tests/**", "examples/**", "agent/**", "scripts/**", "bin/**", "*.md", "Dockerfile", "docker-compose.yml", "tsconfig*", "eslint.config.mjs", "package-lock.json", "node_modules/@img/**", "node_modules/sharp/**", "node_modules/typescript/**"] },
   images: { unoptimized: true },
   // Telegram's and web-push's own dependencies are loaded at run time in ways the tracer can miss: include them whole
   outputFileTracingIncludes: { "*": runtimeDeps(["telegram", "web-push"]) },

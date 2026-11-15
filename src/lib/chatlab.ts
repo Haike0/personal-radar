@@ -8,7 +8,7 @@ import { CHATS_DIR, DATA_DIR } from "./config";
 
 /**
  * Read-only chat store. Every conversation is one SQLite file with the same simple layout
- * (meta / member / message tables). Radar reads three places:
+ * (meta / member / message tables). ReadMe reads three places:
  *   1. CHATS_DIR  — chats you imported with `npm run import` (LINE, WhatsApp, ChatLab JSON)
  *   2. ChatLab    — only if you set CHATLAB_DATA_DIR (https://chatlab.fun): its session databases, opened read-only
  *   3. demoDir()  — fictional demo chats (ids start with "demo_")

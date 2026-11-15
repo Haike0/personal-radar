@@ -1,4 +1,4 @@
-// Chat export → Radar's local chat store. Shared by `npm run import` and the in-app importer.
+// Chat export → ReadMe's local chat store. Shared by `npm run import` and the in-app importer.
 //
 // read(buffer, filename)        → { format, chats: [parsed chat…] }   (a zip is opened, a Telegram account export can hold many chats)
 // plan(chat, { me, name }, dir) → what would be written: who is "me", conversation id, counts, new vs. already imported
