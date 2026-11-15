@@ -50,7 +50,7 @@ Radar ships no decryption or scraping tools. See the [export guide](docs/export-
 One command (Node.js 22.13+):
 
 ```bash
-npx github:Ikarishinji00/personal-radar
+npx personal-radar
 ```
 
 It opens http://localhost:3210 with three fictional demo scenarios (personal life: partner, friends and family; work; night-club hosting). Import a chat and the chat analysis is ready right away, no AI key needed; add your own key when you want reminders.

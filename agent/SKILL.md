@@ -26,7 +26,7 @@ Personal Radar 跑在用户自己的电脑上，读聊天导出文件，整理�
 下面的 `radar` 指用户给你的那条命令去掉末尾的 `guide agent`，通常是下面两种之一：
 
 ```bash
-npx github:Ikarishinji00/personal-radar <命令>      # 用一条命令装的
+npx personal-radar <命令>      # 用一条命令装的
 node <Radar 程序目录>/bin/radar.mjs <命令>           # 克隆了代码的
 ```
 

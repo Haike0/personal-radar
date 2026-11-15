@@ -20,7 +20,7 @@ export interface OrganizeStatus {
   model: string; ready: boolean; chats: ChatStatus[];
 }
 
-const ROOT = process.cwd();
+const ROOT = process.env.RADAR_ROOT ?? process.cwd(); // the launcher passes the package folder (the server may run from .next/standalone)
 const SCRIPT = path.join(ROOT, "scripts/organize.mjs");
 const BRIDGE = path.join(ROOT, "scripts/radar-ai.mjs");
 const STALE_MIN = 30;

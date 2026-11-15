@@ -1,50 +1,28 @@
 {
   "name": "personal-radar",
-  "version": "0.11.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev -p 3210 -H 127.0.0.1",
-    "build": "next build",
-    "start": "node bin/radar.mjs",
-    "lint": "eslint",
-    "import": "node scripts/import.mjs",
-    "organize": "node scripts/organize.mjs",
-    "milestones": "node scripts/radar-milestones.mjs",
-    "check:privacy": "sh scripts/check-privacy.sh",
-    "test": "node --test tests/*.test.mjs",
-    "serve": "next start -p 3210 -H 127.0.0.1",
-    "prepare": "node bin/prepare.mjs"
-  },
-  "dependencies": {
-    "@mantine/core": "^9.7.5",
-    "@mantine/dates": "^9.7.5",
-    "@mantine/hooks": "^9.7.5",
-    "@mantine/modals": "^9.7.5",
-    "@mantine/notifications": "^9.7.5",
-    "@tabler/icons-react": "^3.50.0",
-    "@types/node": "^24.19.2",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "dayjs": "^1.11.23",
-    "next": "16.4.5",
-    "postcss-preset-mantine": "^1.18.0",
-    "postcss-simple-vars": "^7.0.1",
-    "react": "19.3.0",
-    "react-dom": "19.3.0",
-    "server-only": "^0.0.1",
-    "telegram": "^2.26.22",
-    "typescript": "^5",
-    "web-push": "^3.6.7"
-  },
-  "devDependencies": {
-    "@types/web-push": "^3.6.4",
-    "eslint": "^9",
-    "eslint-config-next": "16.4.5"
-  },
+  "version": "0.12.0",
   "description": "Local-first relationship memory: turns your chat exports into reminders, promises and notes about the people you care about.",
+  "keywords": [
+    "local-first",
+    "chat",
+    "reminders",
+    "personal-crm",
+    "llm",
+    "privacy",
+    "line",
+    "whatsapp",
+    "telegram",
+    "imessage",
+    "wechat"
+  ],
   "license": "AGPL-3.0-only",
-  "engines": {
-    "node": ">=22.13"
+  "homepage": "https://github.com/Ikarishinji00/personal-radar#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ikarishinji00/personal-radar.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Ikarishinji00/personal-radar/issues"
   },
   "bin": {
     "personal-radar": "bin/radar.mjs"
@@ -69,10 +47,48 @@
     "LICENSE",
     "README.md",
     "README.en.md",
-    ".next",
-    "!.next/cache",
-    "!.next/dev",
-    "!.next/trace",
-    "!.next/diagnostics"
-  ]
+    ".next/standalone",
+    ".next/BUILD_ID"
+  ],
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "dev": "next dev -p 3210 -H 127.0.0.1",
+    "build": "next build",
+    "start": "node bin/radar.mjs",
+    "lint": "eslint",
+    "import": "node scripts/import.mjs",
+    "organize": "node scripts/organize.mjs",
+    "milestones": "node scripts/radar-milestones.mjs",
+    "check:privacy": "sh scripts/check-privacy.sh",
+    "test": "node --test tests/*.test.mjs",
+    "serve": "next start -p 3210 -H 127.0.0.1",
+    "prepare": "node bin/prepare.mjs"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@mantine/core": "^9.7.5",
+    "@mantine/dates": "^9.7.5",
+    "@mantine/hooks": "^9.7.5",
+    "@mantine/modals": "^9.7.5",
+    "@mantine/notifications": "^9.7.5",
+    "@tabler/icons-react": "^3.50.0",
+    "@types/node": "^24.19.2",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/web-push": "^3.6.4",
+    "dayjs": "^1.11.23",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.5",
+    "next": "16.4.5",
+    "postcss-preset-mantine": "^1.18.0",
+    "postcss-simple-vars": "^7.0.1",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "server-only": "^0.0.1",
+    "telegram": "^2.26.22",
+    "typescript": "^5",
+    "web-push": "^3.6.7"
+  }
 }

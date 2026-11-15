@@ -80,7 +80,7 @@ const now = () => fmt(Math.floor(Date.now() / 1000)) + ":00";
 const today = () => now().slice(0, 10);
 
 function radar() {
-  if (!fs.existsSync(RADAR_DB)) die("还没有 Radar 的数据库（radar.db）：先打开一次 Personal Radar（npx github:Ikarishinji00/personal-radar 或 npm start），再运行这个命令 / radar.db not found — start Personal Radar once first");
+  if (!fs.existsSync(RADAR_DB)) die("还没有 Radar 的数据库（radar.db）：先打开一次 Personal Radar（npx personal-radar 或 npm start），再运行这个命令 / radar.db not found — start Personal Radar once first");
   const d = new DatabaseSync(RADAR_DB);
   d.exec(`CREATE TABLE IF NOT EXISTS ai_cursor(session_id TEXT PRIMARY KEY, last_ts INTEGER NOT NULL, last_id INTEGER NOT NULL, updated_at TEXT NOT NULL);
           CREATE TABLE IF NOT EXISTS person_analysis(session_id TEXT PRIMARY KEY, content TEXT NOT NULL, basis_items INTEGER NOT NULL, basis_until TEXT, generated_at TEXT NOT NULL);

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Personal Radar in one command:
-//   npx github:Ikarishinji00/personal-radar         (or `npm start` inside a clone)
+//   npx personal-radar         (or `npm start` inside a clone)
 // The package ships the built app (npm runs `prepare` → next build when installing from GitHub), so it starts in seconds.
 // In a clone without a build, the first run builds it (about a minute).
 // Options: --port 3210   --rebuild   --no-open   --host 127.0.0.1
@@ -16,6 +16,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { createRequire } from "node:module";
+import { finishStandalone } from "./standalone.mjs";
 import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -46,7 +47,9 @@ if (SUB[args[0]]) {
   process.exit(r.status ?? 1);
 }
 
-const next = createRequire(path.join(ROOT, "package.json")).resolve("next/dist/bin/next");
+// an installed package carries the slim standalone server; a clone has next itself
+const SA = path.join(ROOT, ".next", "standalone", "server.js");
+const nextBin = () => createRequire(path.join(ROOT, "package.json")).resolve("next/dist/bin/next");
 const inPackage = ROOT.split(path.sep).includes("node_modules");
 const BUILD_ID = path.join(ROOT, ".next", "BUILD_ID");
 // in a clone, rebuild after `git pull` changed the code
@@ -59,20 +62,21 @@ const built = fs.existsSync(BUILD_ID) && !stale;
 if (!built || args.includes("--rebuild")) {
   // Next.js can't compile source that sits inside node_modules, so an installed copy must come prebuilt
   if (inPackage) {
-    console.error("这个安装包里缺少构建好的程序。请重新安装：npx github:Ikarishinji00/personal-radar ，还不行就到 GitHub 提 issue。");
+    console.error("这个安装包里缺少构建好的程序。请重新安装：npx personal-radar ，还不行就到 GitHub 提 issue。");
     process.exit(1);
   }
   console.log(stale ? "代码有更新，正在重新准备（大约一分钟）…" : "第一次运行，正在准备（大约一分钟）…");
   // build output (and its harmless warnings) only shows when the build fails
-  const b = spawnSync(process.execPath, [next, "build"], { cwd: ROOT, encoding: "utf8", maxBuffer: 64 * 1024 * 1024, env: { ...process.env, NEXT_TELEMETRY_DISABLED: "1" } });
+  const b = spawnSync(process.execPath, [nextBin(), "build"], { cwd: ROOT, encoding: "utf8", maxBuffer: 64 * 1024 * 1024, env: { ...process.env, NEXT_TELEMETRY_DISABLED: "1" } });
   if (b.status !== 0) { console.error(`${b.stdout ?? ""}${b.stderr ?? ""}\n准备失败，上面是出错信息。可以到 GitHub 提 issue。`); process.exit(1); }
+  finishStandalone(ROOT);
 }
 
 const url = `http://${HOST === "127.0.0.1" || HOST === "0.0.0.0" || HOST === "::" ? "localhost" : HOST}:${PORT}`;
-const server = spawn(process.execPath, [next, "start", "-p", PORT, "-H", HOST], {
-  cwd: ROOT, stdio: ["ignore", "ignore", "inherit"],
-  env: { ...process.env, NODE_ENV: "production", RADAR_PORT: PORT, NEXT_TELEMETRY_DISABLED: "1" },
-});
+const env = { ...process.env, NODE_ENV: "production", RADAR_PORT: PORT, NEXT_TELEMETRY_DISABLED: "1", RADAR_ROOT: ROOT, RADAR_DEMO_DIR: process.env.RADAR_DEMO_DIR ?? path.join(ROOT, "demo") };
+const server = fs.existsSync(SA)
+  ? spawn(process.execPath, [SA], { cwd: path.dirname(SA), stdio: ["ignore", "ignore", "inherit"], env: { ...env, PORT, HOSTNAME: HOST } })
+  : spawn(process.execPath, [nextBin(), "start", "-p", PORT, "-H", HOST], { cwd: ROOT, stdio: ["ignore", "ignore", "inherit"], env });
 server.on("exit", (code) => process.exit(code ?? 0));
 for (const sig of ["SIGINT", "SIGTERM"]) process.on(sig, () => server.kill(sig));
 

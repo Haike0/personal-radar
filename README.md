@@ -9,10 +9,10 @@
 Personal Radar 读你导出的聊天记录，把约好的事、答应过的事、改了的安排找出来，到日子提醒你。每一条都能点回原话核对。
 
 ```bash
-npx github:Ikarishinji00/personal-radar
+npx personal-radar
 ```
 
-一条命令，半分钟内浏览器自动打开（需要 [Node.js](https://nodejs.org) 22.13 以上）。先看演示，再导入自己的聊天：导入完马上能看聊天分析，不用填任何密钥；想让它找出约定和承诺时，再填你自己的 AI 密钥。
+一条命令，第一次大约下载 12 MB，几秒后浏览器自动打开（需要 [Node.js](https://nodejs.org) 22.13 以上）。先看演示，再导入自己的聊天：导入完马上能看聊天分析，不用填任何密钥；想让它找出约定和承诺时，再填你自己的 AI 密钥。
 
 [English](README.en.md) · 界面支持简体中文、繁體中文、日本語、English · AGPL-3.0 · 早期预览版
 
