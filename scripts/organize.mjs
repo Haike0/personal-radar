@@ -13,8 +13,9 @@ import fs from "node:fs";
 import readline from "node:readline/promises";
 import path from "node:path";
 import { AI, DATA_DIR, extraBody, requireKey, scrub } from "./lib/env.mjs";
+import { fileURLToPath } from "node:url";
 
-const HERE = path.dirname(new URL(import.meta.url).pathname);
+const HERE = path.dirname(fileURLToPath(import.meta.url));
 const NODE = process.execPath;
 const RADAR_AI = path.join(HERE, "radar-ai.mjs");
 const GUIDE = fs.readFileSync(path.join(HERE, "../docs/ai-extract-guide.md"), "utf8");

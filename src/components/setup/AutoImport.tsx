@@ -39,7 +39,7 @@ export function WatchFolder() {
           {w.recent.slice(0, 4).map((r) => (
             <Group key={r.file + r.at} gap={6} wrap="nowrap">
               <Badge size="xs" variant="light" color={r.ok ? "teal" : "orange"} style={{ flex: "none" }}>{r.ok ? "已导入" : "需处理"}</Badge>
-              <Text size="xs" className="faint" truncate>{r.file.split("/").pop()} · {r.result}</Text>
+              <Text size="xs" className="faint" truncate>{r.file.split(/[\\/]/).pop()} · {r.result}</Text>
             </Group>
           ))}
         </Stack>

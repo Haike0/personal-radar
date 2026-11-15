@@ -8,8 +8,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { CAST, HOSTESS, STYLE } from "../demo/night/cast.mjs";
 import { AI, extraBody, requireKey } from "./lib/env.mjs";
+import { fileURLToPath } from "node:url";
 
-const ROOT = path.join(path.dirname(new URL(import.meta.url).pathname), "..");
+const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = path.join(ROOT, "demo/night");
 const CACHE = path.join(OUT, ".cache", "v2");
 fs.mkdirSync(CACHE, { recursive: true });

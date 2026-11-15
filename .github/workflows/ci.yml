@@ -5,7 +5,12 @@ on:
   pull_request:
 jobs:
   check:
-    runs-on: ubuntu-latest
+    # Windows matters: many people who'd use this keep their chats on a Windows PC
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -14,12 +19,17 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Privacy check (no personal data in the repo)
+        if: runner.os == 'Linux'
         run: sh scripts/check-privacy.sh
       - name: Importer and redaction tests
         run: npm test
       - name: Build (also generates route types)
         run: npx next build
+      - name: Starts the way users start it
+        run: node scripts/smoke.mjs
       - name: Type check
+        if: runner.os == 'Linux'
         run: npx tsc --noEmit
       - name: Lint
+        if: runner.os == 'Linux'
         run: npx eslint src scripts

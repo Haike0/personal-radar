@@ -4,8 +4,9 @@
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 if (fs.existsSync(path.join(ROOT, ".next", "BUILD_ID")) && !process.env.RADAR_FORCE_BUILD) process.exit(0);
 if (!fs.existsSync(path.join(ROOT, "node_modules", "next"))) process.exit(0); // dependencies not installed yet
 console.log("Personal Radar：正在构建（大约一分钟）…");

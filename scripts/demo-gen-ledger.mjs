@@ -6,9 +6,10 @@ import fs from "node:fs";
 import path from "node:path";
 import { AI, extraBody, requireKey } from "./lib/env.mjs";
 import { keywords, LEDGER_SYSTEM, ledgerInput, parseLedger, pickWindow } from "./lib/ledger.mjs";
+import { fileURLToPath } from "node:url";
 
 const SET = process.argv[2];
-const ROOT = path.join(path.dirname(new URL(import.meta.url).pathname), "..");
+const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const DIR = path.join(ROOT, "demo", SET ?? "");
 if (!SET || !fs.existsSync(path.join(DIR, "items.json"))) { console.log("usage: demo-gen-ledger.mjs love|work|night"); process.exit(1); }
 const K = requireKey();
