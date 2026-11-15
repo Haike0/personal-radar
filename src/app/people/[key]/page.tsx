@@ -1,4 +1,5 @@
 "use client";
+import { t } from "@/lib/i18n";
 import { Alert, Avatar, Badge, Box, Button, Collapse, Group, Paper, SimpleGrid, Skeleton, Stack, Tabs, Text, ThemeIcon, Timeline, Title, UnstyledButton } from "@mantine/core";
 import {
   IconArrowLeft, IconBriefcase, IconBulb, IconCalendarEvent, IconChartBar, IconScale, IconChevronDown, IconChevronRight, IconClock, IconFlag, IconHeart,
@@ -17,16 +18,16 @@ import { dayDiff, initial, relDate, sinceText } from "@/lib/format";
 import { isKnowledge, STATUS_LABEL, type Item, type PersonProfile } from "@/lib/types";
 
 const FACETS: { key: string; icon: typeof IconHeart; color: string }[] = [
-  { key: "作息与工作", icon: IconClock, color: "blue" },
-  { key: "情况", icon: IconUser, color: "radar" },
-  { key: "近况", icon: IconBriefcase, color: "radar" },
-  { key: "喜好", icon: IconHeart, color: "pink" },
-  { key: "明确需求", icon: IconMessageHeart, color: "orange" },
-  { key: "相处约定", icon: IconHeartHandshake, color: "violet" },
-  { key: "观点与判断", icon: IconBulb, color: "yellow" },
-  { key: "其他", icon: IconFlag, color: "gray" },
+  { key: t("作息与工作"), icon: IconClock, color: "blue" },
+  { key: t("情况"), icon: IconUser, color: "radar" },
+  { key: t("近况"), icon: IconBriefcase, color: "radar" },
+  { key: t("喜好"), icon: IconHeart, color: "pink" },
+  { key: t("明确需求"), icon: IconMessageHeart, color: "orange" },
+  { key: t("相处约定"), icon: IconHeartHandshake, color: "violet" },
+  { key: t("观点与判断"), icon: IconBulb, color: "yellow" },
+  { key: t("其他"), icon: IconFlag, color: "gray" },
 ];
-const facetOf = (i: Item) => i.facet ?? "其他";
+const facetOf = (i: Item) => i.facet ?? t("其他");
 
 function Section({ title, extra, children }: { title: string; extra?: React.ReactNode; children: React.ReactNode }) {
   return (
@@ -43,7 +44,7 @@ function Row({ item, right, flash }: { item: Item; right?: React.ReactNode; flas
       style={{ borderTop: "1px solid light-dark(rgba(20,24,39,.06), rgba(255,255,255,.05))" }}>
       <Box style={{ flex: 1, minWidth: 0 }}>
         <Text size="sm" lh={1.45} c={item.status === "open" ? undefined : "dimmed"}>{item.title}</Text>
-        <Text size="xs" className="faint" mt={2}>{item.eventDate ? relDate(item.eventDate, item.eventTime) : item.observedAt ? `${relDate(item.observedAt.slice(0, 10))}提到` : ""}</Text>
+        <Text size="xs" className="faint" mt={2}>{item.eventDate ? relDate(item.eventDate, item.eventTime) : item.observedAt ? t("{0}提到", relDate(item.observedAt.slice(0, 10))) : ""}</Text>
       </Box>
       {right}
       <IconChevronRight size={16} className="faint" style={{ flex: "none" }} />
@@ -84,7 +85,7 @@ export default function PersonPage() {
   const { data: mem } = useApi<{ days: { date: string; messages: number; items: number; summary: string | null }[] }>(`/api/people/${encodeURIComponent(key)}/memory`);
 
   if (loading && !p) return <Stack><Skeleton h={220} radius="xl" /><Skeleton h={40} radius="md" /><Skeleton h={200} radius="xl" /></Stack>;
-  if (error || !p) return <Alert color="red" title="找不到这个人">{error}</Alert>;
+  if (error || !p) return <Alert color="red" title={t("找不到这个人")}>{error}</Alert>;
 
   const short = p.name.replace(/^演示·/, "");
   // newest first: what you learned most recently is what you want to see first
@@ -100,7 +101,7 @@ export default function PersonPage() {
 
   return (
     <Stack gap="lg" className="fade-in">
-      <Button variant="subtle" color="gray" leftSection={<IconArrowLeft size={18} />} px={6} w="fit-content" onClick={back}>返回</Button>
+      <Button variant="subtle" color="gray" leftSection={<IconArrowLeft size={18} />} px={6} w="fit-content" onClick={back}>{t("返回")}</Button>
 
       {/* hero */}
       <Paper className="surface" radius="xl" style={{ overflow: "hidden" }}>
@@ -113,27 +114,27 @@ export default function PersonPage() {
           <Title order={2} fz={24}>{p.name}</Title>
           {!p.isGroup && <TagEditor personKey={p.key} tags={p.tags ?? []} />}
           <Text size="sm" className="muted" ta="center">
-            {p.isGroup ? "群聊" : "联系人"}
-            {p.chat?.firstAt ? ` · ${p.chat.firstAt.slice(0, 4)}年${Number(p.chat.firstAt.slice(5, 7))}月开始聊天` : ""}
-            {p.chat?.lastAt ? ` · 最近联系 ${sinceText(p.chat.lastAt)}` : ""}
+            {p.isGroup ? t("群聊") : t("联系人")}
+            {p.chat?.firstAt ? t(" · {0}年{1}月开始聊天", p.chat.firstAt.slice(0, 4), Number(p.chat.firstAt.slice(5, 7))) : ""}
+            {p.chat?.lastAt ? t(" · 最近联系 {0}", sinceText(p.chat.lastAt)) : ""}
           </Text>
           {p.chat && (
             <SimpleGrid cols={3} spacing="xs" w="100%" mt="sm">
-              {[[p.chat.last30.toLocaleString(), "近 30 天消息"], [p.chat.messages.toLocaleString(), "全部消息"], [p.chat.mineShare == null ? "—" : `${Math.round(p.chat.mineShare * 100)}%`, "你发的占比"]].map(([n, l]) => (
+              {[[p.chat.last30.toLocaleString(), t("近 30 天消息")], [p.chat.messages.toLocaleString(), t("全部消息")], [p.chat.mineShare == null ? "—" : `${Math.round(p.chat.mineShare * 100)}%`, t("你发的占比")]].map(([n, l]) => (
                 <Box key={l} ta="center" py={6}><Text fw={650} className="tabular">{n}</Text><Text size="xs" className="faint">{l}</Text></Box>
               ))}
             </SimpleGrid>
           )}
-          <Text size="10px" className="faint">只统计事实，不打亲密度之类的分数</Text>
+          <Text size="10px" className="faint">{t("只统计事实，不打亲密度之类的分数")}</Text>
         </Stack>
       </Paper>
 
       <Tabs value={tab} onChange={setTab} variant="pills" radius="xl" keepMounted={false}>
         <Tabs.List grow mb="lg" p={4} className="surface" style={{ borderRadius: 999 }}>
-          <Tabs.Tab value="overview">概览</Tabs.Tab>
-          <Tabs.Tab value="analysis">分析</Tabs.Tab>
-          <Tabs.Tab value="chat">聊天记忆</Tabs.Tab>
-          <Tabs.Tab value="memory">记忆</Tabs.Tab>
+          <Tabs.Tab value="overview">{t("概览")}</Tabs.Tab>
+          <Tabs.Tab value="analysis">{t("分析")}</Tabs.Tab>
+          <Tabs.Tab value="chat">{t("聊天记忆")}</Tabs.Tab>
+          <Tabs.Tab value="memory">{t("记忆")}</Tabs.Tab>
         </Tabs.List>
 
         <Tabs.Panel value="overview">
@@ -141,21 +142,21 @@ export default function PersonPage() {
             {p.analysis && (
               <UnstyledButton onClick={() => setTab("analysis")} w="100%" p="md"
                 style={{ borderRadius: "var(--mantine-radius-xl)", border: "1px solid light-dark(var(--mantine-color-violet-1), rgba(124,108,240,.25))", background: "light-dark(rgba(124,108,240,.04), rgba(124,108,240,.08))", textAlign: "left" }}>
-                <Group gap={6} mb={6}><IconSparkles size={15} color="var(--mantine-color-violet-5)" /><Text size="xs" c="violet" fw={600}>AI 分析 · 推测，附依据</Text></Group>
+                <Group gap={6} mb={6}><IconSparkles size={15} color="var(--mantine-color-violet-5)" /><Text size="xs" c="violet" fw={600}>{t("AI 分析 · 推测，附依据")}</Text></Group>
                 <Text size="sm" lh={1.7}>{p.analysis.summary}</Text>
-                <Text size="xs" c="violet" mt={6}>看完整分析 ›</Text>
+                <Text size="xs" c="violet" mt={6}>{t("看完整分析 ›")}</Text>
               </UnstyledButton>
             )}
-            <Section title={`${short}的画像`} extra={<Text size="xs" className="faint">每条都有原话出处</Text>}>
+            <Section title={t("{0}的画像", short)} extra={<Text size="xs" className="faint">{t("每条都有原话出处")}</Text>}>
               <Paper className="surface" radius="xl" py={4}>
                 {facets.length ? facets.map((f, i) => (
                   <Group key={f.key} wrap="nowrap" align="flex-start" gap="sm" px="md" py={12}
                     style={{ borderTop: i ? "1px solid light-dark(rgba(20,24,39,.06), rgba(255,255,255,.05))" : undefined }}>
-                    <UnstyledButton onClick={() => jump(f.key)} aria-label={`看全部${f.key}`}>
+                    <UnstyledButton onClick={() => jump(f.key)} aria-label={t("看全部{0}", f.key)}>
                       <ThemeIcon size={30} radius="md" variant="light" color={f.color}><f.icon size={17} /></ThemeIcon>
                     </UnstyledButton>
                     <Box style={{ flex: 1, minWidth: 0 }}>
-                      <UnstyledButton onClick={() => jump(f.key)}><Text size="xs" className="faint">{f.key}{f.list.length > 2 ? ` · ${f.list.length} 条 ›` : ""}</Text></UnstyledButton>
+                      <UnstyledButton onClick={() => jump(f.key)}><Text size="xs" className="faint">{f.key}{f.list.length > 2 ? t(" · {0} 条 ›", f.list.length) : ""}</Text></UnstyledButton>
                       {f.list.slice(0, 2).map((x) => (
                         <UnstyledButton key={x.id} onClick={() => jump(f.key, x.id)} className="portrait-line" display="block" w="100%">
                           <Text size="sm" lh={1.5} truncate>{x.title}</Text>
@@ -163,7 +164,7 @@ export default function PersonPage() {
                       ))}
                     </Box>
                   </Group>
-                )) : <Text size="sm" className="faint" p="md">还没有记录到关于{short}的信息</Text>}
+                )) : <Text size="sm" className="faint" p="md">{t("还没有记录到关于{0}的信息", short)}</Text>}
               </Paper>
             </Section>
 
@@ -171,8 +172,8 @@ export default function PersonPage() {
               <Paper component={Link} href={`/people/${encodeURIComponent(p.key)}/report`} className="surface report-entry pressable">
                 <Group justify="space-between" wrap="nowrap">
                   <div style={{ minWidth: 0 }}>
-                    <Group gap={6}><IconChartBar size={16} color="var(--mantine-color-radar-6)" /><Text size="sm" fw={600}>聊天分析</Text></Group>
-                    <Text size="xs" className="faint" mt={2}>回复率、谁先开口、什么时候聊、口头禅、聊什么</Text>
+                    <Group gap={6}><IconChartBar size={16} color="var(--mantine-color-radar-6)" /><Text size="sm" fw={600}>{t("聊天分析")}</Text></Group>
+                    <Text size="xs" className="faint" mt={2}>{t("回复率、谁先开口、什么时候聊、口头禅、聊什么")}</Text>
                   </div>
                   <IconChevronRight size={18} className="faint" />
                 </Group>
@@ -183,8 +184,8 @@ export default function PersonPage() {
               <Paper component={Link} href={`/people/${encodeURIComponent(p.key)}/ledger`} className="surface report-entry pressable">
                 <Group justify="space-between" wrap="nowrap">
                   <div style={{ minWidth: 0 }}>
-                    <Group gap={6}><IconScale size={16} color="var(--mantine-color-orange-6)" /><Text size="sm" fw={600}>说话算数账本</Text></Group>
-                    <Text size="xs" className="faint" mt={2}>你们互相答应过的事，谁做到了、谁没做</Text>
+                    <Group gap={6}><IconScale size={16} color="var(--mantine-color-orange-6)" /><Text size="sm" fw={600}>{t("说话算数账本")}</Text></Group>
+                    <Text size="xs" className="faint" mt={2}>{t("你们互相答应过的事，谁做到了、谁没做")}</Text>
                   </div>
                   <IconChevronRight size={18} className="faint" />
                 </Group>
@@ -193,11 +194,11 @@ export default function PersonPage() {
 
             {openActions.length > 0 && (
               <UnstyledButton onClick={() => { pick(key); router.push("/"); }}>
-                <Text size="sm" className="muted">{short}有 {openActions.length} 件事在关注，在「今天」里处理 ›</Text>
+                <Text size="sm" className="muted">{t("{0}有 {1} 件事在关注，在「今天」里处理 ›", short, openActions.length)}</Text>
               </UnstyledButton>
             )}
 
-            <Section title="最近聊天" extra={<UnstyledButton onClick={() => { setMemDate(null); setTab("chat"); }}><Text size="xs" c="radar">聊天记忆 ›</Text></UnstyledButton>}>
+            <Section title={t("最近聊天")} extra={<UnstyledButton onClick={() => { setMemDate(null); setTab("chat"); }}><Text size="xs" c="radar">{t("聊天记忆 ›")}</Text></UnstyledButton>}>
               <Paper className="surface" radius="xl" style={{ overflow: "hidden" }}>
                 {(mem?.days ?? []).slice(0, 3).map((d, i) => (
                   <UnstyledButton key={d.date} onClick={() => { setMemDate(d.date); setTab("chat"); }} w="100%" px="md" py={11} className="pressable"
@@ -207,15 +208,15 @@ export default function PersonPage() {
                         <Text size="sm">{relDate(d.date)}</Text>
                         {d.summary && <Text size="xs" className="muted" lineClamp={1}>{d.summary}</Text>}
                       </Box>
-                      <Text size="xs" className="faint tabular" style={{ flex: "none" }}>{d.messages} 条{d.items ? ` · 记下 ${d.items} 件` : ""}</Text>
+                      <Text size="xs" className="faint tabular" style={{ flex: "none" }}>{t("{0} 条{1}", d.messages, d.items ? t(" · 记下 {0} 件", d.items) : "")}</Text>
                     </Group>
                   </UnstyledButton>
                 ))}
-                {mem && !mem.days.length && <Text size="sm" className="faint" p="md">暂无</Text>}
+                {mem && !mem.days.length && <Text size="sm" className="faint" p="md">{t("暂无")}</Text>}
               </Paper>
             </Section>
 
-            <Section title="重要日程">
+            <Section title={t("重要日程")}>
               <Paper className="surface" radius="xl" px="md" py="md">
                 <Timeline active={-1} bulletSize={22} lineWidth={1.5}>
                   {milestones.map((i) => (
@@ -228,18 +229,18 @@ export default function PersonPage() {
                   ))}
                   {p.chat?.firstAt && (
                     <Timeline.Item bullet={<IconSparkles size={12} />}>
-                      <Group justify="space-between" wrap="nowrap"><Text size="sm">开始聊天</Text><Text size="xs" className="faint tabular">{p.chat.firstAt.slice(0, 10)}</Text></Group>
+                      <Group justify="space-between" wrap="nowrap"><Text size="sm">{t("开始聊天")}</Text><Text size="xs" className="faint tabular">{p.chat.firstAt.slice(0, 10)}</Text></Group>
                     </Timeline.Item>
                   )}
                 </Timeline>
-                {!milestones.length && !p.chat?.firstAt && <Text size="sm" className="faint">暂无</Text>}
+                {!milestones.length && !p.chat?.firstAt && <Text size="sm" className="faint">{t("暂无")}</Text>}
               </Paper>
             </Section>
 
             <Paper p="md" radius="xl" style={{ border: "1px solid light-dark(var(--mantine-color-violet-1), rgba(124,108,240,.25))", background: "light-dark(rgba(124,108,240,.04), rgba(124,108,240,.08))" }}>
-              <Group gap={6} mb="xs"><IconSparkles size={16} color="var(--mantine-color-violet-5)" /><Text size="sm" fw={600}>问 AI 关于{short}</Text></Group>
+              <Group gap={6} mb="xs"><IconSparkles size={16} color="var(--mantine-color-violet-5)" /><Text size="sm" fw={600}>{t("问 AI 关于{0}", short)}</Text></Group>
               <Group gap={8}>
-                {["最近有什么值得我主动关心的？", "最近我答应了什么还没完成？", "帮我按我平时的语气起草一条关心的消息"].map((q) => (
+                {[t("最近有什么值得我主动关心的？"), t("最近我答应了什么还没完成？"), t("帮我按我平时的语气起草一条关心的消息")].map((q) => (
                   <Button key={q} size="xs" radius="xl" variant="light" color="violet" onClick={() => openCompanion(q)}>{q.replace(/[？?]$/, "")}</Button>
                 ))}
               </Group>
@@ -250,8 +251,7 @@ export default function PersonPage() {
         <Tabs.Panel value="analysis">
           {p.analysis ? (
             <Stack gap="lg">
-              <Text size="xs" className="faint">AI 根据 {p.analysis.basisItems} 条整理过的记录写的分析，{p.analysis.generatedAt.slice(0, 16)} 更新。
-                标「推测」的是归纳出来的，不是定论；点编号可以看原话。</Text>
+              <Text size="xs" className="faint">{t("AI 根据 {0} 条整理过的记录写的分析，{1} 更新。 标「推测」的是归纳出来的，不是定论；点编号可以看原话。", p.analysis.basisItems, p.analysis.generatedAt.slice(0, 16))}</Text>
               <Paper className="surface" radius="xl" p="md"><Text size="sm" lh={1.8}>{p.analysis.summary}</Text></Paper>
               {p.analysis.sections.map((sec) => (
                 <Section key={sec.title} title={sec.title}>
@@ -260,7 +260,7 @@ export default function PersonPage() {
                       {sec.points.map((pt, i) => (
                         <Box key={i}>
                           <Group gap={6} align="flex-start" wrap="nowrap">
-                            <Badge size="xs" mt={3} color={pt.basis === "fact" ? "teal" : "violet"} variant="light" style={{ flex: "none" }}>{pt.basis === "fact" ? "事实" : "推测"}</Badge>
+                            <Badge size="xs" mt={3} color={pt.basis === "fact" ? "teal" : "violet"} variant="light" style={{ flex: "none" }}>{pt.basis === "fact" ? t("事实") : t("推测")}</Badge>
                             <Text size="sm" lh={1.65}>{pt.text}</Text>
                           </Group>
                           <Group gap={4} mt={4} ml={40}>
@@ -278,8 +278,8 @@ export default function PersonPage() {
           ) : (
             <Paper className="surface" radius="xl" p="xl" ta="center">
               <IconSparkles size={26} color="var(--mantine-color-violet-5)" />
-              <Text size="sm" mt="xs">{short}的聊天还在整理中，整理完会自动写分析</Text>
-              <Text size="xs" className="faint" mt={4}>已整理 {p.items.length} 条记录</Text>
+              <Text size="sm" mt="xs">{t("{0}的聊天还在整理中，整理完会自动写分析", short)}</Text>
+              <Text size="xs" className="faint" mt={4}>{t("已整理 {0} 条记录", p.items.length)}</Text>
             </Paper>
           )}
         </Tabs.Panel>
@@ -299,11 +299,11 @@ export default function PersonPage() {
                 </Section>
               </div>
             ))}
-            {!facets.length && <Text className="faint" ta="center" py="xl">还没有记录</Text>}
+            {!facets.length && <Text className="faint" ta="center" py="xl">{t("还没有记录")}</Text>}
             {aboutMe.length > 0 && (
               <Stack gap="xs">
                 <UnstyledButton onClick={() => setShowSelf((s) => !s)}>
-                  <Group gap={6}><Text size="sm" className="muted">在和{short}的聊天里提到的你自己 · {aboutMe.length}</Text>
+                  <Group gap={6}><Text size="sm" className="muted">{t("在和{0}的聊天里提到的你自己 · {1}", short, aboutMe.length)}</Text>
                     <IconChevronDown size={14} style={{ transform: showSelf ? "rotate(180deg)" : undefined }} /></Group>
                 </UnstyledButton>
                 <Collapse expanded={showSelf}>
@@ -316,7 +316,7 @@ export default function PersonPage() {
 
       </Tabs>
       {p.chat && dayDiff(p.chat.lastAt?.slice(0, 10) ?? "") < -14 && (
-        <Text size="xs" className="faint" ta="center">已经 {-dayDiff(p.chat.lastAt!.slice(0, 10))} 天没有聊天了</Text>
+        <Text size="xs" className="faint" ta="center">{t("已经 {0} 天没有聊天了", -dayDiff(p.chat.lastAt!.slice(0, 10)))}</Text>
       )}
     </Stack>
   );

@@ -1,4 +1,5 @@
 "use client";
+import { t } from "@/lib/i18n";
 import { Avatar, Badge, Collapse, Group, Paper, ScrollArea, Skeleton, Stack, Text, Title, UnstyledButton } from "@mantine/core";
 import { IconChevronDown, IconChevronRight, IconUsersGroup } from "@tabler/icons-react";
 import Link from "next/link";
@@ -21,9 +22,9 @@ function PersonRow({ p }: { p: Person }) {
         <div style={{ flex: 1, minWidth: 0 }}>
           <Group gap={6} wrap="nowrap"><Text fw={600} truncate>{p.name}</Text>{p.tags?.map((t) => <Badge key={t} size="xs" variant="light" color={tagColor(t)} radius="sm" tt="none" style={{ flex: "none" }}>{t}</Badge>)}{p.open > 0 && <Badge size="xs" color="red" variant="filled" style={{ flex: "none" }}>{p.open}</Badge>}</Group>
           <Text size="xs" className="muted" truncate>
-            {p.topTitle ? `关注：${p.topTitle}` : p.total ? `${p.total} 条记录` : "还没有记录"}
+            {p.topTitle ? t("关注：{0}", p.topTitle) : p.total ? t("{0} 条记录", p.total) : t("还没有记录")}
           </Text>
-          {(p.lastTs || p.messages) && <Text size="xs" className="faint">{p.lastTs ? `最近联系 ${sinceText(fmtTs(p.lastTs))}` : ""}{p.messages ? ` · 聊天 ${p.messages.toLocaleString()} 条` : ""}</Text>}
+          {(p.lastTs || p.messages) && <Text size="xs" className="faint">{p.lastTs ? t("最近联系 {0}", sinceText(fmtTs(p.lastTs))) : ""}{p.messages ? t(" · 聊天 {0} 条", p.messages.toLocaleString()) : ""}</Text>}
         </div>
         <IconChevronRight size={18} className="faint" />
       </Group>
@@ -43,14 +44,14 @@ export default function People() {
   return (
     <Stack gap="lg" className="fade-in">
       <div>
-        <Title order={1} fz={28}>人物</Title>
+        <Title order={1} fz={28}>{t("人物")}</Title>
       </div>
       {allTags.length > 0 && (
         <ScrollArea type="never">
           <Group gap={6} wrap="nowrap">
-            {[null, ...allTags].map((t) => (
-              <UnstyledButton key={t ?? "all"} onClick={() => setTag(t)} className={`ai-pill${tag === t ? " is-active" : ""}`}>
-                {t ?? "全部"}{t ? ` ${people.filter((p) => p.tags?.includes(t)).length}` : ""}
+            {[null, ...allTags].map((g) => (
+              <UnstyledButton key={g ?? "all"} onClick={() => setTag(g)} className={`ai-pill${tag === g ? " is-active" : ""}`}>
+                {g ? t(g) : t("全部")}{g ? ` ${people.filter((p) => p.tags?.includes(g)).length}` : ""}
               </UnstyledButton>
             ))}
           </Group>
@@ -58,11 +59,11 @@ export default function People() {
       )}
       {loading && !data ? <Stack>{[0, 1, 2].map((i) => <Skeleton key={i} h={80} radius="xl" />)}</Stack> : (
         <>
-          <Stack gap="sm">{contacts.map((p) => <PersonRow key={p.key} p={p} />)}{!contacts.length && <Text className="faint" ta="center" py="xl">还没有联系人</Text>}</Stack>
+          <Stack gap="sm">{contacts.map((p) => <PersonRow key={p.key} p={p} />)}{!contacts.length && <Text className="faint" ta="center" py="xl">{t("还没有联系人")}</Text>}</Stack>
           {groups.length > 0 && (
             <Stack gap="xs">
               <UnstyledButton onClick={() => setShowGroups((s) => !s)}>
-                <Group gap={6}><Text size="sm" className="muted">群聊 · {groups.length}（暂不做画像）</Text>
+                <Group gap={6}><Text size="sm" className="muted">{t("群聊 · {0}（暂不做画像）", groups.length)}</Text>
                   <IconChevronDown size={14} style={{ transform: showGroups ? "rotate(180deg)" : undefined, transition: "transform 150ms" }} /></Group>
               </UnstyledButton>
               <Collapse expanded={showGroups}><Stack gap="sm">{groups.map((p) => <PersonRow key={p.key} p={p} />)}</Stack></Collapse>

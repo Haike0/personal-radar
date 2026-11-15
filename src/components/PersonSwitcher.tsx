@@ -1,4 +1,5 @@
 "use client";
+import { t } from "@/lib/i18n";
 import Link from "next/link";
 import { Avatar, Badge, Drawer, Group, ScrollArea, Skeleton, Text, UnstyledButton } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
@@ -32,13 +33,13 @@ export function useCurrentPerson() {
 }
 
 /** Messages-style time: today → 10:44, yesterday → 昨天, this week → 周二, older → 10/21 */
-function shortWhen(t: number | null | undefined) {
-  if (!t) return "";
-  const d = new Date(t * 1000), now = new Date();
+function shortWhen(sec: number | null | undefined) {
+  if (!sec) return "";
+  const d = new Date(sec * 1000), now = new Date();
   const days = Math.round((new Date(now.toDateString()).getTime() - new Date(d.toDateString()).getTime()) / 864e5);
   const p = (n: number) => String(n).padStart(2, "0");
   if (days <= 0) return `${p(d.getHours())}:${p(d.getMinutes())}`;
-  if (days === 1) return "昨天";
+  if (days === 1) return t("昨天");
   if (days < 7) return WEEKDAYS[d.getDay()];
   return d.getFullYear() === now.getFullYear() ? `${d.getMonth() + 1}/${d.getDate()}` : `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`;
 }
@@ -66,35 +67,35 @@ export function PersonBar({ person, contacts, pick, loading, subtitle }: ReturnT
   const tags = [...new Set(contacts.flatMap((p) => p.tags ?? []))];
   const shown = tag ? contacts.filter((p) => p.tags?.includes(tag)) : contacts;
   if (loading) return <Skeleton h={64} radius="xl" />;
-  if (!person) return <Text className="faint">还没有联系人</Text>;
+  if (!person) return <Text className="faint">{t("还没有联系人")}</Text>;
   return (
     <>
       <div className="person-bar surface">
         {/* tap the person → their page (portrait, analysis); tap the right button → switch contact */}
-        <Link href={`/people/${encodeURIComponent(person.key)}`} className="person-link pressable" aria-label={`打开${person.name}的画像`}>
+        <Link href={`/people/${encodeURIComponent(person.key)}`} className="person-link pressable" aria-label={t("打开{0}的画像", person.name)}>
           <Face p={person} size={44} />
           <div style={{ flex: 1, minWidth: 0 }}>
             <Group gap={4} wrap="nowrap"><Text fw={650} truncate>{person.name}</Text><IconChevronRight size={15} className="faint" style={{ flex: "none" }} /></Group>
             {subtitle && <Text size="xs" className="muted" truncate>{subtitle}</Text>}
           </div>
         </Link>
-        <UnstyledButton className="person-more pressable" onClick={() => setOpen(true)} aria-label="切换联系人"><IconUsers size={20} stroke={1.7} /></UnstyledButton>
+        <UnstyledButton className="person-more pressable" onClick={() => setOpen(true)} aria-label={t("切换联系人")}><IconUsers size={20} stroke={1.7} /></UnstyledButton>
       </div>
 
       <Drawer opened={open} onClose={() => setOpen(false)} position={desktop ? "right" : "bottom"} size={desktop ? 380 : "auto"}
-        title={<Text fw={650}>联系人</Text>} styles={{ body: { padding: "0 0 calc(var(--safe-bottom) + 12px)" }, content: desktop ? undefined : { height: "auto", maxHeight: "80dvh" } }}>
+        title={<Text fw={650}>{t("联系人")}</Text>} styles={{ body: { padding: "0 0 calc(var(--safe-bottom) + 12px)" }, content: desktop ? undefined : { height: "auto", maxHeight: "80dvh" } }}>
         {tags.length > 0 && (
           <ScrollArea type="never" px="md" pb={6}>
             <Group gap={6} wrap="nowrap">
-              {[null, ...tags].map((t) => (
-                <UnstyledButton key={t ?? "all"} onClick={() => setTag(t)} className={`ai-pill${tag === t ? " is-active" : ""}`}>
-                  {t ?? "全部"} <Text span size="xs" className="faint">{t ? contacts.filter((p) => p.tags?.includes(t)).length : contacts.length}</Text>
+              {[null, ...tags].map((g) => (
+                <UnstyledButton key={g ?? "all"} onClick={() => setTag(g)} className={`ai-pill${tag === g ? " is-active" : ""}`}>
+                  {g ? t(g) : t("全部")} <Text span size="xs" className="faint">{g ? contacts.filter((p) => p.tags?.includes(g)).length : contacts.length}</Text>
                 </UnstyledButton>
               ))}
             </Group>
           </ScrollArea>
         )}
-        <div className="contact-index">{tag ?? "私聊"} · {shown.length}</div>
+        <div className="contact-index">{tag ?? t("私聊")} · {shown.length}</div>
         {shown.map((p) => {
           const n = focusCount.get(p.key) ?? 0;
           return (
@@ -108,13 +109,13 @@ export function PersonBar({ person, contacts, pick, loading, subtitle }: ReturnT
                 </Group>
                 <div className="contact-side">
                   <Text size="xs" className="faint tabular">{shortWhen(p.lastTs)}</Text>
-                  {n > 0 && <Badge size="sm" color="red" variant="filled" circle aria-label={`今日焦点 ${n} 件`}>{n}</Badge>}
+                  {n > 0 && <Badge size="sm" color="red" variant="filled" circle aria-label={t("今日焦点 {0} 件", n)}>{n}</Badge>}
                 </div>
               </div>
             </UnstyledButton>
           );
         })}
-        <Text size="xs" className="faint" ta="center" mt="md" px="md">红色数字是今日焦点的件数</Text>
+        <Text size="xs" className="faint" ta="center" mt="md" px="md">{t("红色数字是今日焦点的件数")}</Text>
       </Drawer>
     </>
   );

@@ -1,4 +1,5 @@
 "use client";
+import { t } from "@/lib/i18n";
 import { AppShell, Box, Group, NavLink, Stack, Text, ThemeIcon, useComputedColorScheme } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconCalendarEvent, IconRadar2, IconSettings, IconSparkles, IconUsers } from "@tabler/icons-react";
@@ -11,11 +12,11 @@ import type { CompanionContext } from "@/lib/ai/types";
 import { Companion } from "./Companion";
 
 const TABS = [
-  { href: "/", label: "今天", icon: IconRadar2 },
-  { href: "/people", label: "人物", icon: IconUsers },
-  { href: "/timeline", label: "日历", icon: IconCalendarEvent },
+  { href: "/", label: t("今天"), icon: IconRadar2 },
+  { href: "/people", label: t("人物"), icon: IconUsers },
+  { href: "/timeline", label: t("日历"), icon: IconCalendarEvent },
   { href: "/companion", label: "AI", icon: IconSparkles },
-  { href: "/settings", label: "设置", icon: IconSettings },
+  { href: "/settings", label: t("设置"), icon: IconSettings },
 ];
 
 type Ctx = { openCompanion: (prompt?: string, context?: CompanionContext) => void; setPageContext: (c: CompanionContext) => void; pageContext: CompanionContext };
@@ -84,7 +85,7 @@ export function Shell({ children }: { children: ReactNode }) {
             </ThemeIcon>
             <div>
               <Text fw={650} lh={1.1}>Personal Radar</Text>
-              <Text size="xs" className="faint">私人关注中心</Text>
+              <Text size="xs" className="faint">{t("私人关注中心")}</Text>
             </div>
           </Group>
           <Stack gap={4}>
@@ -103,7 +104,7 @@ export function Shell({ children }: { children: ReactNode }) {
       </AppShell>
 
       {!desktop && !bare && (
-        <nav className="tabbar" aria-label="主导航">
+        <nav className="tabbar" aria-label={t("主导航")}>
           {TABS.filter((t) => t.href !== "/companion").map((t) => (
             <Link key={t.href} href={t.href} className="tab" data-active={active(t.href) || undefined}>
               <t.icon size={24} stroke={active(t.href) ? 2.1 : 1.7} />
@@ -113,7 +114,7 @@ export function Shell({ children }: { children: ReactNode }) {
         </nav>
       )}
       {!onCompanionPage && !bare && (
-        <button className="ai-fab" aria-label="打开 AI 助手" onClick={() => openCompanion()}>
+        <button className="ai-fab" aria-label={t("打开 AI 助手")} onClick={() => openCompanion()}>
           <IconSparkles size={26} stroke={1.8} />
         </button>
       )}

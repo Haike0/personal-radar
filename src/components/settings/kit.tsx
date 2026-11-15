@@ -1,4 +1,5 @@
 "use client";
+import { t } from "@/lib/i18n";
 import { Badge, Group, Paper, Stack, Text, ThemeIcon, Title, UnstyledButton } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
@@ -9,7 +10,7 @@ import { post, refreshAll, useApi } from "@/lib/client";
 import { useBack } from "@/lib/nav";
 
 /** A settings sub-page: back to 设置, a title, one short line, then the content. */
-export function SubPage({ title, intro, children, back = "/settings", backLabel = "设置" }: { title: string; intro?: string; children: ReactNode; back?: string; backLabel?: string }) {
+export function SubPage({ title, intro, children, back = "/settings", backLabel = t("设置") }: { title: string; intro?: string; children: ReactNode; back?: string; backLabel?: string }) {
   usePageContext({ page: "settings" });
   const goBack = useBack(back);
   return (
@@ -72,7 +73,7 @@ export function useSettings<T extends { settings: S } = { settings: S }>() {
   const api = useApi<T>("/api/settings");
   const [local, setLocal] = useState<S>({});
   const s: S | null = api.data ? { ...api.data.settings, ...local } : null;
-  async function save(patch: S, msg = "已保存") {
+  async function save(patch: S, msg = t("已保存")) {
     setLocal((x) => ({ ...x, ...patch }));
     try {
       await post("/api/settings", patch, "PATCH");

@@ -1,4 +1,5 @@
 "use client";
+import { t } from "@/lib/i18n";
 import { Button, Group, Paper, Stack, Stepper, Text, Title } from "@mantine/core";
 import { IconArrowRight, IconCheck } from "@tabler/icons-react";
 import Link from "next/link";
@@ -14,10 +15,10 @@ import { PrivacySimple } from "@/components/setup/PrivacySimple";
 import { post, refreshAll } from "@/lib/client";
 
 const STEPS = [
-  { label: "导入聊天", desc: "拖进导出文件" },
-  { label: "AI 服务", desc: "用你自己的密钥" },
-  { label: "隐私", desc: "聊天都在本地" },
-  { label: "整理", desc: "变成提醒和画像" },
+  { label: t("导入聊天"), desc: t("拖进导出文件") },
+  { label: t("AI 服务"), desc: t("用你自己的密钥") },
+  { label: t("隐私"), desc: t("聊天都在本地") },
+  { label: t("整理"), desc: t("变成提醒和画像") },
 ];
 
 /** First run: get from the demo to your own chats in four steps. Import comes first so nothing has to be configured to look around. */
@@ -52,24 +53,24 @@ export default function SetupPage() {
     <Stack gap="lg" className="fade-in">
       <div>
         <Group justify="space-between" align="center">
-          <Title order={1} fz={28}>用自己的聊天</Title>
-          <Button variant="subtle" color="gray" size="xs" radius="xl" onClick={leave}>先不设置，看演示</Button>
+          <Title order={1} fz={28}>{t("用自己的聊天")}</Title>
+          <Button variant="subtle" color="gray" size="xs" radius="xl" onClick={leave}>{t("先不设置，看演示")}</Button>
         </Group>
-        <Text size="sm" className="muted" mt={4}>四步，聊天始终存在这台电脑上。</Text>
+        <Text size="sm" className="muted" mt={4}>{t("四步，聊天始终存在这台电脑上。")}</Text>
       </div>
       <Stepper active={step} onStepClick={setStep} size="sm" allowNextStepsSelect>
         {STEPS.map((s) => <Stepper.Step key={s.label} label={s.label} description={s.desc} />)}
       </Stepper>
       <Paper className="surface" radius="xl" p="lg">{body}</Paper>
       <Group justify="space-between">
-        <Button variant="subtle" color="gray" radius="md" disabled={step === 0} onClick={() => setStep(step - 1)}>上一步</Button>
+        <Button variant="subtle" color="gray" radius="md" disabled={step === 0} onClick={() => setStep(step - 1)}>{t("上一步")}</Button>
         {step < STEPS.length - 1
-          ? <Button radius="md" rightSection={<IconArrowRight size={16} />} onClick={() => setStep(step + 1)}>{step === 1 ? "下一步（可以以后再设）" : "下一步"}</Button>
+          ? <Button radius="md" rightSection={<IconArrowRight size={16} />} onClick={() => setStep(step + 1)}>{step === 1 ? t("下一步（可以以后再设）") : t("下一步")}</Button>
           : done
-            ? <Button component={Link} href="/" radius="md" color="teal" leftSection={<IconCheck size={16} />}>去「今天」看看</Button>
-            : <Button radius="md" onClick={finish}>完成，切换到我的数据</Button>}
+            ? <Button component={Link} href="/" radius="md" color="teal" leftSection={<IconCheck size={16} />}>{t("去「今天」看看")}</Button>
+            : <Button radius="md" onClick={finish}>{t("完成，切换到我的数据")}</Button>}
       </Group>
-      <Text size="xs" className="faint">这些设置以后都能在「设置」里改。随时可以在「设置 → 数据」切回演示数据。</Text>
+      <Text size="xs" className="faint">{t("这些设置以后都能在「设置」里改。随时可以在「设置 → 数据」切回演示数据。")}</Text>
     </Stack>
   );
 }

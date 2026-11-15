@@ -1,4 +1,5 @@
 "use client";
+import { t } from "@/lib/i18n";
 import { Button, Group, Loader, Modal, Stack, Switch, Text, TextInput } from "@mantine/core";
 import { IconDownload, IconShare2 } from "@tabler/icons-react";
 import Link from "next/link";
@@ -23,11 +24,11 @@ function round(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h
 /** Draw the card. Rows that weren't kept go first: that's what people want to see. The first rows carry the original words. */
 function draw(cv: HTMLCanvasElement, data: LedgerData, name: string, quotes: number) {
   const ctx = cv.getContext("2d")!;
-  const t = tally(data.rows);
+  const tl = tally(data.rows);
   const order: LedgerState[] = ["not", "silent", "done", "waiting"];
-  const pick = (s: typeof t.me) => [...s.list].sort((a, b) => order.indexOf(a.state) - order.indexOf(b.state)).slice(0, 4)
+  const pick = (s: typeof tl.me) => [...s.list].sort((a, b) => order.indexOf(a.state) - order.indexOf(b.state)).slice(0, 4)
     .map((r, i) => ({ ...r, said: i < quotes && r.quote ? r.quote.text.replace(/\s+/g, " ") : null }));
-  const lists = [pick(t.them), pick(t.me)];
+  const lists = [pick(tl.them), pick(tl.me)];
   const rowH = (r: { said: string | null }) => (r.said ? 116 : 72);
   const boxH = (l: { said: string | null }[]) => (l.length ? l.reduce((a, r) => a + rowH(r), 0) : 72) + 16;
   const H = Math.max(1440, 568 + 24 + boxH(lists[0]) + 70 + 24 + boxH(lists[1]) + 150);
@@ -40,35 +41,35 @@ function draw(cv: HTMLCanvasElement, data: LedgerData, name: string, quotes: num
   ctx.fillStyle = g2; ctx.fillRect(0, 0, W, H);
 
   ctx.textBaseline = "alphabetic";
-  ctx.fillStyle = C.orange; ctx.font = `700 34px ${FONT}`; ctx.fillText("说话算数账本", PAD, 120);
-  ctx.fillStyle = C.ink; ctx.font = `600 34px ${FONT}`; ctx.textAlign = "right"; ctx.fillText(fit(ctx, `我 × ${name}`, 520), W - PAD, 120); ctx.textAlign = "left";
+  ctx.fillStyle = C.orange; ctx.font = `700 34px ${FONT}`; ctx.fillText(t("说话算数账本"), PAD, 120);
+  ctx.fillStyle = C.ink; ctx.font = `600 34px ${FONT}`; ctx.textAlign = "right"; ctx.fillText(fit(ctx, t("我 × {0}", name), 520), W - PAD, 120); ctx.textAlign = "left";
 
   // the score
   const bw = (W - PAD * 2 - 28) / 2, by = 168, bh = 236;
-  [[`我欠${name}`, t.me.owed, C.orange], [`${name}欠我`, t.them.owed, C.pink]].forEach(([label, n, color], i) => {
+  [[t("我欠{0}", name), tl.me.owed, C.orange], [t("{0}欠我", name), tl.them.owed, C.pink]].forEach(([label, n, color], i) => {
     const x = PAD + i * (bw + 28);
     round(ctx, x, by, bw, bh, 36, C.card);
     ctx.fillStyle = C.muted; ctx.font = `600 32px ${FONT}`; ctx.fillText(fit(ctx, String(label), bw - 80), x + 40, by + 66);
     ctx.fillStyle = String(color); ctx.font = `800 120px ${FONT}`; ctx.fillText(String(n), x + 36, by + 194);
     const nw = ctx.measureText(String(n)).width;
-    ctx.fillStyle = C.ink; ctx.font = `700 40px ${FONT}`; ctx.fillText("件", x + 48 + nw, by + 190);
+    ctx.fillStyle = C.ink; ctx.font = `700 40px ${FONT}`; ctx.fillText(t("件"), x + 48 + nw, by + 190);
   });
-  ctx.fillStyle = C.ink; ctx.font = `800 46px ${FONT}`; ctx.fillText(fit(ctx, punchline(t.me.owed, t.them.owed, name, t.me.proven, t.them.proven), W - PAD * 2), PAD, 482);
+  ctx.fillStyle = C.ink; ctx.font = `800 46px ${FONT}`; ctx.fillText(fit(ctx, punchline(tl.me.owed, tl.them.owed, name, tl.me.proven, tl.them.proven), W - PAD * 2), PAD, 482);
 
   // the two lists
-  const section = (y: number, title: string, s: typeof t.me, list: ReturnType<typeof pick>) => {
+  const section = (y: number, title: string, s: typeof tl.me, list: ReturnType<typeof pick>) => {
     ctx.fillStyle = C.ink; ctx.font = `700 36px ${FONT}`; ctx.fillText(title, PAD, y);
     ctx.fillStyle = C.muted; ctx.font = `500 26px ${FONT}`; ctx.textAlign = "right";
-    ctx.fillText(`做到 ${s.kept} · 欠着 ${s.owed}`, W - PAD, y); ctx.textAlign = "left";
+    ctx.fillText(t("做到 {0} · 欠着 {1}", s.kept, s.owed), W - PAD, y); ctx.textAlign = "left";
     round(ctx, PAD, y + 24, W - PAD * 2, boxH(list), 28, C.card);
-    if (!list.length) { ctx.fillStyle = C.muted; ctx.font = `500 28px ${FONT}`; ctx.fillText("一件都没有", PAD + 36, y + 86); }
+    if (!list.length) { ctx.fillStyle = C.muted; ctx.font = `500 28px ${FONT}`; ctx.fillText(t("一件都没有"), PAD + 36, y + 86); }
     let ry = y + 24 + 8;
     list.forEach((r, i) => {
       if (i) { ctx.fillStyle = C.line; ctx.fillRect(PAD + 32, ry, W - PAD * 2 - 64, 2); }
       const [mark, color] = MARK[r.state];
       ctx.beginPath(); ctx.arc(PAD + 52, ry + 36, 20, 0, Math.PI * 2); ctx.fillStyle = color; ctx.fill();
       ctx.fillStyle = "#fff"; ctx.font = `800 24px ${FONT}`; ctx.textAlign = "center"; ctx.fillText(mark, PAD + 52, ry + 45); ctx.textAlign = "left";
-      const when = r.state === "silent" ? `没下文 · ${daysAgo(r.saidAt) ?? ""}` : daysAgo(r.saidAt) ?? "";
+      const when = r.state === "silent" ? t("没下文 · {0}", daysAgo(r.saidAt) ?? "") : daysAgo(r.saidAt) ?? "";
       ctx.font = `500 24px ${FONT}`; const ww = ctx.measureText(when).width;
       ctx.fillStyle = r.state === "done" ? C.muted : color; ctx.textAlign = "right"; ctx.fillText(when, W - PAD - 32, ry + 45); ctx.textAlign = "left";
       ctx.fillStyle = C.ink; ctx.font = `500 31px ${FONT}`;
@@ -81,11 +82,11 @@ function draw(cv: HTMLCanvasElement, data: LedgerData, name: string, quotes: num
     });
     return y + 24 + boxH(list);
   };
-  const end1 = section(568, `${name}答应我的`, t.them, lists[0]);
-  section(end1 + 70, `我答应${name}的`, t.me, lists[1]);
+  const end1 = section(568, t("{0}答应我的", name), tl.them, lists[0]);
+  section(end1 + 70, t("我答应{0}的", name), tl.me, lists[1]);
 
   ctx.fillStyle = C.muted; ctx.font = `500 24px ${FONT}`;
-  ctx.fillText("从聊天记录里翻出来的 · Personal Radar", PAD, H - 64);
+  ctx.fillText(t("从聊天记录里翻出来的 · Personal Radar"), PAD, H - 64);
   ctx.textAlign = "right"; ctx.fillText("github.com/Ikarishinji00/personal-radar", W - PAD, H - 64); ctx.textAlign = "left";
 }
 
@@ -105,7 +106,7 @@ export function LedgerShare({ personKey, personName, opened, onClose }: { person
       let d = (await (await fetch(api, { cache: "no-store" })).json()) as LedgerData;
       const total = d.rows.length;
       while (d.aiReady && d.unchecked > 0) {
-        setBusy(`AI 正在翻旧账… 已看 ${total - d.unchecked}/${total} 件`);
+        setBusy(t("AI 正在翻旧账… 已看 {0}/{1} 件", total - d.unchecked, total));
         const r = (await (await fetch(api, { method: "POST" })).json()) as { checked?: number; error?: string };
         if (r.error || !r.checked) break;
         d = (await (await fetch(api, { cache: "no-store" })).json()) as LedgerData;
@@ -125,35 +126,35 @@ export function LedgerShare({ personKey, personName, opened, onClose }: { person
   async function blob() { return new Promise<Blob | null>((r) => cv.current?.toBlob(r, "image/png")); }
   async function share() {
     const b = await blob(); if (!b) return;
-    const file = new File([b], "说话算数账本.png", { type: "image/png" });
-    if (navigator.canShare?.({ files: [file] })) { try { await navigator.share({ files: [file], title: "说话算数账本" }); return; } catch { return; } }
+    const file = new File([b], t("说话算数账本.png"), { type: "image/png" });
+    if (navigator.canShare?.({ files: [file] })) { try { await navigator.share({ files: [file], title: t("说话算数账本") }); return; } catch { return; } }
     save();
   }
   function save() {
     if (!url) return;
-    const a = document.createElement("a"); a.href = url; a.download = `说话算数账本-${name || "TA"}.png`; a.click();
+    const a = document.createElement("a"); a.href = url; a.download = t("说话算数账本-{0}.png", name || "TA"); a.click();
   }
 
   return (
-    <Modal opened={opened} onClose={() => { setName(null); onClose(); }} title="说话算数账本" radius="xl" size="md" centered>
+    <Modal opened={opened} onClose={() => { setName(null); onClose(); }} title={t("说话算数账本")} radius="xl" size="md" centered>
       {busy || !data ? (
-        <Stack align="center" py="xl" gap="sm"><Loader size="sm" /><Text size="sm" className="muted">{busy ?? "正在翻你们的聊天…"}</Text></Stack>
+        <Stack align="center" py="xl" gap="sm"><Loader size="sm" /><Text size="sm" className="muted">{busy ?? t("正在翻你们的聊天…")}</Text></Stack>
       ) : !data.rows.length ? (
-        <Text size="sm" className="muted" py="md">还没从你们的聊天里找到谁答应过谁的事。先用 AI 整理一下聊天再来。</Text>
+        <Text size="sm" className="muted" py="md">{t("还没从你们的聊天里找到谁答应过谁的事。先用 AI 整理一下聊天再来。")}</Text>
       ) : (
         <Stack gap="sm">
           {/* eslint-disable-next-line @next/next/no-img-element -- a canvas data URL, nothing to optimize */}
-          {url && <img src={url} alt="说话算数账本卡片" style={{ width: "100%", borderRadius: 16, display: "block" }} />}
+          {url && <img src={url} alt={t("说话算数账本卡片")} style={{ width: "100%", borderRadius: 16, display: "block" }} />}
           <Group gap="sm" align="flex-end" wrap="nowrap">
-            <TextInput size="xs" radius="md" label="卡片上怎么称呼 TA" value={name} onChange={(e) => setName(e.currentTarget.value)} maxLength={10} style={{ flex: 1 }} />
-            <Switch size="sm" color="orange" label="带上原话" checked={withQuotes} onChange={(e) => setWithQuotes(e.currentTarget.checked)} mb={4} />
+            <TextInput size="xs" radius="md" label={t("卡片上怎么称呼 TA")} value={name} onChange={(e) => setName(e.currentTarget.value)} maxLength={10} style={{ flex: 1 }} />
+            <Switch size="sm" color="orange" label={t("带上原话")} checked={withQuotes} onChange={(e) => setWithQuotes(e.currentTarget.checked)} mb={4} />
           </Group>
           <Group grow gap="xs">
-            <Button radius="xl" color="orange" leftSection={<IconShare2 size={16} />} onClick={share}>分享</Button>
-            <Button radius="xl" variant="light" color="orange" leftSection={<IconDownload size={16} />} onClick={save}>保存图片</Button>
+            <Button radius="xl" color="orange" leftSection={<IconShare2 size={16} />} onClick={share}>{t("分享")}</Button>
+            <Button radius="xl" variant="light" color="orange" leftSection={<IconDownload size={16} />} onClick={save}>{t("保存图片")}</Button>
           </Group>
-          {!data.aiReady && data.unchecked > 0 && <Text size="xs" className="faint">没设置 AI 服务，没再提起的事都先算「没下文」。</Text>}
-          <Text component={Link} href={`/people/${encodeURIComponent(personKey)}/ledger`} size="xs" c="radar" ta="center" onClick={onClose}>看完整账本，改判错的 ›</Text>
+          {!data.aiReady && data.unchecked > 0 && <Text size="xs" className="faint">{t("没设置 AI 服务，没再提起的事都先算「没下文」。")}</Text>}
+          <Text component={Link} href={`/people/${encodeURIComponent(personKey)}/ledger`} size="xs" c="radar" ta="center" onClick={onClose}>{t("看完整账本，改判错的 ›")}</Text>
         </Stack>
       )}
     </Modal>

@@ -7,6 +7,7 @@ import { ColorSchemeScript, MantineProvider, mantineHtmlProps } from "@mantine/c
 import { Notifications } from "@mantine/notifications";
 import { theme } from "@/theme";
 import { Shell } from "@/components/Shell";
+import { ClientOnly } from "@/components/ClientOnly";
 
 export const metadata: Metadata = {
   title: "Personal Radar",
@@ -35,12 +36,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <head>
         <ColorSchemeScript defaultColorScheme="light" />
         {/* bottom-bar glass strength (设置 → 通用), applied before paint so it never flashes */}
-        <script dangerouslySetInnerHTML={{ __html: `try{var g=localStorage.getItem("radar-glass");if(g)document.documentElement.dataset.glass=g}catch(e){}` }} />
+        <script dangerouslySetInnerHTML={{ __html: `try{var g=localStorage.getItem("radar-glass");if(g)document.documentElement.dataset.glass=g;var l=localStorage.getItem("radar.lang");if(l)document.documentElement.lang=l}catch(e){}` }} />
       </head>
       <body>
         <MantineProvider theme={theme} defaultColorScheme="light">
           <Notifications position="top-center" limit={2} />
-          <Shell>{children}</Shell>
+          <ClientOnly><Shell>{children}</Shell></ClientOnly>
         </MantineProvider>
       </body>
     </html>

@@ -1,4 +1,5 @@
 "use client";
+import { t } from "@/lib/i18n";
 import { ActionIcon, Box, Button, Collapse, CopyButton, Group, Menu, Modal, Paper, ScrollArea, SimpleGrid, Stack, Text, Textarea, TextInput, Title, Tooltip, UnstyledButton } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useMediaQuery } from "@mantine/hooks";
@@ -14,7 +15,7 @@ import type { Person } from "@/lib/types";
 import { Md } from "./Md";
 
 /** long built-in prompts show a short label on their button */
-const qLabel = (q: string) => (q.startsWith("见面前简报") ? "见面前简报：上次聊到哪、谁欠谁什么、这次聊什么" : q);
+const qLabel = (q: string) => (q.startsWith("见面前简报") ? t("见面前简报：上次聊到哪、谁欠谁什么、这次聊什么") : q);
 type Msg = { role: "user" | "assistant"; content: string; citations?: Citation[]; proposals?: Proposal[] };
 type Conv = { id: number; personKey: string | null; assistant: string; title: string; updatedAt: string; messages: number; scope: CompanionContext | null };
 
@@ -36,7 +37,7 @@ export function AiChat({ context, layout, seedPrompt, onNavigate, picker }: {
   const ctx: CompanionContext = over ?? (canPick ? { page: "home" } : context);
   const personKey = scopePerson(ctx);
   const who = ctx.page === "person" || ctx.page === "day" ? (ctx.personName ?? null) : null;
-  const itemTitle = ctx.page === "item" ? (ctx.title ?? "这件事") : null;
+  const itemTitle = ctx.page === "item" ? (ctx.title ?? t("这件事")) : null;
   const quick = (a: ReturnType<typeof assistantOf>) =>
     itemTitle ? ITEM_QUICK : ctx.page === "day" ? DAY_QUICK : who ? [briefFor(who), ...quickFor(a, who)] : quickFor(a, who);
   // scopes from the page the AI was opened on (this item / this day, and its person), offered on top of the picker
@@ -124,7 +125,7 @@ export function AiChat({ context, layout, seedPrompt, onNavigate, picker }: {
         }
       }
     } catch {
-      setMsgs((m) => [...m.slice(0, -1), { role: "assistant", content: "连不上家里的 Mac，稍后再试。" }]);
+      setMsgs((m) => [...m.slice(0, -1), { role: "assistant", content: t("连不上家里的 Mac，稍后再试。") }]);
     } finally {
       setBusy(false);
       convs.reload();
@@ -134,16 +135,16 @@ export function AiChat({ context, layout, seedPrompt, onNavigate, picker }: {
   const list = (
     <Stack gap={4}>
       <UnstyledButton onClick={fresh} className="conv-new pressable">
-        <Group gap={8}><IconPlus size={16} /><Text size="sm" fw={550}>开始新对话</Text></Group>
+        <Group gap={8}><IconPlus size={16} /><Text size="sm" fw={550}>{t("开始新对话")}</Text></Group>
       </UnstyledButton>
-      {!convs.data?.conversations.length && <Text size="xs" className="faint" ta="center" py="lg">还没有历史对话</Text>}
+      {!convs.data?.conversations.length && <Text size="xs" className="faint" ta="center" py="lg">{t("还没有历史对话")}</Text>}
       {convs.data?.conversations.filter((c) => !historyQ.trim() || `${c.title} ${c.scope ? scopeLabel(c.scope) : ""}`.includes(historyQ.trim())).map((c) => (
         <Group key={c.id} gap={4} wrap="nowrap" className={`conv-row${c.id === activeId ? " is-active" : ""}`}>
           <UnstyledButton onClick={() => open(c.id)} style={{ flex: 1, minWidth: 0 }} py={8} px={10}>
             <Text size="sm" truncate>{c.title}</Text>
-            <Text size="11px" className="faint" truncate>{c.scope ? scopeLabel(c.scope) : c.personKey ? privates.find((p) => p.key === c.personKey)?.name ?? "某个联系人" : "所有人"} · {assistantOf(c.assistant).name} · {c.updatedAt.slice(5, 16)}</Text>
+            <Text size="11px" className="faint" truncate>{c.scope ? scopeLabel(c.scope) : c.personKey ? privates.find((p) => p.key === c.personKey)?.name ?? t("某个联系人") : t("所有人")} · {assistantOf(c.assistant).name} · {c.updatedAt.slice(5, 16)}</Text>
           </UnstyledButton>
-          <ActionIcon size="sm" variant="subtle" color="gray" className="conv-del" aria-label="删除对话" onClick={() => remove(c.id)}><IconTrash size={14} /></ActionIcon>
+          <ActionIcon size="sm" variant="subtle" color="gray" className="conv-del" aria-label={t("删除对话")} onClick={() => remove(c.id)}><IconTrash size={14} /></ActionIcon>
         </Group>
       ))}
     </Stack>
@@ -163,7 +164,7 @@ export function AiChat({ context, layout, seedPrompt, onNavigate, picker }: {
         ))}
       </SimpleGrid>
       <UnstyledButton onClick={() => setMoreA((m) => !m)} style={{ alignSelf: "center" }}>
-        <Text size="xs" c="radar">{moreA ? "收起" : `更多助手（${ASSISTANTS.filter((x) => !x.pinned).length}）`}</Text>
+        <Text size="xs" c="radar">{moreA ? t("收起") : t("更多助手（{0}）", ASSISTANTS.filter((x) => !x.pinned).length)}</Text>
       </UnstyledButton>
     </Stack>
   );
@@ -171,7 +172,7 @@ export function AiChat({ context, layout, seedPrompt, onNavigate, picker }: {
   const empty = (
     <Stack align="center" gap="md" py={desktop ? 56 : 24} px="xs">
       <Box className="ai-orb"><IconSparkles size={24} /></Box>
-      <Title order={3} ta="center" fz={desktop ? 24 : 20}>{who ? `想知道${who}的什么？` : "想问什么，直接问"}</Title>
+      <Title order={3} ta="center" fz={desktop ? 24 : 20}>{who ? t("想知道{0}的什么？", who) : t("想问什么，直接问")}</Title>
       {pills}
       <Text size="xs" className="faint" ta="center" maw={520}>{a.intro}</Text>
       <Stack gap={8} w="100%" maw={560}>
@@ -193,7 +194,7 @@ export function AiChat({ context, layout, seedPrompt, onNavigate, picker }: {
         <Group key={i} align="flex-start" gap={10} wrap="nowrap" className="fade-in">
           <Box className="ai-avatar"><IconSparkles size={14} /></Box>
           <Stack gap={8} style={{ flex: 1, minWidth: 0 }}>
-            {m.content ? <Md text={m.content} onCite={onNavigate} /> : <Text size="sm" className="faint typing">正在翻记录…</Text>}
+            {m.content ? <Md text={m.content} onCite={onNavigate} /> : <Text size="sm" className="faint typing">{t("正在翻记录…")}</Text>}
             {(m.content && !(busy && i === msgs.length - 1)) && <Answerbar text={m.content} citations={m.citations} onNavigate={onNavigate} />}
             {!!m.proposals?.length && !(busy && i === msgs.length - 1) && <Proposals items={m.proposals} />}
           </Stack>
@@ -206,10 +207,10 @@ export function AiChat({ context, layout, seedPrompt, onNavigate, picker }: {
     <Box pt="xs" pb={layout === "drawer" ? 8 : 0}>
       <Paper className="composer" radius="xl" p={6} pl={16}>
         <Group gap={8} wrap="nowrap" align="flex-end">
-          <Textarea variant="unstyled" style={{ flex: 1 }} placeholder={ctx.page === "day" ? "问问这一天的事…" : itemTitle ? "问问这件事…" : who ? `问问关于${who}的事…` : "问点什么…"} autosize minRows={1} maxRows={6} value={input}
+          <Textarea variant="unstyled" style={{ flex: 1 }} placeholder={ctx.page === "day" ? t("问问这一天的事…") : itemTitle ? t("问问这件事…") : who ? t("问问关于{0}的事…", who) : t("问点什么…")} autosize minRows={1} maxRows={6} value={input}
             onChange={(e) => setInput(e.currentTarget.value)}
             onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); void send(input); } }} />
-          <ActionIcon size={36} radius="xl" variant="filled" loading={busy} disabled={!input.trim()} onClick={() => send(input)} aria-label="发送" mb={2}><IconArrowUp size={18} /></ActionIcon>
+          <ActionIcon size={36} radius="xl" variant="filled" loading={busy} disabled={!input.trim()} onClick={() => send(input)} aria-label={t("发送")} mb={2}><IconArrowUp size={18} /></ActionIcon>
         </Group>
       </Paper>
     </Box>
@@ -218,15 +219,15 @@ export function AiChat({ context, layout, seedPrompt, onNavigate, picker }: {
   const header = (
     <Group justify="space-between" wrap="nowrap" gap={6} pb={8}>
       <Box style={{ flex: 1, minWidth: 0 }}><PersonPicker people={privates} value={ctx} extra={extra} onChange={setOver} /></Box>
-      {!sidebar && <Button size="compact-sm" variant="subtle" color="gray" leftSection={<IconHistory size={15} />} onClick={() => setHistoryOpen(true)}>历史</Button>}
-      <Button size="compact-sm" variant="light" leftSection={<IconPlus size={15} />} onClick={fresh}>新对话</Button>
+      {!sidebar && <Button size="compact-sm" variant="subtle" color="gray" leftSection={<IconHistory size={15} />} onClick={() => setHistoryOpen(true)}>{t("历史")}</Button>}
+      <Button size="compact-sm" variant="light" leftSection={<IconPlus size={15} />} onClick={fresh}>{t("新对话")}</Button>
       <Menu position="bottom-end" withinPortal zIndex={600}>
-        <Menu.Target><ActionIcon variant="subtle" color="gray" aria-label="更多"><IconDots size={18} /></ActionIcon></Menu.Target>
+        <Menu.Target><ActionIcon variant="subtle" color="gray" aria-label={t("更多")}><IconDots size={18} /></ActionIcon></Menu.Target>
         <Menu.Dropdown>
           <Menu.Label>{a.name} · {model}</Menu.Label>
-          <Menu.Item leftSection={<IconEye size={14} />} onClick={showPreview}>看看这次会发出去什么</Menu.Item>
+          <Menu.Item leftSection={<IconEye size={14} />} onClick={showPreview}>{t("看看这次会发出去什么")}</Menu.Item>
           {msgs.length > 0 && <Menu.Divider />}
-          {msgs.length > 0 && <Menu.Label>换个助手</Menu.Label>}
+          {msgs.length > 0 && <Menu.Label>{t("换个助手")}</Menu.Label>}
           {msgs.length > 0 && ASSISTANTS.map((x) => <Menu.Item key={x.id} onClick={() => setAssistant(x.id)} leftSection={x.id === assistant ? <IconCheck size={14} /> : <span style={{ width: 14 }} />}>{x.name}</Menu.Item>)}
         </Menu.Dropdown>
       </Menu>
@@ -253,20 +254,20 @@ export function AiChat({ context, layout, seedPrompt, onNavigate, picker }: {
       ) : (
         <Box style={{ height, display: "flex", flexDirection: "column" }} px={layout === "drawer" ? "md" : 0}>{main}</Box>
       )}
-      <Modal opened={!!preview} onClose={() => setPreview(null)} size="lg" zIndex={500} title={<Text fw={650}>这次提问会发给 AI 服务的内容</Text>}>
+      <Modal opened={!!preview} onClose={() => setPreview(null)} size="lg" zIndex={500} title={<Text fw={650}>{t("这次提问会发给 AI 服务的内容")}</Text>}>
         {preview && (
           <Stack gap="sm">
-            <Text size="xs" className="faint">问题：{preview.question} · 共 {preview.chars.toLocaleString()} 个字符 · 另外还有固定的回答规则和最近 8 轮对话。还没发送，关掉就不会发。</Text>
+            <Text size="xs" className="faint">{t("问题：{0} · 共 {1} 个字符 · 另外还有固定的回答规则和最近 8 轮对话。还没发送，关掉就不会发。", preview.question, preview.chars.toLocaleString())}</Text>
             <Paper className="surface" p="sm" radius="md" mah="60dvh" style={{ overflow: "auto" }}>
-              <Text size="xs" style={{ whiteSpace: "pre-wrap", fontFamily: "ui-monospace, Menlo, monospace" }}>{preview.text || "（这个问题不会附带任何记录）"}</Text>
+              <Text size="xs" style={{ whiteSpace: "pre-wrap", fontFamily: "ui-monospace, Menlo, monospace" }}>{preview.text || t("（这个问题不会附带任何记录）")}</Text>
             </Paper>
           </Stack>
         )}
       </Modal>
-      <BottomSheet opened={historyOpen} onClose={() => setHistoryOpen(false)} label="历史对话" zIndex={450} maxHeight={0.8}>
+      <BottomSheet opened={historyOpen} onClose={() => setHistoryOpen(false)} label={t("历史对话")} zIndex={450} maxHeight={0.8}>
         <Stack gap="sm" px="md" pb="md" style={{ minHeight: 0, flex: 1 }}>
-          <Text fw={650}>历史对话</Text>
-          <TextInput radius="xl" placeholder="搜问过的问题、人名" value={historyQ} onChange={(e) => setHistoryQ(e.currentTarget.value)} leftSection={<IconSearch size={16} />} />
+          <Text fw={650}>{t("历史对话")}</Text>
+          <TextInput radius="xl" placeholder={t("搜问过的问题、人名")} value={historyQ} onChange={(e) => setHistoryQ(e.currentTarget.value)} leftSection={<IconSearch size={16} />} />
           <Box style={{ overflowY: "auto", minHeight: 0, flex: 1 }}>{list}</Box>
         </Stack>
       </BottomSheet>
@@ -281,11 +282,11 @@ function Answerbar({ text, citations, onNavigate }: { text: string; citations?: 
       <Group gap={6}>
         <CopyButton value={text}>
           {({ copied, copy }) => (
-            <Tooltip label={copied ? "已复制" : "复制回答"}><ActionIcon size="sm" variant="subtle" color="gray" onClick={copy} aria-label="复制">{copied ? <IconCheck size={14} /> : <IconCopy size={14} />}</ActionIcon></Tooltip>
+            <Tooltip label={copied ? t("已复制") : t("复制回答")}><ActionIcon size="sm" variant="subtle" color="gray" onClick={copy} aria-label={t("复制")}>{copied ? <IconCheck size={14} /> : <IconCopy size={14} />}</ActionIcon></Tooltip>
           )}
         </CopyButton>
         {!!citations?.length && (
-          <UnstyledButton onClick={() => setOpen((o) => !o)}><Text size="xs" c="violet">依据 {citations.length} 条记录 {open ? "▴" : "▾"}</Text></UnstyledButton>
+          <UnstyledButton onClick={() => setOpen((o) => !o)}><Text size="xs" c="violet">{t("依据 {0} 条记录 {1}", citations.length, open ? "▴" : "▾")}</Text></UnstyledButton>
         )}
       </Group>
       <Collapse expanded={open}>
@@ -318,8 +319,8 @@ function Proposals({ items }: { items: Proposal[] }) {
       refreshAll();
       const nid = `ai-${r.historyId}`;
       notifications.show({ id: nid, radius: "lg", autoClose: 7000, withCloseButton: false, message: (
-        <Group justify="space-between" wrap="nowrap"><Text size="sm">已按建议修改</Text>
-          {r.historyId && <Button size="compact-sm" variant="subtle" onClick={async () => { await post(`/api/history/${r.historyId}/undo`, {}); notifications.hide(nid); refreshAll(); setState((s) => ({ ...s, [p.id]: "skip" })); }}>撤销</Button>}
+        <Group justify="space-between" wrap="nowrap"><Text size="sm">{t("已按建议修改")}</Text>
+          {r.historyId && <Button size="compact-sm" variant="subtle" onClick={async () => { await post(`/api/history/${r.historyId}/undo`, {}); notifications.hide(nid); refreshAll(); setState((s) => ({ ...s, [p.id]: "skip" })); }}>{t("撤销")}</Button>}
         </Group>) });
     } catch (e) {
       setState((s) => { const n = { ...s }; delete n[p.id]; return n; });
@@ -328,7 +329,7 @@ function Proposals({ items }: { items: Proposal[] }) {
   }
   return (
     <Stack gap={6}>
-      <Group gap={6}><IconWand size={14} color="var(--mantine-color-violet-5)" /><Text size="xs" c="violet" fw={600}>AI 建议修改记录（你确认后才生效）</Text></Group>
+      <Group gap={6}><IconWand size={14} color="var(--mantine-color-violet-5)" /><Text size="xs" c="violet" fw={600}>{t("AI 建议修改记录（你确认后才生效）")}</Text></Group>
       {items.map((p) => (
         <Paper key={p.id} className="surface" p="sm" radius="md">
           <Group justify="space-between" wrap="nowrap" gap="sm">
@@ -336,11 +337,11 @@ function Proposals({ items }: { items: Proposal[] }) {
               <Text size="sm">{p.label}</Text>
               <Text size="xs" component={Link} href={`/items/${p.itemId}`} c="radar">#{p.itemId}</Text>
             </Box>
-            {state[p.id] === "done" ? <Text size="xs" c="teal" style={{ flex: "none" }}>已修改</Text>
-              : state[p.id] === "skip" ? <Text size="xs" className="faint" style={{ flex: "none" }}>没改</Text>
+            {state[p.id] === "done" ? <Text size="xs" c="teal" style={{ flex: "none" }}>{t("已修改")}</Text>
+              : state[p.id] === "skip" ? <Text size="xs" className="faint" style={{ flex: "none" }}>{t("没改")}</Text>
               : <Group gap={4} wrap="nowrap" style={{ flex: "none" }}>
-                  <Button size="compact-sm" color="violet" loading={state[p.id] === "busy"} onClick={() => apply(p)}>确认</Button>
-                  <Button size="compact-sm" variant="subtle" color="gray" onClick={() => setState((s) => ({ ...s, [p.id]: "skip" }))}>不用</Button>
+                  <Button size="compact-sm" color="violet" loading={state[p.id] === "busy"} onClick={() => apply(p)}>{t("确认")}</Button>
+                  <Button size="compact-sm" variant="subtle" color="gray" onClick={() => setState((s) => ({ ...s, [p.id]: "skip" }))}>{t("不用")}</Button>
                 </Group>}
           </Group>
         </Paper>

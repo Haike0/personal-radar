@@ -1,4 +1,5 @@
 "use client";
+import { t } from "@/lib/i18n";
 import { Avatar, Badge, Drawer, Group, Stack, Text, TextInput, UnstyledButton } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconChevronDown, IconLock, IconSearch, IconTag, IconUserSearch } from "@tabler/icons-react";
@@ -32,30 +33,30 @@ export function PersonPicker({ people, value, extra = [], onChange }: {
   const narrowed = value.page !== "home" && value.page !== "companion" && value.page !== "timeline" && value.page !== "people" && value.page !== "settings";
   // without a search: people grouped under their first tag, untagged last (like a contact book)
   const groups = k ? [{ title: "", list: people.filter(hit) }]
-    : [...tags.map((t) => ({ title: t, list: people.filter((p) => p.tags?.[0] === t) })), { title: "没加标签", list: people.filter((p) => !p.tags?.length) }].filter((g) => g.list.length);
+    : [...tags.map((t) => ({ title: t, list: people.filter((p) => p.tags?.[0] === t) })), { title: t("没加标签"), list: people.filter((p) => !p.tags?.length) }].filter((g) => g.list.length);
   const shownTags = tags.filter((t) => !k || t.toLowerCase().includes(k));
 
-  const label = cur ? cur.name : value.page === "tag" ? `${value.tag} · ${count(value.tag)} 人` : narrowed ? scopeLabel(value) : "选人或标签";
+  const label = cur ? cur.name : value.page === "tag" ? t("{0} · {1} 人", value.tag, count(value.tag)) : narrowed ? scopeLabel(value) : t("选人或标签");
   return (
     <>
-      <UnstyledButton className="who-btn pressable" onClick={() => setOpen(true)} aria-label="选择问谁的事">
+      <UnstyledButton className="who-btn pressable" onClick={() => setOpen(true)} aria-label={t("选择问谁的事")}>
         {cur ? face(cur, 24)
           : <span className="who-all">{value.page === "tag" ? <IconTag size={14} /> : narrowed ? <IconLock size={13} /> : <IconUserSearch size={14} />}</span>}
         <Text size="sm" fw={600} truncate c={narrowed ? undefined : "dimmed"}>{label}</Text>
         <IconChevronDown size={14} className="faint" style={{ flex: "none" }} />
       </UnstyledButton>
       <Drawer opened={open} onClose={() => setOpen(false)} position={desktop ? "right" : "bottom"} size={desktop ? 380 : "auto"} zIndex={650}
-        title={<Text fw={650}>问谁的事</Text>} styles={{ body: { paddingBottom: "calc(var(--safe-bottom) + 12px)" }, content: desktop ? undefined : { height: "auto", maxHeight: "85dvh" } }}>
+        title={<Text fw={650}>{t("问谁的事")}</Text>} styles={{ body: { paddingBottom: "calc(var(--safe-bottom) + 12px)" }, content: desktop ? undefined : { height: "auto", maxHeight: "85dvh" } }}>
         <Stack gap="md">
-          <TextInput radius="xl" placeholder="搜名字或标签" leftSection={<IconSearch size={15} />} value={q} onChange={(e) => setQ(e.currentTarget.value)} data-autofocus />
+          <TextInput radius="xl" placeholder={t("搜名字或标签")} leftSection={<IconSearch size={15} />} value={q} onChange={(e) => setQ(e.currentTarget.value)} data-autofocus />
 
           {!k && extra.length > 0 && (
             <Stack gap={4}>
-              <Text size="xs" fw={600} className="muted">刚才在看的</Text>
+              <Text size="xs" fw={600} className="muted">{t("刚才在看的")}</Text>
               {extra.map((c) => (
                 <UnstyledButton key={scopeKey(c)} className="contact-row" data-active={scopeKey(c) === scopeKey(value) || undefined} onClick={() => pick(c)}>
                   <span className="who-all big"><IconLock size={18} /></span>
-                  <div className="contact-body"><Text fw={550} truncate>{c.page === "person" ? `${c.personName ?? "这个人"}的全部记录` : scopeLabel(c)}</Text></div>
+                  <div className="contact-body"><Text fw={550} truncate>{c.page === "person" ? t("{0}的全部记录", c.personName ?? t("这个人")) : scopeLabel(c)}</Text></div>
                 </UnstyledButton>
               ))}
             </Stack>
@@ -64,8 +65,8 @@ export function PersonPicker({ people, value, extra = [], onChange }: {
           {shownTags.length > 0 && (
             <Stack gap={6}>
               <Group justify="space-between">
-                <Text size="xs" fw={600} className="muted">按标签问一群人</Text>
-                {narrowed && !k && <UnstyledButton onClick={() => pick({ page: "home" })}><Text size="xs" c="radar">不限定</Text></UnstyledButton>}
+                <Text size="xs" fw={600} className="muted">{t("按标签问一群人")}</Text>
+                {narrowed && !k && <UnstyledButton onClick={() => pick({ page: "home" })}><Text size="xs" c="radar">{t("不限定")}</Text></UnstyledButton>}
               </Group>
               <Group gap={6}>
                 {shownTags.map((t) => (
@@ -94,7 +95,7 @@ export function PersonPicker({ people, value, extra = [], onChange }: {
                 ))}
               </div>
             ))}
-            {!groups.length && !shownTags.length && <Text size="sm" className="faint" ta="center" py="lg">没有找到</Text>}
+            {!groups.length && !shownTags.length && <Text size="sm" className="faint" ta="center" py="lg">{t("没有找到")}</Text>}
           </Stack>
         </Stack>
       </Drawer>

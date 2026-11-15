@@ -1,4 +1,5 @@
 "use client";
+import { t } from "@/lib/i18n";
 import { Box, Skeleton, Text } from "@mantine/core";
 import Link from "next/link";
 import { useState } from "react";
@@ -34,17 +35,17 @@ function toEntries(p: PersonProfile): Entry[] {
     if (!type || !date || i.status === "superseded" || i.status === "ignored") continue;
     const future = dayDiff(date) > 0;
     const unsure = i.certainty === "uncertain" || i.certainty === "tentative";
-    const tags: Entry["tags"] = [{ label: type }];
+    const tags: Entry["tags"] = [{ label: t(type) }];
     if (i.certainty !== "confirmed") tags.push({ label: CERTAINTY_LABEL[i.certainty], tone: i.certainty === "cancelled" ? "neutral" : "watch" });
     if (i.status !== "open") tags.push({ label: STATUS_LABEL[i.status], tone: "neutral" });
-    else if (i.category === "urgent" || i.category === "forgotten") tags.push({ label: i.category === "urgent" ? "需要行动" : "可能遗忘", tone: "danger" });
+    else if (i.category === "urgent" || i.category === "forgotten") tags.push({ label: i.category === "urgent" ? t("需要行动") : t("可能遗忘"), tone: "danger" });
     out.push({
       key: `i${i.id}`, date, time: i.eventDate ? i.eventTime : null, type, title: i.title, text: i.summary, href: `/items/${i.id}`,
       dot: future ? "accent" : unsure || (i.status === "open" && (i.category === "urgent" || i.category === "forgotten")) ? "warn" : "meta", tags,
     });
   }
-  if (p.chat?.lastAt) out.push({ key: "last", date: p.chat.lastAt.slice(0, 10), time: p.chat.lastAt.slice(11, 16), type: "近况", title: "最近一次联系", text: `${sinceText(p.chat.lastAt)}，这是目前记录里的最后一条消息。`, dot: "accent", tags: [{ label: "近况" }] });
-  if (p.chat?.firstAt) out.push({ key: "first", date: p.chat.firstAt.slice(0, 10), type: "近况", title: "开始聊天", text: "从这一天开始有你们的聊天记录。", dot: "accent", tags: [{ label: "起点" }] });
+  if (p.chat?.lastAt) out.push({ key: "last", date: p.chat.lastAt.slice(0, 10), time: p.chat.lastAt.slice(11, 16), type: "近况", title: t("最近一次联系"), text: t("{0}，这是目前记录里的最后一条消息。", sinceText(p.chat.lastAt)), dot: "accent", tags: [{ label: t("近况") }] });
+  if (p.chat?.firstAt) out.push({ key: "first", date: p.chat.firstAt.slice(0, 10), type: "近况", title: t("开始聊天"), text: t("从这一天开始有你们的聊天记录。"), dot: "accent", tags: [{ label: t("起点") }] });
   // newest first; things still ahead of you sit on top
   return out.sort((a, b) => (b.date + (b.time ?? "")).localeCompare(a.date + (a.time ?? "")));
 }
@@ -64,48 +65,48 @@ export default function TimelinePage() {
   const list = all.filter((e) => filter === "全部" || e.type === filter);
   const count = (f: (typeof FILTERS)[number]) => (f === "全部" ? all.length : all.filter((e) => e.type === f).length);
 
-  if (!who.loading && !person) return <Text className="faint" ta="center" py="xl">还没有联系人</Text>;
+  if (!who.loading && !person) return <Text className="faint" ta="center" py="xl">{t("还没有联系人")}</Text>;
   const switcher = (
-    <div className="view-switch" role="group" aria-label="切换视图">
-      <button type="button" aria-pressed={view === "cal"} onClick={() => setView("cal")}>日历</button>
-      <button type="button" aria-pressed={view === "line"} onClick={() => setView("line")}>时间线</button>
+    <div className="view-switch" role="group" aria-label={t("切换视图")}>
+      <button type="button" aria-pressed={view === "cal"} onClick={() => setView("cal")}>{t("日历")}</button>
+      <button type="button" aria-pressed={view === "line"} onClick={() => setView("line")}>{t("时间线")}</button>
     </div>
   );
   // 日历: everyone's dated things by month, filtered by group. 时间线: one person's history, newest first.
   if (view === "cal") return (
     <div className="apl fade-in">
-      <p className="apl-kicker">{now.getFullYear()}年{now.getMonth() + 1}月</p>
-      <h1 className="apl-title">日历</h1>
-      <p className="apl-lead">每个人接下来要你面对的事，按恋人、朋友、同事、客户这些分组看。点一天看当天的安排，虚线框的是还没定下来的。</p>
+      <p className="apl-kicker">{t("{0}年{1}月", now.getFullYear(), now.getMonth() + 1)}</p>
+      <h1 className="apl-title">{t("日历")}</h1>
+      <p className="apl-lead">{t("每个人接下来要你面对的事，按恋人、朋友、同事、客户这些分组看。点一天看当天的安排，虚线框的是还没定下来的。")}</p>
       {switcher}
       <CalendarView />
     </div>
   );
   return (
     <div className="apl fade-in">
-      <p className="apl-kicker">{now.getFullYear()}年{now.getMonth() + 1}月</p>
-      <h1 className="apl-title">时间线</h1>
-      <p className="apl-lead">按时间回看你和{person?.name ?? "TA"}之间记下来的事，每条都能点开看原话。标「待判断」「待定」的还没确定。</p>
+      <p className="apl-kicker">{t("{0}年{1}月", now.getFullYear(), now.getMonth() + 1)}</p>
+      <h1 className="apl-title">{t("时间线")}</h1>
+      <p className="apl-lead">{t("按时间回看你和{0}之间记下来的事，每条都能点开看原话。标「待判断」「待定」的还没确定。", person?.name ?? "TA")}</p>
       {switcher}
-      <Box mt={18}><PersonBar {...who} subtitle={p ? `${all.length} 个节点` : undefined} /></Box>
+      <Box mt={18}><PersonBar {...who} subtitle={p ? t("{0} 个节点", all.length) : undefined} /></Box>
 
-      <div className="apl-filters" role="group" aria-label="筛选时间线">
+      <div className="apl-filters" role="group" aria-label={t("筛选时间线")}>
         {FILTERS.map((f) => (
           <button key={f} type="button" className="apl-filter" aria-pressed={filter === f} onClick={() => { setFilter(f); setShown(PAGE); }}>
-            {f}<span className="apl-filter-n">{count(f)}</span>
+            {t(f)}<span className="apl-filter-n">{count(f)}</span>
           </button>
         ))}
       </div>
 
       {(loading || who.loading) && !p ? <Skeleton h={300} radius="lg" mt={26} /> : list.length === 0 ? (
-        <p className="apl-empty">这个分类里还没有记录</p>
+        <p className="apl-empty">{t("这个分类里还没有记录")}</p>
       ) : (
         <>
           <ol className="apl-tl">
             {list.slice(0, shown).map((e) => (
               <li key={e.key} className="apl-tl-item">
                 <span className={`apl-dot is-${e.dot}`} aria-hidden="true" />
-                <p className="apl-date">{e.date}{e.time ? ` ${e.time}` : ""}{dayDiff(e.date) === 0 ? " · 今天" : dayDiff(e.date) > 0 ? " · 接下来" : ""}</p>
+                <p className="apl-date">{e.date}{e.time ? ` ${e.time}` : ""}{dayDiff(e.date) === 0 ? t(" · 今天") : dayDiff(e.date) > 0 ? t(" · 接下来") : ""}</p>
                 {e.href ? <Link href={e.href} className="apl-tl-title">{e.title}</Link> : <h2 className="apl-tl-title">{e.title}</h2>}
                 {e.text && <p className="apl-text">{e.text}</p>}
                 <div className="apl-tags">
@@ -115,10 +116,10 @@ export default function TimelinePage() {
             ))}
           </ol>
           {details > 0 && list.length <= shown && (filter === "全部" || filter === "近况") && (
-            <p className="apl-empty" style={{ marginTop: 22 }}>另有 {details} 条关于{person?.name ?? "TA"}的小事（比如证件、习惯、日常状态）不进时间线，在人物页的「记忆」里。</p>
+            <p className="apl-empty" style={{ marginTop: 22 }}>{t("另有 {0} 条关于{1}的小事（比如证件、习惯、日常状态）不进时间线，在人物页的「记忆」里。", details, person?.name ?? "TA")}</p>
           )}
           {list.length > shown && (
-            <button type="button" className="apl-more" onClick={() => setShown((n) => n + PAGE)}>显示更早的 {Math.min(PAGE, list.length - shown)} 条（还有 {list.length - shown} 条）</button>
+            <button type="button" className="apl-more" onClick={() => setShown((n) => n + PAGE)}>{t("显示更早的 {0} 条（还有 {1} 条）", Math.min(PAGE, list.length - shown), list.length - shown)}</button>
           )}
         </>
       )}

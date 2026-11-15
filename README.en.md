@@ -8,6 +8,8 @@
 
 *The recording uses a fictional chat.*
 
+Interface in English, 日本語, 简体中文 and 繁體中文 (Settings → Appearance & language). Text the AI writes and the demo data are in Chinese for now.
+
 ## What it does
 
 - **A promise ledger you can post.** The AI goes through what you two promised each other and who actually followed through, then makes a shareable card in one tap ("I owe her 7, she owes me 5").
