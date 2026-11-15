@@ -76,7 +76,7 @@ export async function syncHubs() {
   return res;
 }
 
-let lastFolderScan = 0, lastWechat = 0, lastImessage = 0, lastWhatsapp = 0;
+let lastFolderScan = 0, lastWechat = 0, lastImessage = 0, lastWhatsapp = 0, lastTelegram = 0;
 /** Called every minute by the scheduler. */
 export async function autoTick() {
   const out: Record<string, unknown> = {};
@@ -93,6 +93,13 @@ export async function autoTick() {
   if (getSetting("whatsapp_on") === "on" && Date.now() - lastWhatsapp > 5 * 60e3) {
     lastWhatsapp = Date.now();
     out.whatsapp = (await import("./whatsapp-sync")).sync();
+  }
+  // Telegram: a live listener brings new messages in as they arrive; an hourly catch-up covers time Radar was off
+  if (getSetting("tg_on") === "on" && Date.now() - lastTelegram > 60 * 60e3) {
+    lastTelegram = Date.now();
+    const tg = await import("./telegram");
+    out.telegram = await tg.sync().catch((e: Error) => ({ ok: false, error: e.message }));
+    await tg.startLive().catch(() => false);
   }
   const hours = Number(getSetting("hub_sync") || 0);
   const last = Date.parse((getSetting("hub_sync_last") || "1970-01-01").replace(" ", "T"));

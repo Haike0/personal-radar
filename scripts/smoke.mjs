@@ -35,6 +35,8 @@ if (!fs.existsSync(path.join(data, "radar.db"))) fail("no radar.db in the data f
 // a write from another site must be refused
 const evil = await fetch(`${base}/api/settings`, { method: "PATCH", headers: { Origin: "https://evil.example", "Content-Type": "application/json" }, body: "{}" });
 if (evil.status !== 403) fail(`cross-site write returned ${evil.status}, expected 403`);
+const tg = await fetch(`${base}/api/telegram`); // loads the Telegram client library in the built app
+if (!tg.ok) fail(`telegram status returned ${tg.status}`);
 const ledger = await fetch(`${base}/api/people/demo_xiaoyu/ledger`);
 if (!ledger.ok) fail(`ledger returned ${ledger.status}`);
 

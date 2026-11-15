@@ -333,3 +333,8 @@ a.apl-tl-title:hover { text-decoration: underline; text-underline-offset: 3px; }
 .view-switch button { border: 0; background: none; padding: 6px 16px; border-radius: 980px; font: inherit; font-size: 14px; font-weight: 600; color: var(--apl-muted); cursor: pointer; }
 .view-switch button[aria-pressed="true"] { background: var(--apl-fg); color: light-dark(#fff, #141827); }
 @media (max-width: 480px) { .cal-cell { min-height: 76px; } .cal-chip { font-size: 10px; padding: 1px 3px; } }
+.source-tile { position: relative; }
+.source-auto { position: absolute; top: 2px; right: 4px; padding: 0 5px; border-radius: 6px; font-size: 9px; font-weight: 700; line-height: 15px;
+  color: var(--mantine-color-teal-7); background: light-dark(var(--mantine-color-teal-0), rgba(32, 201, 151, .16)); }
+.source-dot.is-sm { width: 26px; height: 26px; font-size: 12px; border-radius: 8px; }
+.sheet-section { padding: 14px; border-radius: 16px; background: light-dark(#f6f7f9, rgba(255, 255, 255, .04)); }

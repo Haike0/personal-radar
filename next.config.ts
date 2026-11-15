@@ -9,6 +9,8 @@ const nextConfig: NextConfig = {
   devIndicators: false,
   // iPhone access later goes through a Tailscale HTTPS hostname
   allowedDevOrigins: ["*.ts.net"],
+  // Telegram's client opens sockets and loads optional modules at run time: keep it out of the bundle
+  serverExternalPackages: ["telegram"],
 };
 
 export default nextConfig;

@@ -107,6 +107,14 @@ const DEFAULT_SETTINGS: Record<string, string> = {
   whatsapp_mark: "0",
   whatsapp_last: "",
   whatsapp_result: "",
+  // Telegram official API: your own api_id / api_hash from my.telegram.org; the login itself is in DATA_DIR/telegram.session
+  tg_api_id: "",
+  tg_api_hash: "",
+  tg_on: "off",
+  tg_chats: "[]",
+  tg_marks: "{}",
+  tg_last: "",
+  tg_result: "",
   // first run: "" → show the welcome page; "demo" = chose to look around; "done" = finished setup
   onboarded: "",
   update_check: "on",

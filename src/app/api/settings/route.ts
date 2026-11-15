@@ -6,7 +6,7 @@ import { modelLabel, resolve } from "@/lib/ai/model";
 import { syncStatus } from "@/lib/sync";
 
 // AI keys are not in this table at all (they live in keys.json); these are the other secrets it holds.
-const SECRET = ["bark_key", "bark_encrypt_key", "chatlab_api_token"];
+const SECRET = ["bark_key", "bark_encrypt_key", "chatlab_api_token", "beeper_api_token", "pull_api_token", "tg_api_hash"];
 
 export async function GET() {
   await connection();

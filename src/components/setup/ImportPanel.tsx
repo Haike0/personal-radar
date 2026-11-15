@@ -1,6 +1,10 @@
 "use client";
 import { t } from "@/lib/i18n";
-import { Anchor, Badge, Button, Checkbox, Group, Paper, Select, SimpleGrid, Stack, Text, TextInput, UnstyledButton } from "@mantine/core";
+import { Anchor, Badge, Button, Checkbox, Group, Modal, Paper, Select, SimpleGrid, Stack, Text, TextInput, UnstyledButton } from "@mantine/core";
+import { WechatDb } from "./WechatDb";
+import { ImessageCard } from "./ImessageCard";
+import { WhatsappMacCard } from "./WhatsappMacCard";
+import { TelegramCard } from "./TelegramCard";
 import { notifications } from "@mantine/notifications";
 import { IconChevronRight, IconFileImport, IconUpload } from "@tabler/icons-react";
 import Link from "next/link";
@@ -22,49 +26,61 @@ const FORMAT: Record<string, string> = { line: "LINE", whatsapp: "WhatsApp", tel
 
 // Where the chat comes from → three short steps. Shown only for the app you pick.
 export const SOURCES: { id: string; name: string; color: string; file: string; steps: string[]; note?: string; link?: { label: string; href: string } }[] = [
-  { id: "wechat", name: t("微信"), color: "#07C160", file: t("通用聊天格式 / Markdown / 文本"), steps: [t("微信官方不支持导出聊天记录"), t("怎么拿到聊天记录需要你自己解决，可以参考其他开源项目"), t("整理成通用聊天格式（JSON），或带时间和发送人的 Markdown / 文本，拖到上面；已经解密到本机的微信数据库，可以在下面「微信：自动同步」里选文件夹")], note: t("Radar 只读取你自己提供的文件，不提供、不内置任何读取微信数据的工具") },
+  { id: "wechat", name: t("微信"), color: "#07C160", file: t("通用聊天格式 / Markdown / 文本"), steps: [t("微信官方不支持导出聊天记录"), t("怎么拿到聊天记录需要你自己解决，可以参考其他开源项目"), t("整理成通用聊天格式（JSON），或带时间和发送人的 Markdown / 文本，拖到上面")], note: t("Radar 只读取你自己提供的文件，不提供、不内置任何读取微信数据的工具") },
   { id: "line", name: "LINE", color: "#06C755", file: ".txt", steps: [t("打开要导入的聊天"), t("右上角 ≡ →「设置 / その他」"), t("「发送聊天记录 / トーク履歴を送信」→ 存成文件")], note: t("用手机导出更完整，电脑版只存已加载的消息") },
   { id: "qq", name: "QQ", color: "#12B7F5", file: ".txt / .json / Markdown", steps: [t("旧版 QQ：消息管理器 →「导出消息记录」存成 .txt"), t("新版 QQ 官方没有导出功能，需要你自己解决（可参考其他开源项目）"), t("拖到上面；通用聊天格式、常见的 QQ 导出 JSON、Markdown / 文本都能识别")] },
   { id: "whatsapp", name: "WhatsApp", color: "#25D366", file: t(".zip 或 .txt"), steps: [t("打开聊天，点对方名字"), t("「导出聊天」"), t("选「不含媒体」，保存")], note: t("iPhone 得到 .zip，不用解压") },
   { id: "telegram", name: "Telegram", color: "#2AABEE", file: "result.json", steps: [t("在电脑上打开 Telegram Desktop"), t("聊天右上角 ⋮ →「导出聊天记录」"), t("格式选 JSON")] },
   { id: "instagram", name: "Instagram", color: "#E1306C", file: "message_1.json", steps: [t("账户中心 →「下载你的信息」"), t("只选「消息」，格式选 JSON"), t("解压，找到 inbox/对方/message_1.json")], note: t("Facebook Messenger 也是这样") },
   { id: "douyin", name: t("抖音"), color: "#111111", file: t("通用聊天格式 / Markdown / 文本"), steps: [t("抖音官方不支持导出私信"), t("需要你自己解决（可参考其他开源项目），整理成通用聊天格式或 Markdown / 文本"), t("拖到上面，或在「聚合平台 → 其他导出工具」里连接")] },
-  { id: "imessage", name: "iMessage", color: "#34C759", file: "—", steps: [t("最省事：在「聚合平台」里连接 Beeper（官方提供的本地接口）"), t("或者自己导出成通用聊天格式 / Markdown / 文本"), t("拖到上面")], note: t("只能在 Mac 上做") },
+  { id: "imessage", name: "iMessage", color: "#34C759", file: "—", steps: [t("上面打开自动同步最省事；也可以在「聚合平台」里连接 Beeper"), t("或者自己导出成通用聊天格式 / Markdown / 文本"), t("拖到上面")], note: t("只能在 Mac 上做") },
   { id: "discord", name: "Discord", color: "#5865F2", file: ".json", steps: [t("Discord 官方的「数据下载」不含完整私信"), t("需要你自己导出（可参考其他开源项目），格式选 JSON"), t("拖到上面")] },
   { id: "googlechat", name: "Google Chat", color: "#1A73E8", file: "Takeout .zip", steps: [t("打开 takeout.google.com"), t("只勾选「Google Chat」，导出"), t("下载后整个 .zip 拖进来")], note: t("第一次导出可能要几个小时") },
 ];
 
+// apps that can also sync by themselves on this computer; their card opens above the export steps
+const AUTO: Record<string, () => React.ReactNode> = {
+  wechat: () => <WechatDb />, imessage: () => <ImessageCard />, whatsapp: () => <WhatsappMacCard />, telegram: () => <TelegramCard />,
+};
+
+/** The app grid. Tap an app: a sheet with its automatic sync (if it has one) and how to export a file. */
 function ExportSteps() {
   const [pick, setPick] = useState<string | null>(null);
   const src = SOURCES.find((x) => x.id === pick);
   return (
     <Stack gap="sm">
-      <Text size="sm" fw={600}>{t("选你的聊天软件，看怎么导出")}</Text>
+      <Text size="sm" fw={600}>{t("选你的聊天软件，看怎么接入")}</Text>
       <SimpleGrid cols={{ base: 4, sm: 5 }} spacing="xs">
         {SOURCES.map((x) => (
-          <UnstyledButton key={x.id} className="source-tile" data-active={pick === x.id || undefined} onClick={() => setPick(pick === x.id ? null : x.id)}>
-            <span className="source-dot" style={{ background: x.color }}>{x.name.slice(0, x.name.charCodeAt(0) > 255 ? 1 : 1)}</span>
+          <UnstyledButton key={x.id} className="source-tile" data-active={pick === x.id || undefined} onClick={() => setPick(x.id)}>
+            <span className="source-dot" style={{ background: x.color }}>{x.name.slice(0, 1)}</span>
             <Text size="xs" fw={500} mt={6} ta="center" lh={1.2}>{x.name}</Text>
+            {AUTO[x.id] && <span className="source-auto">{t("自动")}</span>}
           </UnstyledButton>
         ))}
       </SimpleGrid>
-      {src && (
-        <Paper className="hint-box fade-in" radius="lg" p="md">
-          <Stack gap={10}>
-            {src.steps.map((t, i) => (
-              <Group key={i} gap="sm" wrap="nowrap">
-                <span className="step-num">{i + 1}</span>
-                <Text size="sm">{t}</Text>
+      <Modal opened={!!src} onClose={() => setPick(null)} radius="xl" size="lg" centered
+        title={src && <Group gap={8}><span className="source-dot is-sm" style={{ background: src.color }}>{src.name.slice(0, 1)}</span><Text fw={650}>{src.name}</Text></Group>}>
+        {src && (
+          <Stack gap="lg">
+            {AUTO[src.id] && <div className="sheet-section">{AUTO[src.id]()}</div>}
+            <Stack gap={10}>
+              <Text size="sm" fw={650}>{AUTO[src.id] ? t("或者：导出文件，拖进来导入") : t("导出文件，拖进来导入")}</Text>
+              {src.steps.map((step, i) => (
+                <Group key={i} gap="sm" wrap="nowrap" align="flex-start">
+                  <span className="step-num">{i + 1}</span>
+                  <Text size="sm">{step}</Text>
+                </Group>
+              ))}
+              <Group gap={6} mt={2}>
+                <Badge variant="light" color="gray" radius="sm" tt="none">{t("得到 {0}", src.file)}</Badge>
+                {src.note && <Text size="xs" className="faint">{src.note}</Text>}
+                {src.link && <Anchor href={src.link.href} target="_blank" size="xs">{src.link.label} ↗</Anchor>}
               </Group>
-            ))}
-            <Group gap={6} mt={2}>
-              <Badge variant="white" color="gray" radius="sm" tt="none">{t("得到 {0}", src.file)}</Badge>
-              {src.note && <Text size="xs" className="faint">{src.note}</Text>}
-              {src.link && <Anchor href={src.link.href} target="_blank" size="xs">{src.link.label} ↗</Anchor>}
-            </Group>
+            </Stack>
           </Stack>
-        </Paper>
-      )}
+        )}
+      </Modal>
     </Stack>
   );
 }
