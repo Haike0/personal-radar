@@ -13,7 +13,9 @@ export async function GET() {
   const short = (p: string) => (p.startsWith(home + path.sep) ? "~" + p.slice(home.length) : p);
   const run = root.split(path.sep).includes("node_modules") ? "npx readme-app" : `node ${short(path.join(root, "bin", "radar.mjs"))}`;
   // only people who moved their data folder need to tell the agent where it is
-  const dataNote = path.resolve(DATA_DIR) === path.join(home, ".personal-radar") ? "" : `（我的数据目录是 ${short(DATA_DIR)}）`;
+  const dataDir = path.resolve(DATA_DIR) === path.join(home, ".personal-radar") ? null : short(DATA_DIR);
+  const dataNote = dataDir ? `（我的数据目录是 ${dataDir}）` : "";
+  // the page builds the sentence in the interface language from run + dataDir; prompt is the Chinese original
   const prompt = `运行 ${run} guide agent，按它说的帮我维护 ReadMe${dataNote}：每天 21:30 导入新聊天、整理还没整理的消息，做完用一两句话告诉我新增了哪些要处理的事。`;
-  return Response.json({ run, prompt });
+  return Response.json({ run, dataDir, prompt });
 }

@@ -8,8 +8,8 @@ export const theme = createTheme({
   primaryColor: "radar",
   primaryShade: { light: 7, dark: 5 },
   colors: { radar, dark },
-  fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Hiragino Sans GB", "Helvetica Neue", sans-serif',
-  headings: { fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", sans-serif', fontWeight: "650" },
+  fontFamily: "var(--app-font)", // set per language in globals.css
+  headings: { fontFamily: "var(--app-font)", fontWeight: "650" },
   defaultRadius: "lg",
   cursorType: "pointer",
   respectReducedMotion: true,

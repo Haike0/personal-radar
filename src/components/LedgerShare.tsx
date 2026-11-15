@@ -1,5 +1,5 @@
 "use client";
-import { t } from "@/lib/i18n";
+import { lang, t } from "@/lib/i18n";
 import { Button, Group, Loader, Modal, Stack, Switch, Text, TextInput } from "@mantine/core";
 import { IconDownload, IconShare2 } from "@tabler/icons-react";
 import Link from "next/link";
@@ -7,7 +7,12 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { daysAgo, punchline, shortTitle, tally, type LedgerData, type LedgerState } from "@/lib/ledger-view";
 
 const W = 1080, PAD = 72;
-const FONT = `"PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif`;
+const FONTS = {
+  "zh-Hans": `"PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif`,
+  "zh-Hant": `"PingFang TC", "Noto Sans CJK TC", "Microsoft JhengHei", sans-serif`,
+  ja: `"Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans CJK JP", "Yu Gothic UI", Meiryo, sans-serif`,
+  en: `-apple-system, "Helvetica Neue", "PingFang SC", sans-serif`,
+};
 const C = { bg: "#FFF7EF", ink: "#1E1B26", muted: "#8C8596", line: "#F0E3D6", orange: "#FF6A3D", pink: "#FF4F86", green: "#1FA971", card: "#FFFFFF" };
 const MARK: Record<LedgerState, [string, string]> = { done: ["✓", C.green], not: ["✗", C.orange], silent: ["…", C.pink], waiting: ["⏳", C.muted], skip: ["", C.muted] };
 
@@ -24,6 +29,7 @@ function round(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h
 /** Draw the card. Rows that weren't kept go first: that's what people want to see. The first rows carry the original words. */
 function draw(cv: HTMLCanvasElement, data: LedgerData, name: string, quotes: number) {
   const ctx = cv.getContext("2d")!;
+  const FONT = FONTS[lang()];
   const tl = tally(data.rows);
   const order: LedgerState[] = ["not", "silent", "done", "waiting"];
   const pick = (s: typeof tl.me) => [...s.list].sort((a, b) => order.indexOf(a.state) - order.indexOf(b.state)).slice(0, 4)
@@ -86,8 +92,10 @@ function draw(cv: HTMLCanvasElement, data: LedgerData, name: string, quotes: num
   section(end1 + 70, t("我答应{0}的", name), tl.me, lists[1]);
 
   ctx.fillStyle = C.muted; ctx.font = `500 24px ${FONT}`;
-  ctx.fillText(t("从聊天记录里翻出来的 · ReadMe"), PAD, H - 64);
-  ctx.textAlign = "right"; ctx.fillText("github.com/Ikarishinji00/personal-radar", W - PAD, H - 64); ctx.textAlign = "left";
+  const url = "github.com/Ikarishinji00/personal-radar";
+  const urlW = ctx.measureText(url).width;
+  ctx.fillText(fit(ctx, t("从聊天记录里翻出来的 · ReadMe"), W - PAD * 2 - urlW - 32), PAD, H - 64);
+  ctx.textAlign = "right"; ctx.fillText(url, W - PAD, H - 64); ctx.textAlign = "left";
 }
 
 /** One tap: let the AI go through the promises it hasn't seen, then show the card to share or save. */

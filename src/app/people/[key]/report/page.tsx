@@ -81,9 +81,9 @@ export default function ReportPage() {
           </SimpleGrid>
           <Block title={t("消息类型")}>
             <Stack gap={6}>
-              {r.types.map(([t, n]) => (
-                <Group key={t} gap="sm" wrap="nowrap">
-                  <Text size="xs" w={40}>{t}</Text>
+              {r.types.map(([kind, n]) => (
+                <Group key={kind} gap="sm" wrap="nowrap">
+                  <Text size="xs" w={64}>{t(kind)}</Text>
                   <div style={{ flex: 1 }}><div className="type-bar" style={{ width: `${Math.max(2, (100 * n) / totalTypes)}%` }} /></div>
                   <Text size="xs" className="faint tabular" w={56} ta="right">{n.toLocaleString()}</Text>
                 </Group>

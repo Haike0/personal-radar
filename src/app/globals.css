@@ -1,8 +1,13 @@
 :root {
+  /* fonts follow the interface language: Chinese and Japanese share characters but draw them differently,
+     so each language lists its own font first (otherwise one heading mixes two fonts of different weight) */
+  --app-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
   --safe-top: env(safe-area-inset-top);
   --safe-bottom: env(safe-area-inset-bottom);
   --tabbar-h: 76px;
 }
+html:lang(zh-Hant) { --app-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "PingFang TC", "Noto Sans CJK TC", "Microsoft JhengHei", sans-serif; }
+html:lang(ja) { --app-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans CJK JP", "Yu Gothic UI", Meiryo, sans-serif; }
 html, body { -webkit-tap-highlight-color: transparent; }
 /* app-like touch: long-pressing a card/button must not pop Safari's link preview (打开/添加到阅读列表/拷贝链接…),
    select its text or drag it. Real reading text (quotes, AI answers, inputs) stays selectable. */

@@ -10,8 +10,9 @@ for (const [L, dir] of [["zh", "zh-Hans"], ["en", "en"], ["ja", "ja"]]) {
     if (fs.existsSync(s)) fs.copyFileSync(s, path.join(pub, `${L}-${f}.png`));
   }
 }
-fs.copyFileSync(path.join(root, "public", "brand", "icon.svg"), path.join(pub, "icon.svg"));
+fs.copyFileSync(path.join(root, "public", "brand", "icon-1024.png"), path.join(pub, "icon.png"));
 fs.copyFileSync(path.join(media, "video-lines.json"), path.join(here, "lines.json"));
+await import("./bgm.mjs");
 console.log("prepared", fs.readdirSync(pub).length, "files");
 // image sizes, so the phone can scroll exactly to the bottom of each long screenshot
 const dims = {};

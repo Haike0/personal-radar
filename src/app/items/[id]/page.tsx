@@ -143,8 +143,8 @@ export default function ItemPage() {
       <Paper p="md" radius="xl" style={{ border: "1px solid light-dark(var(--mantine-color-violet-1), rgba(124,108,240,.25))", background: "light-dark(rgba(124,108,240,.04), rgba(124,108,240,.07))" }}>
         <Group gap={6} mb="xs"><IconSparkles size={16} color="var(--mantine-color-violet-5)" /><Text size="sm" fw={600}>{t("问 AI")}</Text><Text size="xs" className="faint">{t("会带上这件事的原话和之后相关的聊天")}</Text></Group>
         <Group gap={8}>
-          {ITEM_QUICK.map((q) => (
-            <Button key={q} size="xs" variant="light" color="violet" radius="xl" onClick={() => openCompanion(q)}>{q.split("：")[0].replace(/[？?]$/, "")}</Button>
+          {ITEM_QUICK.map((src) => t(src)).map((q) => (
+            <Button key={q} size="xs" variant="light" color="violet" radius="xl" onClick={() => openCompanion(q)}>{q.split(/[：:]/)[0].replace(/[？?]$/, "")}</Button>
           ))}
         </Group>
       </Paper>

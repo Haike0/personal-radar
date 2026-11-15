@@ -25,7 +25,14 @@ function detect(): Lang {
   return "zh-Hans";
 }
 let current: Lang | null = null;
-export const lang = (): Lang => (current ??= detect());
+export const lang = (): Lang => {
+  if (current === null) {
+    current = detect();
+    // <html lang> picks the font list in globals.css, also when the language was detected rather than chosen
+    if (typeof document !== "undefined") document.documentElement.lang = current;
+  }
+  return current;
+};
 
 /** For dates and numbers (Intl): 11月8日 周日 / 11月8日 週日 / 11月8日(日) / Sun, Nov 8 */
 export const locale = () => ({ "zh-Hans": "zh-CN", "zh-Hant": "zh-TW", ja: "ja-JP", en: "en-US" })[lang()];

@@ -1,5 +1,7 @@
 // Assistant presets for the AI chat. Shared by server (prompt) and client (labels, quick questions).
 // Written for this app; not copied from any other project.
+// Labels and quick questions are the Chinese source text; the client shows them through t() (see src/i18n).
+import { t } from "@/lib/i18n";
 export interface Assistant {
   id: string;
   name: string;
@@ -74,11 +76,11 @@ export const ASSISTANTS: Assistant[] = [
 ];
 
 export const assistantOf = (id: string | null | undefined) => ASSISTANTS.find((a) => a.id === id) ?? ASSISTANTS[0];
-export const quickFor = (a: Assistant, who: string | null) => a.quick.map((q) => q.replaceAll("{who}", who ?? "大家"));
+export const quickFor = (a: Assistant, who: string | null) => a.quick.map((q) => t(q).replaceAll("{who}", who ?? t("大家")));
 
 /** Pre-meeting brief: one card to read before you see someone. Contains "最近" so the latest chat is included. */
 export const briefFor = (who: string) =>
-  `见面前简报：我马上要见${who}。请告诉我①上次聊到哪 ②${who}最近在意或在忙什么 ③我答应过${who}、还没兑现的事 ④${who}答应过我或欠我的事 ⑤这次可以聊的 3 个话题。每条附依据，没有就写“没有”。`;
+  t("见面前简报：我马上要见{0}。请告诉我①上次聊到哪 ②{0}最近在意或在忙什么 ③我答应过{0}、还没兑现的事 ④{0}答应过我或欠我的事 ⑤这次可以聊的 3 个话题。每条附依据，没有就写“没有”。", who);
 /** Quick questions when the AI is opened from one item. */
 export const ITEM_QUICK = [
   "分析这件事：现在是什么情况，我接下来该做什么？",

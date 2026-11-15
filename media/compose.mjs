@@ -9,13 +9,19 @@ const ROOT = path.resolve(import.meta.dirname, "..");
 const SHOTS = path.join(import.meta.dirname, "out", "shots");
 const OUT = path.join(ROOT, "docs", "assets");
 const COPY = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, "copy.json"), "utf8"));
-const ICON = fs.readFileSync(path.join(ROOT, "public/brand/icon.svg"), "utf8");
+const ICON = `data:image/png;base64,${fs.readFileSync(path.join(ROOT, "public/brand/icon-1024.png")).toString("base64")}`;
 const LANGS = ["zh-Hans", "en", "ja"];
 const short = { "zh-Hans": "zh", en: "en", ja: "ja" };
 fs.mkdirSync(OUT, { recursive: true });
 
 const uri = (f) => `data:image/png;base64,${fs.readFileSync(f).toString("base64")}`;
-const FONT = `-apple-system, "SF Pro Display", "Hiragino Sans", "PingFang SC", "Noto Sans CJK SC", sans-serif`;
+// Chinese and Japanese share characters but draw them differently: each language lists its own font first
+const FONTS = {
+  "zh-Hans": `-apple-system, "SF Pro Display", "PingFang SC", "Noto Sans CJK SC", sans-serif`,
+  en: `-apple-system, "SF Pro Display", "Helvetica Neue", sans-serif`,
+  ja: `-apple-system, "SF Pro Display", "Hiragino Sans", "Noto Sans CJK JP", sans-serif`,
+};
+let FONT = FONTS["zh-Hans"];
 const base = (body, w, h, bg = "transparent") => `<!doctype html><html><head><meta charset="utf-8"><style>
 *{box-sizing:border-box;margin:0}html,body{width:${w}px;height:${h}px;background:${bg};font-family:${FONT};-webkit-font-smoothing:antialiased;overflow:hidden}
 .phone{position:absolute;border-radius:64px;padding:13px;background:#0d0d10;box-shadow:0 0 0 2px #2a2a30 inset,0 40px 80px -20px rgba(0,0,0,.45),0 18px 36px -18px rgba(0,0,0,.35)}
@@ -33,9 +39,9 @@ const base = (body, w, h, bg = "transparent") => `<!doctype html><html><head><me
 const phone = (img, x, y, w, dark = false) => `<div class="phone" style="left:${x}px;top:${y}px;width:${w}px;height:${w * 2.06}px"><div class="island"></div><div class="scr" style="background:${dark ? "#10131d" : "#f5f6fa"}"><div class="sb" style="color:${dark ? "#fff" : "#111"}"><b>9:41</b><span><i></i><i></i><i></i><em></em></span></div><img src="${img}"></div></div>`;
 const win = (img, x, y, w, dark = false) => `<div class="win" style="left:${x}px;top:${y}px;width:${w}px"><div class="bar" style="background:${dark ? "#23252e" : "#ececf0"}"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></div><img src="${img}"></div>`;
 const glow = (dark) => dark
-  ? `<div style="position:absolute;inset:0;background:radial-gradient(60% 55% at 50% 0%,rgba(47,216,180,.22),transparent 70%),radial-gradient(45% 45% at 85% 20%,rgba(47,139,255,.16),transparent 70%)"></div>`
-  : `<div style="position:absolute;inset:0;background:radial-gradient(55% 60% at 50% 0%,rgba(47,216,180,.10),transparent 70%),radial-gradient(40% 40% at 88% 15%,rgba(47,139,255,.10),transparent 70%)"></div>`;
-const logo = (size) => ICON.replace("<svg ", `<svg width="${size}" height="${size}" `);
+  ? `<div style="position:absolute;inset:0;background:radial-gradient(60% 55% at 50% 0%,rgba(10,199,240,.22),transparent 70%),radial-gradient(45% 45% at 85% 20%,rgba(47,139,255,.16),transparent 70%)"></div>`
+  : `<div style="position:absolute;inset:0;background:radial-gradient(55% 60% at 50% 0%,rgba(10,199,240,.10),transparent 70%),radial-gradient(40% 40% at 88% 15%,rgba(47,139,255,.10),transparent 70%)"></div>`;
+const logo = (size) => `<img src="${ICON}" width="${size}" height="${size}" style="display:block">`;
 
 const browser = await chromium.launch();
 const page = await browser.newPage({ deviceScaleFactor: 2 });
@@ -52,6 +58,7 @@ async function render(file, html, w, h, opts = {}) {
 }
 
 for (const lang of LANGS) {
+  FONT = FONTS[lang];
   const c = COPY[lang], L = short[lang], S = (s, f) => uri(path.join(SHOTS, lang, s, f));
   for (const dark of [false, true]) {
     const fg = dark ? "#fff" : "#111216", sub = dark ? "rgba(255,255,255,.62)" : "#5b5d66", bg = dark ? "#0b0b10" : "#fbfaf8";

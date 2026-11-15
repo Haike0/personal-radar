@@ -71,7 +71,7 @@ function icns() {
   const set = path.join(DIST, "cache", "AppIcon.iconset");
   fs.rmSync(set, { recursive: true, force: true });
   fs.mkdirSync(set);
-  const src = path.join(ROOT, "public", "brand", "icon-1024.png");
+  const src = path.join(ROOT, "public", "brand", "icon-mac.png");
   for (const s of [16, 32, 128, 256, 512]) {
     run("sips", ["-z", String(s), String(s), src, "--out", path.join(set, `icon_${s}x${s}.png`)], { stdio: "ignore" });
     run("sips", ["-z", String(s * 2), String(s * 2), src, "--out", path.join(set, `icon_${s}x${s}@2x.png`)], { stdio: "ignore" });

@@ -43,7 +43,15 @@ export function punchline(meOwed: number, themOwed: number, name: string, meProv
 /** "小雨答应会跟爸妈说" → "会跟爸妈说": the section header already says who promised. */
 export function shortTitle(title: string, name: string) {
   const esc = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  return title.replace(new RegExp(`^(我|${esc})?(答应|说好|保证|承诺)(了)?(要|会)?`), "").replace(/^[，,、\s]+/, "") || title;
+  const t = title
+    // 小雨答应会跟爸妈说 → 会跟爸妈说
+    .replace(new RegExp(`^(我|${esc})?(答应|说好|保证|承诺)(了)?(要|会)?`), "")
+    // Amy said she'll cook for me → cook for me;  I promised to pick up Amy → pick up Amy
+    .replace(new RegExp(`^((I|${esc})\\s+)?(promised|said|agreed|swore)\\s+(that\\s+)?(to\\s+)?((she|he|they|I|we)('ll|'d| will| would)\\s+)?`, "i"), "")
+    // みさきは明日食べ物を持ってきてくれると約束した → 明日食べ物を持ってきてくれる
+    .replace(new RegExp(`^(${esc}|私|俺|僕|自分)(は|が)`), "").replace(/(と|を)?約束(した|する)?[。.]?$/, "")
+    .replace(/^[，,、\s]+/, "");
+  return t ? t[0].toUpperCase() + t.slice(1) : title;
 }
 
 export function daysAgo(ts: string | null) {

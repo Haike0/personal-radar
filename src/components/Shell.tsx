@@ -80,7 +80,7 @@ export function Shell({ children }: { children: ReactNode }) {
       <AppShell navbar={{ width: 232, breakpoint: "sm", collapsed: { mobile: true, desktop: bare } }} padding={0}>
         <AppShell.Navbar p="md" style={{ background: "transparent", borderRight: "1px solid light-dark(rgba(20,24,39,.06), rgba(255,255,255,.05))" }}>
           <Group gap={10} mb="xl" px={6} mt={4}>
-            <img src="/brand/icon.svg" alt="" width={34} height={34} style={{ display: "block", borderRadius: 9 }} />
+            <img src="/brand/icon.png" alt="" width={34} height={34} style={{ display: "block", borderRadius: 9 }} />
             <div>
               <Text fw={650} lh={1.1}>ReadMe</Text>
               <Text size="xs" className="faint">{t("记住 TA 说过的话")}</Text>

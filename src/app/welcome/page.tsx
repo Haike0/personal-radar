@@ -33,7 +33,7 @@ export default function Welcome() {
     <Stack gap={28} maw={560} mx="auto" pt={{ base: 20, sm: 48 }} className="fade-in">
       <Stack gap="sm" align="flex-start">
         <Group justify="space-between" w="100%" align="flex-start">
-          <img src="/brand/icon.svg" alt="ReadMe" width={56} height={56} style={{ display: "block", borderRadius: 14 }} />
+          <img src="/brand/icon.png" alt="ReadMe" width={56} height={56} style={{ display: "block", borderRadius: 14 }} />
           <LangPicker compact />
         </Group>
         <Title order={1} fz={30} lh={1.2}>ReadMe</Title>

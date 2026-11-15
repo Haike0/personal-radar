@@ -4,7 +4,10 @@ import { Button, CopyButton, Group, Paper, Stack, Text } from "@mantine/core";
 import { IconCheck, IconCopy, IconRobot } from "@tabler/icons-react";
 import { useApi } from "@/lib/client";
 
-type Agent = { run: string; prompt: string };
+type Agent = { run: string; dataDir: string | null; prompt: string };
+/** The sentence to paste, in the interface language. */
+const sentence = (a: Agent) =>
+  t("运行 {0} guide agent，按它说的帮我维护 ReadMe{1}：每天 21:30 导入新聊天、整理还没整理的消息，做完用一两句话告诉我新增了哪些要处理的事。", a.run, a.dataDir ? t("（我的数据目录是 {0}）", a.dataDir) : "");
 const AGENTS = ["Claude Code", "Codex", "WorkBuddy", "Hermes"];
 
 /** Hand ReadMe to the agent you already use: one sentence to paste, and it imports, organizes and schedules itself. */
@@ -19,10 +22,10 @@ export function AgentCard() {
         </Text>
       </Group>
       <Paper className="agent-prompt" radius="md" p="sm">
-        <Text size="sm" lh={1.6} style={{ wordBreak: "break-all" }}>{data?.prompt ?? t("读取中…")}</Text>
+        <Text size="sm" lh={1.6} style={{ wordBreak: "break-all" }}>{data ? sentence(data) : t("读取中…")}</Text>
       </Paper>
       <Group gap="xs">
-        <CopyButton value={data?.prompt ?? ""}>
+        <CopyButton value={data ? sentence(data) : ""}>
           {({ copied, copy }) => (
             <Button radius="md" size="sm" disabled={!data} onClick={copy} color={copied ? "teal" : "violet"} leftSection={copied ? <IconCheck size={15} /> : <IconCopy size={15} />}>
               {copied ? t("已复制，去发给你的 agent") : t("复制这句话")}

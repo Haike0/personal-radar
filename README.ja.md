@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Ikarishinji00/personal-radar/releases/latest"><img alt="Release" src="https://img.shields.io/github/v/release/Ikarishinji00/personal-radar?style=for-the-badge&logo=github&label=Release&color=2FB6C8&logoColor=white"></a>
+  <a href="https://github.com/Ikarishinji00/personal-radar/releases/latest"><img alt="Release" src="https://img.shields.io/github/v/release/Ikarishinji00/personal-radar?style=for-the-badge&logo=github&label=Release&color=1F6FD6&logoColor=white"></a>
   <a href="https://github.com/Ikarishinji00/personal-radar/actions/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/Ikarishinji00/personal-radar/ci.yml?style=for-the-badge&label=CI&logo=githubactions&logoColor=white"></a>
   <img alt="macOS · Windows · Linux" src="https://img.shields.io/badge/macOS%20·%20Windows%20·%20Linux-111216?style=for-the-badge&logo=apple&logoColor=white">
   <a href="LICENSE"><img alt="License AGPL-3.0" src="https://img.shields.io/badge/License-AGPL--3.0-2F8BFF?style=for-the-badge"></a>

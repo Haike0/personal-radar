@@ -39,7 +39,7 @@ export function AiChat({ context, layout, seedPrompt, onNavigate, picker }: {
   const who = ctx.page === "person" || ctx.page === "day" ? (ctx.personName ?? null) : null;
   const itemTitle = ctx.page === "item" ? (ctx.title ?? t("这件事")) : null;
   const quick = (a: ReturnType<typeof assistantOf>) =>
-    itemTitle ? ITEM_QUICK : ctx.page === "day" ? DAY_QUICK : who ? [briefFor(who), ...quickFor(a, who)] : quickFor(a, who);
+    itemTitle ? ITEM_QUICK.map((q) => t(q)) : ctx.page === "day" ? DAY_QUICK.map((q) => t(q)) : who ? [briefFor(who), ...quickFor(a, who)] : quickFor(a, who);
   // scopes from the page the AI was opened on (this item / this day, and its person), offered on top of the picker
   const owner = context.page === "day" || (context.page === "item" && context.personKey) ? { key: context.personKey!, name: context.personName } : null;
   const extra: CompanionContext[] = canPick ? [] : [
@@ -142,7 +142,7 @@ export function AiChat({ context, layout, seedPrompt, onNavigate, picker }: {
         <Group key={c.id} gap={4} wrap="nowrap" className={`conv-row${c.id === activeId ? " is-active" : ""}`}>
           <UnstyledButton onClick={() => open(c.id)} style={{ flex: 1, minWidth: 0 }} py={8} px={10}>
             <Text size="sm" truncate>{c.title}</Text>
-            <Text size="11px" className="faint" truncate>{c.scope ? scopeLabel(c.scope) : c.personKey ? privates.find((p) => p.key === c.personKey)?.name ?? t("某个联系人") : t("所有人")} · {assistantOf(c.assistant).name} · {c.updatedAt.slice(5, 16)}</Text>
+            <Text size="11px" className="faint" truncate>{c.scope ? scopeLabel(c.scope) : c.personKey ? privates.find((p) => p.key === c.personKey)?.name ?? t("某个联系人") : t("所有人")} · {t(assistantOf(c.assistant).name)} · {c.updatedAt.slice(5, 16)}</Text>
           </UnstyledButton>
           <ActionIcon size="sm" variant="subtle" color="gray" className="conv-del" aria-label={t("删除对话")} onClick={() => remove(c.id)}><IconTrash size={14} /></ActionIcon>
         </Group>
@@ -158,8 +158,8 @@ export function AiChat({ context, layout, seedPrompt, onNavigate, picker }: {
       <SimpleGrid cols={2} spacing={8}>
         {shown.map((x) => (
           <UnstyledButton key={x.id} onClick={() => setAssistant(x.id)} className={`assistant-card${x.id === assistant ? " is-active" : ""}`}>
-            <Text size="sm" fw={600}>{x.name}</Text>
-            <Text size="xs" className="faint" truncate>{x.desc}</Text>
+            <Text size="sm" fw={600}>{t(x.name)}</Text>
+            <Text size="xs" className="faint" truncate>{t(x.desc)}</Text>
           </UnstyledButton>
         ))}
       </SimpleGrid>
@@ -174,7 +174,7 @@ export function AiChat({ context, layout, seedPrompt, onNavigate, picker }: {
       <Box className="ai-orb"><IconSparkles size={24} /></Box>
       <Title order={3} ta="center" fz={desktop ? 24 : 20}>{who ? t("想知道{0}的什么？", who) : t("想问什么，直接问")}</Title>
       {pills}
-      <Text size="xs" className="faint" ta="center" maw={520}>{a.intro}</Text>
+      <Text size="xs" className="faint" ta="center" maw={520}>{t(a.intro)}</Text>
       <Stack gap={8} w="100%" maw={560}>
         {quick(a).slice(0, 4).map((q) => (
           <UnstyledButton key={q} className="quick-row pressable" onClick={() => send(q)}>
@@ -224,11 +224,11 @@ export function AiChat({ context, layout, seedPrompt, onNavigate, picker }: {
       <Menu position="bottom-end" withinPortal zIndex={600}>
         <Menu.Target><ActionIcon variant="subtle" color="gray" aria-label={t("更多")}><IconDots size={18} /></ActionIcon></Menu.Target>
         <Menu.Dropdown>
-          <Menu.Label>{a.name} · {model}</Menu.Label>
+          <Menu.Label>{t(a.name)} · {model}</Menu.Label>
           <Menu.Item leftSection={<IconEye size={14} />} onClick={showPreview}>{t("看看这次会发出去什么")}</Menu.Item>
           {msgs.length > 0 && <Menu.Divider />}
           {msgs.length > 0 && <Menu.Label>{t("换个助手")}</Menu.Label>}
-          {msgs.length > 0 && ASSISTANTS.map((x) => <Menu.Item key={x.id} onClick={() => setAssistant(x.id)} leftSection={x.id === assistant ? <IconCheck size={14} /> : <span style={{ width: 14 }} />}>{x.name}</Menu.Item>)}
+          {msgs.length > 0 && ASSISTANTS.map((x) => <Menu.Item key={x.id} onClick={() => setAssistant(x.id)} leftSection={x.id === assistant ? <IconCheck size={14} /> : <span style={{ width: 14 }} />}>{t(x.name)}</Menu.Item>)}
         </Menu.Dropdown>
       </Menu>
     </Group>
