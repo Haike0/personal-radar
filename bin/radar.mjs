@@ -36,7 +36,9 @@ const GUIDES = { agent: "../agent/SKILL.md", extract: "ai-extract-guide.md", ana
 if (args[0] === "guide") {
   const f = GUIDES[args[1]];
   if (!f) { console.error("用法：personal-radar guide agent|extract|analysis|export"); process.exit(1); }
-  process.stdout.write(fs.readFileSync(path.join(ROOT, "docs", f), "utf8"));
+  let rule = "";
+  if (args[1] !== "agent") { try { const env = await import("../scripts/lib/env.mjs"); rule = (await import("../scripts/lib/lang.mjs")).langRule(env.UI_LANG); } catch { /* no data yet */ } }
+  process.stdout.write(fs.readFileSync(path.join(ROOT, "docs", f), "utf8") + rule + (rule ? "\n" : ""));
   process.exit(0);
 }
 if (SUB[args[0]]) {

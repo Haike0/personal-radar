@@ -2,6 +2,7 @@ import "server-only";
 import { isExcluded, scrub } from "@/lib/ai-config";
 import * as chatlab from "@/lib/chatlab";
 import { db, getAnalysis, getItem, getSetting, listItems, listPeople, nowStr, todayStr } from "@/lib/db";
+import { langRule } from "../../../scripts/lib/lang.mjs";
 import type { Item } from "@/lib/types";
 import { assistantOf } from "./assistants";
 import { body, modelLabel, resolve, type Role } from "./model";
@@ -167,12 +168,12 @@ const SYSTEM = (today: string) => `你是用户（下文“我”）的私人记
 - 每个具体说法后面标出依据：整理过的记录用 [#编号]；直接引用聊天原话时写明时间和说话人。
 - 区分事实和推测：对方亲口说的、明确发生的算事实；你的归纳要写“推测”。
 - 不打分，不贴心理诊断标签，不评判谁对谁错。
-- 结论先行，说人话，简短。用中文。
+- 结论先行，说人话，简短。用中文（除非下面另有输出语言的要求）。
 - 用户让你起草要发给对方的话时，用“我”的口吻写，自然、有温度、不肉麻，并说明依据了哪些记录。
 - 标注 [语音 AI 转写·待核对] 的内容可能有识别错误，引用时提醒一句。
 - 修改建议：只有当资料清楚显示某条记录已经完成、改了日期、取消了、或者记录本身识别错了时，才在回答的最后另起一行写 ${MARK}，下一行写一个 JSON 数组（最多 3 条），然后结束，不要再写别的。格式：
   [{"itemId":编号,"type":"edit","patch":{"event_date":"YYYY-MM-DD"},"label":"把日期改成 11月20日"}]
-  type 只能是 done（已完成）、cancel（取消了）、snooze（延后，加 "days":天数）、edit（改字段，patch 只能含 title、event_date、event_time、next_step、certainty）。itemId 必须是资料里出现过的编号。label 用一句中文说明改什么、依据哪句话。没有把握就不要写，这些建议要用户点确认才会生效。`;
+  type 只能是 done（已完成）、cancel（取消了）、snooze（延后，加 "days":天数）、edit（改字段，patch 只能含 title、event_date、event_time、next_step、certainty）。itemId 必须是资料里出现过的编号。label 用一句话说明改什么、依据哪句话。没有把握就不要写，这些建议要用户点确认才会生效。` + langRule(getSetting("ui_lang"));
 const MARK = "<<<建议修改";
 
 function cite(id: number): Citation | null {

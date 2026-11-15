@@ -38,6 +38,8 @@ const S = saved();
 const R = resolveRole((k) => S[k], process.env, DATA_DIR, "fast");
 export const AI = { key: R.key ?? "", baseUrl: R.service.baseUrl, model: R.model, service: R.service.name };
 export const extraBody = () => R.extra;
+/** Interface language chosen in the app (zh-Hans when unset). */
+export const UI_LANG = S.ui_lang || "zh-Hans";
 export const PRIVACY = privacyConfig((k) => S[k]);
 /** Last step before a request leaves the computer: drop blacklisted lines, redact the rest. */
 export const scrub = (text) => outbound(text, PRIVACY).text;

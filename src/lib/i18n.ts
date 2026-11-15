@@ -34,9 +34,19 @@ export const weekdays = (style: "short" | "narrow" = "short") =>
   Array.from({ length: 7 }, (_, i) => new Intl.DateTimeFormat(locale(), { weekday: style }).format(new Date(2026, 10, 1 + i)));
 
 /** Switch language and reload, so labels computed once at start-up are redone too. */
-export function setLang(l: Lang) {
+export async function setLang(l: Lang) {
   try { localStorage.setItem(KEY, l); } catch { /* private window */ }
+  await syncServerLang(l);
   location.reload();
+}
+
+/** Tell the app the language, so the demo people are seeded speaking it. Returns once the server has it. */
+export async function syncServerLang(l: Lang = lang()) {
+  try {
+    const s = (await (await fetch("/api/settings", { cache: "no-store" })).json()) as { settings?: Record<string, string> };
+    if ((s.settings?.ui_lang ?? "zh-Hans") !== l)
+      await fetch("/api/settings", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ui_lang: l }) });
+  } catch { /* offline: keep going */ }
 }
 
 /** t("我欠{0} {1} 件", name, n) */

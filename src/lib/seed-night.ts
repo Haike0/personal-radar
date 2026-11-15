@@ -24,9 +24,13 @@ const SETS: Record<string, { platform: string; me: string; memo: string | null; 
   love: { platform: "weixin", me: "周远", memo: null, tag: "朋友" },
   work: { platform: "weixin", me: "周远", memo: null, tag: "同事" },
 };
-let SET = "night";
+let SET = "night", LANG = "zh-Hans";
 const SRC = (set = SET) => path.join(process.env.RADAR_DEMO_DIR ?? path.join(process.cwd(), "demo"), set);
-const read = <T,>(f: string): T => JSON.parse(fs.readFileSync(path.join(SRC(), f), "utf8")) as T;
+// translated scenes live in demo/<scene>/<lang>/ (scripts/demo-translate.mjs); anything missing falls back to Chinese
+const fileOf = (f: string) => { const t = path.join(SRC(), LANG, f); return LANG !== "zh-Hans" && fs.existsSync(t) ? t : path.join(SRC(), f); };
+const read = <T,>(f: string): T => JSON.parse(fs.readFileSync(fileOf(f), "utf8")) as T;
+const has = (f: string) => fs.existsSync(fileOf(f));
+const MEMO_LABEL: Record<string, string> = { "zh-Hans": "备注", "zh-Hant": "備註", ja: "メモ", en: "Note" };
 
 export function nightAvailable(set = "night") {
   return fs.existsSync(path.join(SRC(set), "chats.json"));
@@ -40,11 +44,13 @@ export function clearNightChats() {
 
 export function seedNight(d: DatabaseSync, now: string, dateOf: (off: number) => string, set = "night") {
   SET = set;
-  const cfg = SETS[set] ?? SETS.night;
-  const MEMO = cfg.memo ?? "备注";
+  LANG = String((d.prepare("SELECT value FROM settings WHERE key='ui_lang'").get() as { value?: string } | undefined)?.value ?? "zh-Hans");
+  const meta = has("meta.json") && LANG !== "zh-Hans" ? read<{ me?: string }>("meta.json") : {};
+  const cfg = { ...(SETS[set] ?? SETS.night), ...(meta.me ? { me: meta.me } : {}) };
+  const MEMO = cfg.memo ?? MEMO_LABEL[LANG] ?? "备注";
   const { sessions } = read<{ sessions: Session[] }>("chats.json");
-  const items = fs.existsSync(path.join(SRC(), "items.json")) ? read<Record<string, Ex[]>>("items.json") : {};
-  const analysis = fs.existsSync(path.join(SRC(), "analysis.json")) ? read<Record<string, Analysis>>("analysis.json") : {};
+  const items = has("items.json") ? read<Record<string, Ex[]>>("items.json") : {};
+  const analysis = has("analysis.json") ? read<Record<string, Analysis>>("analysis.json") : {};
 
   // 1) chats → ChatLab-format dbs
   closeDemo();
@@ -103,7 +109,7 @@ export function seedNight(d: DatabaseSync, now: string, dateOf: (off: number) =>
 
   // 3) 说话算数账本, judged ahead of time by scripts/demo-gen-ledger.mjs so the demo card shows up instantly
   d.exec(LEDGER_SQL);
-  const ledger = fs.existsSync(path.join(SRC(), "ledger.json")) ? read<Record<string, { who: string; result: string; proof: number | null; reason: string | null }>>("ledger.json") : {};
+  const ledger = has("ledger.json") ? read<Record<string, { who: string; result: string; proof: number | null; reason: string | null }>>("ledger.json") : {};
   const insL = d.prepare("INSERT OR REPLACE INTO ledger(item_id,who,ai,reason,proof_mid,proof_ts,proof_sender,proof_text,checked_at) VALUES(?,?,?,?,?,?,?,?,?)");
   for (const s of sessions) for (const x of items[s.id] ?? []) {
     const l = ledger[x.tmp], id = ids.get(x.tmp);
@@ -126,7 +132,7 @@ export function seedNight(d: DatabaseSync, now: string, dateOf: (off: number) =>
 // [图片] / [表情] / [语音] placeholders get the matching message type, so the chat report counts them right
 function typeOf(text: string) {
   const t = text.trim();
-  return /^\[(图片|写真|照片)\]$/.test(t) ? 1 : /^\[(表情|スタンプ|动画表情)\]$/.test(t) ? 5 : /^\[(语音|ボイスメッセージ)\]$/.test(t) ? 2 : /^\[(视频通话|语音通话|通話)/.test(t) ? 23 : 0;
+  return /^\[(图片|圖片|写真|照片|Photo)\]$/.test(t) ? 1 : /^\[(表情|スタンプ|动画表情|Sticker)\]$/.test(t) ? 5 : /^\[(语音|語音|ボイスメッセージ|Voice message)\]$/.test(t) ? 2 : /^\[(视频通话|语音通话|通話|Call)/.test(t) ? 23 : 0;
 }
 
 // 有日期的事项之后由 maintain() 按天重算；这里给没日期的一个合理初值

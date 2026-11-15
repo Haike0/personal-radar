@@ -8,7 +8,7 @@
 
 *The recording uses a fictional chat.*
 
-Interface in English, 日本語, 简体中文 and 繁體中文 (Settings → Appearance & language). Text the AI writes and the demo data are in Chinese for now.
+Interface in English, 日本語, 简体中文 and 繁體中文 (Settings → Appearance & language). The demo people and what the AI writes follow the language you pick.
 
 ## What it does
 

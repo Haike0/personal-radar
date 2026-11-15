@@ -2,7 +2,8 @@ import "server-only";
 import * as chatlab from "./chatlab";
 import { complete } from "./ai/deepseek";
 import { isExcluded } from "./ai-config";
-import { db, listItems, nowStr } from "./db";
+import { db, getSetting, listItems, nowStr } from "./db";
+import { langRule } from "../../scripts/lib/lang.mjs";
 import type { Item } from "./types";
 
 // 聊天记忆: one person's chat by day. Raw messages are read live from the chat databases (read-only);
@@ -44,7 +45,7 @@ export async function summarize(key: string, name: string, date: string) {
   if (!msgs.length) return null;
   const text = msgs.map((m) => `(${m.ts.slice(11)} ${m.sender}) ${m.text.replace(/\s+/g, " ").slice(0, 120)}`).join("\n");
   const out = await complete(
-    `你在帮用户（下文“我”）回顾和${name}某一天的聊天。用 1–3 句中文写这一天聊了什么、发生了什么、有没有约定或情绪变化。只写聊天里有的，不猜；人称用“你”和“${name}”。不加标题、不分点。`,
+    `你在帮用户（下文“我”）回顾和${name}某一天的聊天。用 1–3 句中文写这一天聊了什么、发生了什么、有没有约定或情绪变化。只写聊天里有的，不猜；人称用“你”和“${name}”。不加标题、不分点。` + langRule(getSetting("ui_lang")),
     `${date} 的聊天：\n${text}`, 220);
   if (!out) return null;
   d().prepare("INSERT OR REPLACE INTO day_summary(session_id,date,summary,messages,generated_at) VALUES(?,?,?,?,?)").run(key, date, out, msgs.length, nowStr());

@@ -3,7 +3,8 @@ import * as chatlab from "./chatlab";
 import { complete } from "./ai/deepseek";
 import { resolve } from "./ai/model";
 import { isExcluded } from "./ai-config";
-import { db, getItem, listItems, nowStr } from "./db";
+import { db, getItem, getSetting, listItems, nowStr } from "./db";
+import { langRule } from "../../scripts/lib/lang.mjs";
 import { LEDGER_SQL } from "./ledger-schema";
 import { keywords, LEDGER_SYSTEM, ledgerInput, parseLedger, pickWindow } from "../../scripts/lib/ledger.mjs";
 import type { Item } from "./types";
@@ -78,7 +79,7 @@ export async function check(key: string, name: string, batch = 24) {
     const after = idx.map((k) => all[k]);
     const shown = idx.map((k, n) => ({ who: all[k].isSelf ? "我" : name, text: all[k].text, ts: all[k].ts, gap: n > 0 && k !== idx[n - 1] + 1 }));
     const quotes = (getItem(i.id)?.evidence ?? []).filter((e) => e.isKey).slice(-4).map((e) => `${e.sender === "我" ? "我" : name}：${e.text.slice(0, 100)}`);
-    const raw = await complete(LEDGER_SYSTEM, ledgerInput({ title: i.title, summary: i.summary, whoGuess: i.subject ?? "them", quotes, name }, shown), 200);
+    const raw = await complete(LEDGER_SYSTEM + langRule(getSetting("ui_lang")), ledgerInput({ title: i.title, summary: i.summary, whoGuess: i.subject ?? "them", quotes, name }, shown), 200);
     const r = parseLedger(raw, shown.length);
     if (!r) { failed++; return; }
     const p = r.proof ? after[r.proof - 1] : null;

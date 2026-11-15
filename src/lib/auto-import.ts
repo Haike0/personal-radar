@@ -76,7 +76,7 @@ export async function syncHubs() {
   return res;
 }
 
-let lastFolderScan = 0, lastWechat = 0;
+let lastFolderScan = 0, lastWechat = 0, lastImessage = 0;
 /** Called every minute by the scheduler. */
 export async function autoTick() {
   const out: Record<string, unknown> = {};
@@ -85,6 +85,10 @@ export async function autoTick() {
     lastWechat = Date.now();
     const { sync } = await import("./wechat-sync"); // lazy: avoids a circular import
     out.wechat = sync();
+  }
+  if (getSetting("imessage_on") === "on" && Date.now() - lastImessage > 5 * 60e3) {
+    lastImessage = Date.now();
+    out.imessage = (await import("./imessage-sync")).sync();
   }
   const hours = Number(getSetting("hub_sync") || 0);
   const last = Date.parse((getSetting("hub_sync_last") || "1970-01-01").replace(" ", "T"));

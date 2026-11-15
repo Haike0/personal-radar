@@ -12,7 +12,8 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import readline from "node:readline/promises";
 import path from "node:path";
-import { AI, DATA_DIR, extraBody, requireKey, scrub } from "./lib/env.mjs";
+import { AI, DATA_DIR, extraBody, requireKey, scrub, UI_LANG } from "./lib/env.mjs";
+import { langRule } from "./lib/lang.mjs";
 import { fileURLToPath } from "node:url";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -41,7 +42,7 @@ const SYSTEM = GUIDE + `
 你直接输出提交用的 JSON 对象本身（不要 markdown 代码块，不要解释），格式同上面的「提交格式」，session 字段照抄给你的值。
 - kind 为 fact 时必须有 milestone（true/false）；kind 为 fact/preference/need 时必须有 facet
 - refs 只能用聊天里出现过的编号，每条 1–8 个
-- 没有值得记的内容就输出 {"session":"<同上>","items":[],"attach":[]}`;
+- 没有值得记的内容就输出 {"session":"<同上>","items":[],"attach":[]}` + langRule(UI_LANG);
 
 const usage = { calls: 0, in: 0, out: 0, hit: 0 };
 async function chat(K, messages, maxTokens = 8000) {
@@ -150,7 +151,7 @@ async function analyze(K, sid, name = sid) {
   const dig = radarAi("digest", "--session", sid);
   if (dig.status !== 0) { log(`${sid} digest failed: ${dig.stderr.trim()}`); return; }
   if (DRY) { log(`[dry-run] analysis ${sid} · ${dig.stdout.length} chars`); return; }
-  const system = ANALYSIS_GUIDE + `\n\n## 本次输出（重要）\n直接输出提交用的 JSON 对象本身（不要 markdown，不要解释），session 字段写 ${sid}。items 里只能用素材里出现过的 #编号（写数字）。`;
+  const system = ANALYSIS_GUIDE + `\n\n## 本次输出（重要）\n直接输出提交用的 JSON 对象本身（不要 markdown，不要解释），session 字段写 ${sid}。items 里只能用素材里出现过的 #编号（写数字）。` + langRule(UI_LANG);
   const messages = [{ role: "system", content: system }, { role: "user", content: dig.stdout }];
   for (let attempt = 0; attempt < 3; attempt++) {
     const text = await chat(K, messages, 6000);

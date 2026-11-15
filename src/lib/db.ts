@@ -42,6 +42,7 @@ CREATE INDEX IF NOT EXISTS idx_evidence_item ON evidence(item_id, ord);
 const DEFAULT_SETTINGS: Record<string, string> = {
   mode: "demo",
   demo_set: "love",
+  ui_lang: "zh-Hans", // interface language; the demo scene is seeded in it (demo/<scene>/<lang>/)
   quiet_start: "23:00",
   quiet_end: "08:00",
   digest_time: "09:00",
@@ -93,6 +94,13 @@ const DEFAULT_SETTINGS: Record<string, string> = {
   wechat_marks: "{}",
   wechat_last: "",
   wechat_result: "",
+  // Messages (iMessage / SMS) on this Mac, read-only; needs Full Disk Access for whatever runs Radar
+  imessage_on: "off",
+  imessage_groups: "off",
+  imessage_oneway: "off",
+  imessage_mark: "0",
+  imessage_last: "",
+  imessage_result: "",
   // first run: "" → show the welcome page; "demo" = chose to look around; "done" = finished setup
   onboarded: "",
   update_check: "on",
