@@ -23,6 +23,11 @@ if (!fs.existsSync(path.join(ROOT, ".next", "standalone", "server.js")) || !fs.e
 }
 const { finishStandalone } = await import("../bin/standalone.mjs");
 finishStandalone(ROOT);
+// the server needs Next's route runtime once real data is in (background sync); demo mode never loads it
+if (!fs.existsSync(path.join(ROOT, ".next", "standalone", "node_modules", "next", "dist", "compiled", "next-server", "app-route-turbo.runtime.prod.js"))) {
+  console.error("The build is missing Next's route runtime (see outputFileTracingIncludes in next.config.ts). Rebuild first.");
+  process.exit(1);
+}
 
 // 1) the app folder: what the npm package carries, minus the source code
 const payload = path.join(DIST, "payload", "app");

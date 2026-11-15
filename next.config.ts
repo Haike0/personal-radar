@@ -33,8 +33,10 @@ const nextConfig: NextConfig = {
   // copied into the server; images are never resized, so the image library isn't needed either
   outputFileTracingExcludes: { "*": ["demo/**", "docs/**", "media/**", "dist/**", "src/**", "tests/**", "examples/**", "agent/**", "scripts/**", "bin/**", "*.md", "Dockerfile", "docker-compose.yml", "tsconfig*", "eslint.config.mjs", "package-lock.json", "node_modules/@img/**", "node_modules/sharp/**", "node_modules/typescript/**"] },
   images: { unoptimized: true },
-  // Telegram's and web-push's own dependencies are loaded at run time in ways the tracer can miss: include them whole
-  outputFileTracingIncludes: { "*": runtimeDeps(["telegram", "web-push"]) },
+  // Telegram's and web-push's own dependencies are loaded at run time in ways the tracer can miss: include them whole.
+  // Next's own route runtimes too: instrumentation.ts (background sync, real data only) needs app-route-turbo, which
+  // the tracer leaves out, so a fresh install worked in demo mode and broke as soon as real chats were imported.
+  outputFileTracingIncludes: { "*": [...runtimeDeps(["telegram", "web-push"]), "node_modules/next/dist/compiled/next-server/*.prod.js"] },
   // the floating "N" dev-tools badge only exists in dev mode; hide it so it doesn't cover the UI
   devIndicators: false,
   // iPhone access later goes through a Tailscale HTTPS hostname
