@@ -1,5 +1,5 @@
-// Read WeChat 4.x databases that the user has ALREADY decrypted on this computer (contact.db + message_N.db).
-// Radar never decrypts anything, never reads keys, never touches the WeChat app: it opens plain SQLite files read-only.
+// Read WeChat 4.x databases that are already plain SQLite files on this computer (contact.db + message_N.db).
+// Radar only opens plain SQLite files, read-only; an encrypted file is reported and left alone.
 // Layout (WCDB): one table per conversation, Msg_<md5(username)>, in one or more message_N.db files;
 // Name2Id maps real_sender_id → username; message_content is text, or zstd bytes when WCDB_CT_message_content = 4;
 // local_type keeps the base type in the low 32 bits and the app-message subtype in the high bits (49 + 57 = quote reply).
@@ -36,6 +36,13 @@ export function scan(dir) {
 }
 
 const open = (file) => new DatabaseSync(file, { readOnly: true });
+export const ENCRYPTED = "这个文件夹里的库还是加密的，Radar 不处理解密";
+/** A plain SQLite file starts with "SQLite format 3\0"; anything else (an encrypted database) is left alone. */
+export function isPlain(file) {
+  try { const fd = fs.openSync(file, "r"); const b = Buffer.alloc(16); fs.readSync(fd, b, 0, 16, 0); fs.closeSync(fd); return b.toString("latin1") === "SQLite format 3\0"; }
+  catch { return false; }
+}
+const encrypted = (files) => [files.contact, ...files.messages].filter(Boolean).some((f) => !isPlain(f));
 
 function zstd(buf) {
   if (typeof zlib.zstdDecompressSync !== "function") throw new Error("解压微信消息需要 Node.js 22.15 或更新版本");
@@ -106,6 +113,7 @@ function names(contactFile) {
 export function read(dir, { since = {}, groups = false, only = null } = {}) {
   const files = scan(dir);
   if (!files.messages.length) throw new Error("这个文件夹里没找到 message_0.db 这类消息库");
+  if (encrypted(files)) throw new Error(ENCRYPTED);
   const { out: nameOf } = names(files.contact);
   const chats = new Map(); // username → chat
   let me = null;
@@ -166,6 +174,7 @@ export function read(dir, { since = {}, groups = false, only = null } = {}) {
 export function inspect(dir) {
   const files = scan(dir);
   if (!files.messages.length) return { ok: false, error: "这个文件夹里没找到 message_0.db 这类消息库", files: { contact: !!files.contact, messages: 0 } };
+  if (encrypted(files)) return { ok: false, encrypted: true, error: ENCRYPTED, files: { contact: !!files.contact, messages: files.messages.length } };
   const { out: nameOf } = names(files.contact);
   const seen = new Map();
   for (const file of files.messages) {

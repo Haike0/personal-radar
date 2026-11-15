@@ -49,3 +49,13 @@ test("inspect lists chats without reading them", { skip }, () => {
   assert.equal(i.groups.length, 1);
   assert.equal(inspect(fs.mkdtempSync(path.join(os.tmpdir(), "radar-empty-"))).ok, false);
 });
+
+test("an encrypted database is reported, never opened or decrypted", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "radar-wx-enc-"));
+  fs.writeFileSync(path.join(dir, "message_0.db"), Buffer.alloc(4096, 0x5a)); // not a plain SQLite file
+  const i = inspect(dir);
+  assert.equal(i.ok, false);
+  assert.equal(i.encrypted, true);
+  assert.match(i.error, /加密/);
+  assert.throws(() => read(dir), /加密/);
+});

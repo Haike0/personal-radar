@@ -6,7 +6,7 @@ import { useState } from "react";
 import { post, useApi } from "@/lib/client";
 import { t } from "@/lib/i18n";
 
-type Found = { ok: boolean; error?: string; files: { contact: boolean; messages: number }; private?: { id: string; name: string; messages: number }[]; groups?: unknown[] };
+type Found = { ok: boolean; error?: string; encrypted?: boolean; files: { contact: boolean; messages: number }; private?: { id: string; name: string; messages: number }[]; groups?: unknown[] };
 type Status = { dir: string; on: boolean; groups: boolean; last: string | null; result: string | null; found: Found | null };
 
 /** 微信（已解密的数据库）: read-only, kept in sync automatically. Names no tool, by design. */
@@ -37,7 +37,7 @@ export function WechatDb() {
       </Group>
       {f && (f.ok
         ? <Text size="xs" c="teal">{t("找到 {0} 个私聊、{1} 个群聊", f.private?.length ?? 0, f.groups?.length ?? 0)}{f.files.contact ? "" : t("（没找到 contact.db，名字会显示成「微信好友」）")}</Text>
-        : <Text size="xs" c="red">{t(f.error ?? "读不了这个文件夹")}</Text>)}
+        : <Text size="xs" c="red">{f.encrypted ? t("这个文件夹里的库还是加密的，Radar 不处理解密") : f.files.messages ? t(f.error ?? "读不了这个文件夹") : t("这个文件夹里没找到 message_0.db 这类消息库")}</Text>)}
       {f?.ok && (
         <>
           <Switch checked={data!.on} onChange={(e) => call({ action: "save", on: e.currentTarget.checked })} label={t("每 5 分钟自动同步新消息")} />
