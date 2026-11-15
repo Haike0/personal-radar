@@ -86,6 +86,13 @@ const DEFAULT_SETTINGS: Record<string, string> = {
   watch_dir: "",
   watch_on: "off",
   watch_last: "",
+  // WeChat databases the user already decrypted with other tools: read-only, synced every few minutes
+  wechat_dir: "",
+  wechat_on: "off",
+  wechat_groups: "off",
+  wechat_marks: "{}",
+  wechat_last: "",
+  wechat_result: "",
   // first run: "" → show the welcome page; "demo" = chose to look around; "done" = finished setup
   onboarded: "",
   update_check: "on",
