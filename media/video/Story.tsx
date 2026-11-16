@@ -117,18 +117,34 @@ const LockPhone: React.FC<{ w: number; time: string; date: string; children?: Re
 };
 
 // 1. 00:47, the question
-const Ask: React.FC = () => {
-  const f = useCurrentFrame();
-  // the one deliberate jolt in the film: the screen shakes as it sinks in
-  const d = f - beat("ask", 7);
-  const shake = d >= 0 && d < 16 ? Math.sin(d * 2.6) * 22 * Math.exp(-d / 5) : 0;
-  const shakeY = d >= 0 && d < 16 ? Math.cos(d * 3.1) * 10 * Math.exp(-d / 5) : 0;
-  const zoom = d >= 0 ? 1 + 0.05 * Math.exp(-d / 4) : 1;
-  const edge = d >= 0 ? Math.exp(-d / 4) : 0; // the screen edges flash red
-  return (
-    <AbsoluteFill style={{ opacity: interpolate(f, [114, 120], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) }}>
-    <AbsoluteFill style={{ background: `radial-gradient(ellipse at center, rgba(255,59,107,0) 45%, rgba(255,59,107,${0.45 * edge}) 100%)`, zIndex: 2, pointerEvents: "none" }} />
-    <AbsoluteFill style={{ padding: "150px 60px 0", transform: `translate(${shake}px, ${shakeY}px) scale(${zoom})` }}>
+// the glass the opening shatters into: rings of shards around the point of impact (the panic line), fixed so every render matches
+const IMPACT = { x: 540, y: 1570 };
+const SHARDS: { pts: [number, number][]; c: [number, number]; spin: number; speed: number }[] = (() => {
+  let seed = 11;
+  const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  const n = 10;
+  const ang = Array.from({ length: n }, (_, i) => ((i + 0.15 + rnd() * 0.7) / n) * Math.PI * 2);
+  const ring = (r: number, jit: number) => ang.map((a) => [IMPACT.x + Math.cos(a) * r * (1 - jit / 2 + rnd() * jit), IMPACT.y + Math.sin(a) * r * (1 - jit / 2 + rnd() * jit)] as [number, number]);
+  const r1 = ring(170, 0.5), r2 = ring(620, 0.4), r3 = ring(1300, 0.3), r4 = ring(3200, 0);
+  const out: { pts: [number, number][]; c: [number, number]; spin: number; speed: number }[] = [];
+  const add = (pts: [number, number][], speed: number) => {
+    const c: [number, number] = [pts.reduce((t, p) => t + p[0], 0) / pts.length, pts.reduce((t, p) => t + p[1], 0) / pts.length];
+    out.push({ pts, c, spin: (rnd() - 0.5) * 140, speed: speed * (0.8 + rnd() * 0.5) });
+  };
+  for (let i = 0; i < n; i++) {
+    const j = (i + 1) % n;
+    add([[IMPACT.x, IMPACT.y], r1[i], r1[j]], 1.6);
+    add([r1[i], r2[i], r2[j], r1[j]], 1.25);
+    add([r2[i], r3[i], r3[j], r2[j]], 1);
+    add([r3[i], r4[i], r4[j], r3[j]], 0.8);
+  }
+  return out;
+})();
+
+const AskBody: React.FC = () => (
+  <AbsoluteFill>
+    <Backdrop />
+    <AbsoluteFill style={{ padding: "150px 60px 0" }}>
       <Title tag="凌晨 00:47">女朋友发来…</Title>
       <div style={{ marginTop: 90, display: "flex", flexDirection: "column", gap: 30 }}>
         <Bubble at={beat("ask", 0)} big>不是说十点给我打电话吗？</Bubble>
@@ -136,30 +152,50 @@ const Ask: React.FC = () => {
         <Typing from={beat("ask", 4)} to={beat("ask", 6)} />
         <Bubble me at={beat("ask", 6)}>……</Bubble>
       </div>
-      <Boom at={beat("ask", 7)} />
+      <Boom at={DOOM} />
     </AbsoluteFill>
+  </AbsoluteFill>
+);
+
+// 1. 00:47, the question. The panic line lands, the screen shakes, cracks, and shatters into the drop.
+const DOOM = Math.round(beat("ask", 6) + 7);
+const CRACK = DOOM + 5, FLY = DOOM + 8;
+const Ask: React.FC = () => {
+  const f = useCurrentFrame();
+  const d = f - DOOM;
+  const shake = d >= 0 && f < FLY ? Math.sin(d * 2.6) * 22 * Math.exp(-d / 6) : 0;
+  const shakeY = d >= 0 && f < FLY ? Math.cos(d * 3.1) * 12 * Math.exp(-d / 6) : 0;
+  const zoom = d >= 0 ? 1 + 0.05 * Math.exp(-d / 4) : 1;
+  if (f < CRACK) return <AbsoluteFill style={{ transform: `translate(${shake}px, ${shakeY}px) scale(${zoom})` }}><AskBody /></AbsoluteFill>;
+  // cracked: the shards part by a few pixels (the seams show), then fly apart, spinning and falling
+  const t = interpolate(f, [FLY, 120], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.in(Easing.quad) });
+  const seam = interpolate(f, [CRACK, FLY], [0, 1], { extrapolateRight: "clamp" });
+  return (
+    <AbsoluteFill style={{ background: "#0b0d12" }}>
+      {SHARDS.map((sh, i) => {
+        const dx = sh.c[0] - IMPACT.x, dy = sh.c[1] - IMPACT.y, len = Math.hypot(dx, dy) || 1;
+        const push = seam * 5 + t * 950 * sh.speed;
+        const x = (dx / len) * push, y = (dy / len) * push + t * t * 700;
+        return (
+          <AbsoluteFill key={i} style={{ transform: `translate(${x}px, ${y}px) rotate(${sh.spin * t}deg) scale(${1 - t * 0.25})`, transformOrigin: `${sh.c[0]}px ${sh.c[1]}px`, opacity: 1 - t * 0.3,
+            filter: "drop-shadow(0 0 1.5px rgba(255,255,255,.9))" }}>
+            <AbsoluteFill style={{ clipPath: `polygon(${sh.pts.map(([px, py]) => `${px}px ${py}px`).join(",")})` }}><AskBody /></AbsoluteFill>
+          </AbsoluteFill>
+        );
+      })}
     </AbsoluteFill>
   );
 };
 
-/** "完了" hits like a blast: a bloom of light behind it, a red/cyan tear, while the screen shakes and the edges flash red */
+/** "完了" punches in; the scene around it then shatters (see Ask) */
 const Boom: React.FC<{ at: number }> = ({ at }) => {
   const f = useCurrentFrame();
   const d = f - at;
   if (d < 0) return null;
-  const punch = interpolate(d, [0, 3, 8], [1.25, 0.97, 1], { extrapolateRight: "clamp", easing: Easing.out(Easing.quad) });
-  // a burst of light behind the words (no outlines): a hot core that blooms out and fades
-  const bloom = interpolate(d, [0, 14], [0, 1], { extrapolateRight: "clamp", easing: Easing.out(Easing.cubic) });
-  const split = 12 * Math.exp(-d / 3); // the words tear into red/cyan for a moment, like a glitch
-  const word = { position: "absolute" as const, inset: 0, fontSize: 78, fontWeight: 900, whiteSpace: "nowrap" as const };
+  const punch = interpolate(d, [0, 3, 8], [1.3, 0.96, 1], { extrapolateRight: "clamp", easing: Easing.out(Easing.quad) });
   return (
     <div style={{ position: "absolute", left: 0, right: 0, bottom: 230, height: 240, display: "flex", justifyContent: "center", alignItems: "center" }}>
-      <div style={{ position: "absolute", width: 900, height: 900, borderRadius: "50%", background: "radial-gradient(circle, rgba(255,240,200,.95) 0%, rgba(255,120,80,.75) 18%, rgba(255,59,107,.35) 40%, rgba(255,59,107,0) 68%)", transform: `scale(${0.25 + bloom * 1.1})`, opacity: 1 - bloom, filter: "blur(6px)" }} />
-      <div style={{ position: "relative", transform: `scale(${punch})` }}>
-        {split > 0.6 && <div style={{ ...word, color: "rgba(0,200,255,.75)", transform: `translate(${-split}px, ${split * 0.3}px)` }}>完了，忘得一干二净</div>}
-        {split > 0.6 && <div style={{ ...word, color: "rgba(255,40,60,.75)", transform: `translate(${split}px, ${-split * 0.3}px)` }}>完了，忘得一干二净</div>}
-        <div style={{ position: "relative", fontSize: 78, fontWeight: 900, color: RED, whiteSpace: "nowrap" }}>完了，忘得一干二净</div>
-      </div>
+      <div style={{ fontSize: 80, fontWeight: 900, color: RED, whiteSpace: "nowrap", transform: `scale(${punch})` }}>完了，忘得一干二净</div>
     </div>
   );
 };
