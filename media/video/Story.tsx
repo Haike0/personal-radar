@@ -136,29 +136,15 @@ const Ask: React.FC = () => {
   );
 };
 
-/** "完了" lands with a small comic burst: a flash, spikes flying out and a ring, then the words punch in */
+/** "完了" punches in while the screen shakes (no decorations) */
 const Boom: React.FC<{ at: number }> = ({ at }) => {
   const f = useCurrentFrame();
   const d = f - at;
   if (d < 0) return null;
-  const burst = interpolate(d, [0, 12], [0, 1], { extrapolateRight: "clamp", easing: Easing.out(Easing.cubic) });
-  const gone = interpolate(d, [6, 14], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const punch = interpolate(d, [0, 3, 8], [1.25, 0.97, 1], { extrapolateRight: "clamp", easing: Easing.out(Easing.quad) });
-  const cx = 480, cy = 120;
   return (
     <div style={{ position: "absolute", left: 0, right: 0, bottom: 230, height: 240, display: "flex", justifyContent: "center", alignItems: "center" }}>
-      <svg width="960" height="240" viewBox="0 0 960 240" style={{ position: "absolute", overflow: "visible" }}>
-        <ellipse cx={cx} cy={cy} rx={360 + burst * 140} ry={(360 + burst * 140) * 0.42} fill="none" stroke={RED} strokeWidth={8 * (1 - burst) + 1} opacity={gone * 0.7} />
-        {Array.from({ length: 14 }, (_, i) => {
-          const a = (i / 14) * Math.PI * 2 + 0.2, r0 = 370 + burst * 90, r1 = r0 + 50 * (1 - burst) + 18;
-          return <line key={i} x1={cx + Math.cos(a) * r0} y1={cy + Math.sin(a) * r0 * 0.42} x2={cx + Math.cos(a) * r1} y2={cy + Math.sin(a) * r1 * 0.42} stroke={i % 2 ? "#ffb020" : RED} strokeWidth={9} strokeLinecap="round" opacity={gone} />;
-        })}
-        {Array.from({ length: 8 }, (_, i) => {
-          const a = (i / 8) * Math.PI * 2 + 0.6, r = 380 + burst * 130;
-          return <circle key={i} cx={cx + Math.cos(a) * r} cy={cy + Math.sin(a) * r * 0.42} r={10 * (1 - burst) + 3} fill={i % 2 ? "#ffb020" : RED} opacity={gone} />;
-        })}
-      </svg>
-      <div style={{ position: "relative", fontSize: 78, fontWeight: 900, color: RED, transform: `scale(${punch}) rotate(-3deg)`, textShadow: "0 6px 0 rgba(255,59,107,.18)" }}>完了，忘得一干二净</div>
+      <div style={{ position: "relative", fontSize: 78, fontWeight: 900, color: RED, transform: `scale(${punch})` }}>完了，忘得一干二净</div>
     </div>
   );
 };
