@@ -56,7 +56,7 @@ export const Backdrop: React.FC = () => (
 );
 
 /** A phone showing a screenshot; with `scroll`, it glides from top to bottom of a long screenshot. */
-const Phone: React.FC<{ src: string; w: number; scroll?: [number, number]; frame: number }> = ({ src, w, scroll, frame }) => {
+export const Phone: React.FC<{ src: string; w: number; scroll?: [number, number]; frame: number }> = ({ src, w, scroll, frame }) => {
   const h = w * 2.06, pad = w * 0.032, sw = w - pad * 2, sh = h - pad * 2;
   const [iw, ih] = (DIMS as Record<string, number[]>)[src] ?? [1170, 2532];
   const imgH = (sw * ih) / iw;
@@ -159,9 +159,9 @@ const Brand: React.FC<{ lang: Lang; portrait: boolean }> = ({ lang, portrait }) 
   );
 };
 
-export const Ledger: React.FC<{ lang: Lang; portrait: boolean; f: number }> = ({ lang, portrait, f }) => {
+export const Ledger: React.FC<{ lang: Lang; portrait: boolean; f: number; popAt?: number }> = ({ lang, portrait, f, popAt = 70 }) => {
   const { fps } = useVideoConfig();
-  const pop = spring({ frame: f - 70, fps, config: { damping: 13, mass: 0.9 } });
+  const pop = spring({ frame: f - popAt, fps, config: { damping: 13, mass: 0.9 } });
   const pw = portrait ? 560 : 430;
   return (
     <div style={{ position: "relative", width: pw, height: pw * 2.06 }}>

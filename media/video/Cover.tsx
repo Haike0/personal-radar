@@ -18,13 +18,13 @@ export const Cover: React.FC = () => (
   <AbsoluteFill style={{ fontFamily: FONT, background: "linear-gradient(170deg, #fff1f4 0%, #f6f4ff 48%, #e9f3ff 100%)", padding: "70px 64px", wordBreak: "keep-all" }}>
     <div style={{ display: "inline-flex", alignSelf: "flex-start", padding: "10px 26px", borderRadius: 999, background: "#ff3b6b", color: "#fff", fontSize: 38, fontWeight: 800, letterSpacing: 2 }}>男生灵魂拷问</div>
     <div style={{ marginTop: 26, fontSize: 118, fontWeight: 900, lineHeight: 1.08, color: "#111318", letterSpacing: -3 }}>
-      你还记得<br /><span style={{ color: "#ff3b6b" }}>答应我啥不？</span>
+      不是说十点<br /><span style={{ color: "#ff3b6b" }}>给我打电话吗？</span>
     </div>
 
     <div style={{ marginTop: 52, display: "flex", flexDirection: "column", gap: 24 }}>
-      <Bubble big>上周答应我的事呢？</Bubble>
-      <Bubble>想好了再回答</Bubble>
-      <Bubble me>……我想想</Bubble>
+      <Bubble big>我等到睡着了。</Bubble>
+      <Bubble>凌晨 00:47 了</Bubble>
+      <Bubble me>……完了</Bubble>
     </div>
 
     {/* the save */}
@@ -33,10 +33,10 @@ export const Cover: React.FC = () => (
       <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
         <Img src={staticFile("icon.png")} style={{ width: 64, height: 64, borderRadius: 16 }} />
         <div style={{ fontSize: 36, fontWeight: 800, color: "#2f7bf6" }}>ReadMe 提醒你</div>
-        <div style={{ marginLeft: "auto", fontSize: 30, color: "#8a90a0" }}>刚刚</div>
+        <div style={{ marginLeft: "auto", fontSize: 30, color: "#8a90a0" }}>21:50</div>
       </div>
-      <div style={{ marginTop: 16, fontSize: 46, fontWeight: 800, color: "#111318", lineHeight: 1.3 }}>下周三：你们在一起一周年</div>
-      <div style={{ marginTop: 12, fontSize: 32, color: "#5d6370", borderLeft: "6px solid #2f7bf6", paddingLeft: 16 }}>原话 · 10/3 23:41「一周年我来订餐厅」</div>
+      <div style={{ marginTop: 16, fontSize: 46, fontWeight: 800, color: "#111318", lineHeight: 1.3 }}>10 分钟后：给她打电话</div>
+      <div style={{ marginTop: 12, fontSize: 32, color: "#5d6370", borderLeft: "6px solid #2f7bf6", paddingLeft: 16 }}>你下午说的「晚上十点给你打电话」</div>
     </div>
 
     <div style={{ marginTop: "auto", marginBottom: 20, alignSelf: "center", fontSize: 72, fontWeight: 900, color: "#111318" }}>

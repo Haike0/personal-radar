@@ -14,8 +14,8 @@ const L = new Float32Array(N), R = new Float32Array(N), SEND = new Float32Array(
 const hz = (m) => 440 * 2 ** ((m - 69) / 12);
 const TAU = Math.PI * 2;
 
-// film moments (seconds), from the scene table in Film.tsx (30 fps)
-const BRAND = 120 / 30, APP = 195 / 30, CARD = (600 + 70) / 30, END = 960 / 30;
+// film moments (seconds, 30 fps): the logo and ending match Film.tsx and Story.tsx; the ledger chime follows the Xiaohongshu cut (Story.tsx)
+const BRAND = 120 / 30, APP = 195 / 30, CARD = (626 + 28) / 30, END = 960 / 30;
 const GRID0 = BRAND - 2 * BAR; // bar 2 starts on the logo
 
 const CHORDS = [
