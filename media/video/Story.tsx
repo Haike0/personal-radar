@@ -119,8 +119,9 @@ const LockPhone: React.FC<{ w: number; time: string; date: string; children?: Re
 // 1. 00:47, the question
 const Ask: React.FC = () => {
   const f = useCurrentFrame();
-  const shake = 0;
-  const doom = usePop(beat("ask", 7));
+  // the one deliberate jolt in the film: the screen shakes as it sinks in
+  const d = f - beat("ask", 7);
+  const shake = d >= 0 && d < 16 ? Math.sin(d * 2.6) * 22 * Math.exp(-d / 5) : 0;
   return (
     <AbsoluteFill style={{ padding: "150px 60px 0", transform: `translateX(${shake}px)`, opacity: interpolate(f, [114, 120], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) }}>
       <Title tag="凌晨 00:47">女朋友发来…</Title>
@@ -130,22 +131,60 @@ const Ask: React.FC = () => {
         <Typing from={beat("ask", 4)} to={beat("ask", 6)} />
         <Bubble me at={beat("ask", 6)}>……</Bubble>
       </div>
-      <div style={{ position: "absolute", left: 0, right: 0, bottom: 300, textAlign: "center", fontSize: 72, fontWeight: 900, color: RED, transform: `translateY(${(1 - doom) * 20}px)`, opacity: doom }}>完了，忘得一干二净</div>
+      <Boom at={beat("ask", 7)} />
     </AbsoluteFill>
   );
 };
 
-// 2. the drop
+/** "完了" lands with a small comic burst: a flash, spikes flying out and a ring, then the words punch in */
+const Boom: React.FC<{ at: number }> = ({ at }) => {
+  const f = useCurrentFrame();
+  const d = f - at;
+  if (d < 0) return null;
+  const burst = interpolate(d, [0, 12], [0, 1], { extrapolateRight: "clamp", easing: Easing.out(Easing.cubic) });
+  const gone = interpolate(d, [6, 14], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const punch = interpolate(d, [0, 3, 8], [1.25, 0.97, 1], { extrapolateRight: "clamp", easing: Easing.out(Easing.quad) });
+  const cx = 480, cy = 120;
+  return (
+    <div style={{ position: "absolute", left: 0, right: 0, bottom: 230, height: 240, display: "flex", justifyContent: "center", alignItems: "center" }}>
+      <svg width="960" height="240" viewBox="0 0 960 240" style={{ position: "absolute", overflow: "visible" }}>
+        <ellipse cx={cx} cy={cy} rx={360 + burst * 140} ry={(360 + burst * 140) * 0.42} fill="none" stroke={RED} strokeWidth={8 * (1 - burst) + 1} opacity={gone * 0.7} />
+        {Array.from({ length: 14 }, (_, i) => {
+          const a = (i / 14) * Math.PI * 2 + 0.2, r0 = 370 + burst * 90, r1 = r0 + 50 * (1 - burst) + 18;
+          return <line key={i} x1={cx + Math.cos(a) * r0} y1={cy + Math.sin(a) * r0 * 0.42} x2={cx + Math.cos(a) * r1} y2={cy + Math.sin(a) * r1 * 0.42} stroke={i % 2 ? "#ffb020" : RED} strokeWidth={9} strokeLinecap="round" opacity={gone} />;
+        })}
+        {Array.from({ length: 8 }, (_, i) => {
+          const a = (i / 8) * Math.PI * 2 + 0.6, r = 380 + burst * 130;
+          return <circle key={i} cx={cx + Math.cos(a) * r} cy={cy + Math.sin(a) * r * 0.42} r={10 * (1 - burst) + 3} fill={i % 2 ? "#ffb020" : RED} opacity={gone} />;
+        })}
+      </svg>
+      <div style={{ position: "relative", fontSize: 78, fontWeight: 900, color: RED, transform: `scale(${punch}) rotate(-3deg)`, textShadow: "0 6px 0 rgba(255,59,107,.18)" }}>完了，忘得一干二净</div>
+    </div>
+  );
+};
+
+// 2. the drop: a flash, the logo punches in with a shockwave and a light sweep, then the line, with "记着" underlined
 const Brand: React.FC = () => {
   const f = useCurrentFrame();
-  const s = usePop(0, 420);
-  const t = usePop(5);
+  const flash = interpolate(f, [0, 8], [0.85, 0], { extrapolateRight: "clamp" });
+  const punch = interpolate(f, [0, 4, 12], [1.35, 0.96, 1], { extrapolateRight: "clamp", easing: Easing.out(Easing.quad) });
+  const wave = interpolate(f, [0, 22], [0, 1], { extrapolateRight: "clamp", easing: Easing.out(Easing.cubic) });
+  const sweep = interpolate(f, [6, 22], [-1, 1.4], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.inOut(Easing.cubic) });
+  const t = usePop(6);
+  const line = ramp(f, 16, 14);
   return (
     <Cut k="brand" pad={false}>
       <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
-        <Img src={staticFile("icon.png")} style={{ width: 300, height: 300, opacity: s, transform: `scale(${0.9 + s * 0.1})`, filter: "drop-shadow(0 30px 50px rgba(47,139,255,.4))" }} />
-        <div style={{ marginTop: 60, fontSize: 96, fontWeight: 900, color: INK, opacity: t, transform: `translateY(${(1 - t) * 20}px)` }}>AI 替我记着</div>
+        <div style={{ position: "absolute", width: 320, height: 320, borderRadius: "50%", border: `${8 * (1 - wave) + 1}px solid ${BLUE}`, transform: `scale(${1 + wave * 2.4})`, opacity: (1 - wave) * 0.7, marginTop: -150 }} />
+        <div style={{ position: "relative", width: 300, height: 300, borderRadius: 68, overflow: "hidden", transform: `scale(${punch})`, boxShadow: "0 30px 60px -20px rgba(47,139,255,.55)" }}>
+          <Img src={staticFile("icon.png")} style={{ width: 300, height: 300, display: "block" }} />
+          <div style={{ position: "absolute", top: -60, bottom: -60, width: 110, left: `${sweep * 100}%`, transform: "rotate(18deg)", background: "linear-gradient(90deg, transparent, rgba(255,255,255,.75), transparent)" }} />
+        </div>
+        <div style={{ marginTop: 60, fontSize: 100, fontWeight: 900, color: INK, opacity: t, transform: `translateY(${(1 - t) * 24}px)` }}>
+          AI 替我<span style={{ position: "relative", color: BLUE }}>记着<span style={{ position: "absolute", left: 0, right: 0, bottom: 4, height: 14, borderRadius: 7, background: "rgba(47,123,246,.25)", transform: `scaleX(${line})`, transformOrigin: "left" }} /></span>
+        </div>
       </AbsoluteFill>
+      <AbsoluteFill style={{ background: "#fff", opacity: flash, pointerEvents: "none" }} />
     </Cut>
   );
 };
