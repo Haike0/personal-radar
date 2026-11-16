@@ -159,14 +159,15 @@ const Brand: React.FC<{ lang: Lang; portrait: boolean }> = ({ lang, portrait }) 
   );
 };
 
-export const Ledger: React.FC<{ lang: Lang; portrait: boolean; f: number; popAt?: number }> = ({ lang, portrait, f, popAt = 70 }) => {
+export const Ledger: React.FC<{ lang: Lang; portrait: boolean; f: number; popAt?: number; smooth?: boolean }> = ({ lang, portrait, f, popAt = 70, smooth }) => {
   const { fps } = useVideoConfig();
-  const pop = spring({ frame: f - popAt, fps, config: { damping: 13, mass: 0.9 } });
+  // smooth: an ease-out with no bounce (the Xiaohongshu cut); otherwise the original springy pop
+  const pop = smooth ? interpolate(f, [popAt, popAt + 18], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.bezier(0.16, 1, 0.3, 1) }) : spring({ frame: f - popAt, fps, config: { damping: 13, mass: 0.9 } });
   const pw = portrait ? 560 : 430;
   return (
     <div style={{ position: "relative", width: pw, height: pw * 2.06 }}>
       <div style={{ opacity: interpolate(pop, [0, 1], [1, 0.35]) }}><Phone src={`${lang}-phone-ledger.png`} w={pw} frame={f} /></div>
-      <Img src={staticFile(`${lang}-phone-card.png`)} style={{ position: "absolute", left: "50%", top: "50%", width: pw * 1.08, borderRadius: 28, boxShadow: "0 50px 100px -30px rgba(15,17,21,.45)", transform: `translate(-50%,-50%) scale(${0.55 + pop * 0.45}) rotate(${-4 + (1 - pop) * 8}deg)`, opacity: pop }} />
+      <Img src={staticFile(`${lang}-phone-card.png`)} style={{ position: "absolute", left: "50%", top: "50%", width: pw * 1.08, borderRadius: 28, boxShadow: "0 50px 100px -30px rgba(15,17,21,.45)", transform: `translate(-50%,-50%) scale(${smooth ? 0.9 + pop * 0.1 : 0.55 + pop * 0.45}) rotate(${smooth ? -2 : -4 + (1 - pop) * 8}deg)`, opacity: pop }} />
     </div>
   );
 };

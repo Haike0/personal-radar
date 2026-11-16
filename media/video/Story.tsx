@@ -4,7 +4,7 @@
 //   → a lock closes: your chats stay on your computer → logo + GitHub
 // Every scene is one or two bars of the music (bgm.mjs: 128 BPM, a bar starts on the logo at 4 s), so cuts land on the beat.
 // Every chat line here is made up for the film; nothing comes from a real conversation.
-import { AbsoluteFill, Audio, Img, Sequence, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
+import { AbsoluteFill, Audio, Easing, Img, Sequence, interpolate, staticFile, useCurrentFrame } from "remotion";
 import { Backdrop, Ledger, Phone } from "./Film";
 
 const FONT = `-apple-system, "SF Pro Display", "PingFang SC", "Noto Sans CJK SC", sans-serif`;
@@ -29,18 +29,23 @@ const len = (k: string) => T[k][1] - T[k][0];
 /** local frame of the nth beat inside a scene */
 const beat = (k: string, n: number) => GRID0F + (Math.ceil((T[k][0] - GRID0F) / BEATF - 1e-6) + n) * BEATF - T[k][0];
 
-const usePop = (at: number, stiff = 320) => { const f = useCurrentFrame(); const { fps } = useVideoConfig(); return spring({ frame: f - at, fps, config: { damping: 11, stiffness: stiff, mass: 0.55 } }); };
-const useEase = (at: number) => { const f = useCurrentFrame(); const { fps } = useVideoConfig(); return spring({ frame: f - at, fps, config: { damping: 200, stiffness: 260 } }); };
+// motion: no bounce anywhere. Things ease out (fast start, long soft landing), like a well-made app's own UI.
+const OUT = Easing.bezier(0.16, 1, 0.3, 1);
+const ramp = (f: number, at: number, dur: number) => interpolate(f, [at, at + dur], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: OUT });
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const usePop = (at: number, _stiff?: number, dur = 16) => ramp(useCurrentFrame(), at, dur);
+const useEase = (at: number) => ramp(useCurrentFrame(), at, 18);
 
 /** Every scene whips in from the right on its first frames and out to the left on its last few. */
 const Cut: React.FC<{ k: string; children: React.ReactNode; pad?: boolean }> = ({ k, children, pad = true }) => {
   const f = useCurrentFrame();
   const L = len(k);
-  const enter = usePop(0, 380);
-  const out = interpolate(f, [L - 6, L], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const enter = ramp(f, 0, 14);
+  const out = interpolate(f, [L - 7, L], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.in(Easing.quad) });
+  const drift = 1 + 0.018 * (f / L); // a slow push-in, like a camera
   return (
-    <AbsoluteFill style={{ padding: pad ? "150px 60px 0" : 0, opacity: Math.min(1, enter * 1.6) * (1 - out),
-      transform: `translateX(${(1 - enter) * 140 - out * 120}px) scale(${0.94 + 0.06 * Math.min(1, enter) + out * 0.03})` }}>{children}</AbsoluteFill>
+    <AbsoluteFill style={{ padding: pad ? "150px 60px 0" : 0, opacity: enter * (1 - out),
+      transform: `translateY(${(1 - enter) * 28}px) scale(${(0.985 + 0.015 * enter) * drift})` }}>{children}</AbsoluteFill>
   );
 };
 
@@ -51,7 +56,7 @@ const Bubble: React.FC<{ me?: boolean; at: number; children: React.ReactNode; bi
   const s = usePop(at);
   if (s <= 0.001) return null;
   return (
-    <div style={{ display: "flex", justifyContent: me ? "flex-end" : "flex-start", alignItems: "flex-end", gap: 18, opacity: Math.min(1, s * 1.5), transform: `translateY(${(1 - s) * 50}px) scale(${0.85 + s * 0.15})`, transformOrigin: me ? "right bottom" : "left bottom" }}>
+    <div style={{ display: "flex", justifyContent: me ? "flex-end" : "flex-start", alignItems: "flex-end", gap: 18, opacity: s, transform: `translateY(${(1 - s) * 24}px) scale(${0.97 + s * 0.03})`, transformOrigin: me ? "right bottom" : "left bottom" }}>
       {!me && <Avatar e={face ?? "😤"} bg="#ffe1ea" />}
       <div style={{ padding: big ? "28px 38px" : "24px 34px", borderRadius: 38, borderBottomLeftRadius: me ? 38 : 10, borderBottomRightRadius: me ? 10 : 38, maxWidth: big ? 840 : 740,
         fontSize: big ? 56 : 50, fontWeight: big ? 850 : 700, lineHeight: 1.3, color: me ? "#fff" : INK, background: me ? BLUE : "#fff", boxShadow: "0 16px 36px -18px rgba(20,24,40,.35)" }}>{children}</div>
@@ -76,7 +81,7 @@ const Title: React.FC<{ at?: number; children: React.ReactNode; tag?: string; co
   const t = usePop(at + 3);
   return (
     <div style={{ textAlign: "center" }}>
-      {tag && <div style={{ display: "inline-block", padding: "10px 28px", borderRadius: 999, background: color ?? RED, color: "#fff", fontSize: 38, fontWeight: 800, letterSpacing: 2, marginBottom: 22, transform: `scale(${t})` }}>{tag}</div>}
+      {tag && <div style={{ display: "inline-block", padding: "10px 28px", borderRadius: 999, background: color ?? RED, color: "#fff", fontSize: 38, fontWeight: 800, letterSpacing: 2, marginBottom: 22, opacity: t, transform: `translateY(${(1 - t) * 12}px)` }}>{tag}</div>}
       <div style={{ fontSize: size, fontWeight: 900, lineHeight: 1.15, color: INK, letterSpacing: -1, opacity: s, transform: `translateY(${(1 - s) * 30}px)` }}>{children}</div>
     </div>
   );
@@ -85,7 +90,7 @@ const Notif: React.FC<{ at: number; head: string; body: string; when?: string }>
   const s = usePop(at);
   if (s <= 0.001) return null;
   return (
-    <div style={{ padding: "22px 24px", borderRadius: 34, background: "rgba(255,255,255,.88)", opacity: Math.min(1, s * 1.5), transform: `translateY(${(1 - s) * -90}px) scale(${0.88 + s * 0.12})` }}>
+    <div style={{ padding: "22px 24px", borderRadius: 34, background: "rgba(255,255,255,.88)", opacity: s, transform: `translateY(${(1 - s) * -36}px)` }}>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <Img src={staticFile("icon.png")} style={{ width: 46, height: 46, borderRadius: 12 }} />
         <div style={{ fontSize: 26, fontWeight: 700, color: GREY }}>ReadMe</div>
@@ -114,7 +119,7 @@ const LockPhone: React.FC<{ w: number; time: string; date: string; children?: Re
 // 1. 00:47, the question
 const Ask: React.FC = () => {
   const f = useCurrentFrame();
-  const shake = f > beat("ask", 6) && f < beat("ask", 6) + 16 ? Math.sin(f * 2.4) * 12 : 0;
+  const shake = 0;
   const doom = usePop(beat("ask", 7));
   return (
     <AbsoluteFill style={{ padding: "150px 60px 0", transform: `translateX(${shake}px)`, opacity: interpolate(f, [114, 120], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) }}>
@@ -125,7 +130,7 @@ const Ask: React.FC = () => {
         <Typing from={beat("ask", 4)} to={beat("ask", 6)} />
         <Bubble me at={beat("ask", 6)}>……</Bubble>
       </div>
-      <div style={{ position: "absolute", left: 0, right: 0, bottom: 300, textAlign: "center", fontSize: 72, fontWeight: 900, color: RED, transform: `scale(${doom})`, opacity: Math.min(1, doom * 2) }}>完了，忘得一干二净</div>
+      <div style={{ position: "absolute", left: 0, right: 0, bottom: 300, textAlign: "center", fontSize: 72, fontWeight: 900, color: RED, transform: `translateY(${(1 - doom) * 20}px)`, opacity: doom }}>完了，忘得一干二净</div>
     </AbsoluteFill>
   );
 };
@@ -138,9 +143,8 @@ const Brand: React.FC = () => {
   return (
     <Cut k="brand" pad={false}>
       <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
-        {[0, 1, 2].map((k) => { const p = ((f + k * 9) % 27) / 27; return <div key={k} style={{ position: "absolute", width: 300, height: 300, borderRadius: "50%", border: "5px solid rgba(47,123,246,.45)", transform: `scale(${1 + p * 2.2})`, opacity: 1 - p }} />; })}
-        <Img src={staticFile("icon.png")} style={{ width: 300, height: 300, transform: `scale(${0.3 + s * 0.7}) rotate(${(1 - s) * -20}deg)`, filter: "drop-shadow(0 30px 50px rgba(47,139,255,.4))" }} />
-        <div style={{ marginTop: 60, fontSize: 96, fontWeight: 900, color: INK, transform: `scale(${t})` }}>AI 替我记着</div>
+        <Img src={staticFile("icon.png")} style={{ width: 300, height: 300, opacity: s, transform: `scale(${0.9 + s * 0.1})`, filter: "drop-shadow(0 30px 50px rgba(47,139,255,.4))" }} />
+        <div style={{ marginTop: 60, fontSize: 96, fontWeight: 900, color: INK, opacity: t, transform: `translateY(${(1 - t) * 20}px)` }}>AI 替我记着</div>
       </AbsoluteFill>
     </Cut>
   );
@@ -152,7 +156,7 @@ const Remind: React.FC = () => {
   return (
     <Cut k="remind">
       <Title tag="有了 ReadMe" color={BLUE}>回到当晚 21:50</Title>
-      <div style={{ marginTop: 50, display: "flex", justifyContent: "center", transform: `translateY(${(1 - up) * 300}px)` }}>
+      <div style={{ marginTop: 50, display: "flex", justifyContent: "center", transform: `translateY(${(1 - up) * 80}px)`, opacity: up }}>
         <LockPhone w={540} time="21:50" date="11月16日 星期一">
           <Notif at={beat("remind", 2)} head="10 分钟后：给她打电话" body="你下午说的「晚上十点给你打电话」" />
         </LockPhone>
@@ -164,13 +168,13 @@ const Remind: React.FC = () => {
 // 4. he calls on time
 const Call: React.FC = () => {
   const f = useCurrentFrame();
-  const ring = (f % 20) / 20;
+  const ring = (f % 40) / 40;
   return (
     <Cut k="call">
       <Title tag="稳了" color={GREEN}>十点整，电话准时打过去</Title>
       <div style={{ marginTop: 70, display: "flex", flexDirection: "column", alignItems: "center" }}>
         <div style={{ position: "relative", width: 200, height: 200, display: "grid", placeItems: "center" }}>
-          <div style={{ position: "absolute", inset: 0, borderRadius: "50%", border: `6px solid ${GREEN}`, transform: `scale(${1 + ring * 0.6})`, opacity: 1 - ring }} />
+          <div style={{ position: "absolute", inset: 0, borderRadius: "50%", border: `4px solid ${GREEN}`, transform: `scale(${1 + ring * 0.4})`, opacity: (1 - ring) * 0.6 }} />
           <div style={{ width: 170, height: 170, borderRadius: 85, background: GREEN, display: "grid", placeItems: "center", fontSize: 90 }}>📞</div>
         </div>
         <div style={{ marginTop: 26, fontSize: 52, fontWeight: 850, color: INK }}>正在呼叫 宝 ❤️</div>
@@ -191,7 +195,7 @@ const MoreCard: React.FC<{ at: number; e: string; bg: string; who: string; said:
   const s = usePop(at, 380);
   if (s <= 0.001) return null;
   return (
-    <div style={{ display: "flex", gap: 22, alignItems: "center", padding: "24px 28px", borderRadius: 36, background: "#fff", boxShadow: "0 18px 40px -22px rgba(20,24,40,.35)", opacity: Math.min(1, s * 1.6), transform: `translateX(${(1 - s) * 220}px) rotate(${(1 - s) * 4}deg)` }}>
+    <div style={{ display: "flex", gap: 22, alignItems: "center", padding: "24px 28px", borderRadius: 36, background: "#fff", boxShadow: "0 18px 40px -22px rgba(20,24,40,.35)", opacity: s, transform: `translateY(${(1 - s) * 30}px)` }}>
       <Avatar e={e} bg={bg} />
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontSize: 34, color: GREY }}>{who}说：「{said}」</div>
@@ -222,7 +226,7 @@ const EVENTS: { d: number; text: string; c: string }[] = [
 const Chip: React.FC<{ at: number; text: string; c: string }> = ({ at, text, c }) => {
   const s = usePop(at, 420);
   if (s <= 0.001) return null;
-  return <div style={{ marginTop: 8, padding: "6px 4px", borderRadius: 10, background: c, color: "#fff", fontSize: 21, fontWeight: 800, lineHeight: 1.25, textAlign: "center", transform: `translateY(${(1 - s) * -70}px) scale(${0.6 + s * 0.4})`, opacity: Math.min(1, s * 2) }}>{text}</div>;
+  return <div style={{ marginTop: 8, padding: "6px 4px", borderRadius: 10, background: c, color: "#fff", fontSize: 21, fontWeight: 800, lineHeight: 1.25, textAlign: "center", transform: `translateY(${(1 - s) * -14}px)`, opacity: s }}>{text}</div>;
 };
 const Cal: React.FC = () => {
   const cell = 136;
@@ -256,7 +260,7 @@ const Shot: React.FC<{ k: string; tag: string; title: React.ReactNode; src: stri
   return (
     <Cut k={k}>
       <Title tag={tag} color={BLUE} size={70}>{title}</Title>
-      <div style={{ marginTop: 50, display: "flex", justifyContent: "center", transform: `translateY(${(1 - up) * 300}px)` }}><Phone src={src} w={520} frame={f} scroll={scroll} /></div>
+      <div style={{ marginTop: 50, display: "flex", justifyContent: "center", opacity: up, transform: `translateY(${(1 - up) * 80}px)` }}><Phone src={src} w={520} frame={f} scroll={scroll} /></div>
     </Cut>
   );
 };
@@ -266,7 +270,7 @@ const LedgerShot: React.FC = () => {
   return (
     <Cut k="ledger">
       <Title tag="说话算数账本" color={BLUE} size={70}>谁答应了什么，谁做到了</Title>
-      <div style={{ marginTop: 50, display: "flex", justifyContent: "center", transform: `translateY(${(1 - up) * 300}px)` }}><Ledger lang="zh" portrait f={f} popAt={Math.round(beat("ledger", 2))} /></div>
+      <div style={{ marginTop: 50, display: "flex", justifyContent: "center", opacity: up, transform: `translateY(${(1 - up) * 80}px)` }}><Ledger lang="zh" portrait f={f} popAt={Math.round(beat("ledger", 2))} smooth /></div>
     </Cut>
   );
 };
@@ -274,7 +278,7 @@ const APPS: [string, string][] = [["微信", "#07c160"], ["LINE", "#06c755"], ["
 const AppChip: React.FC<{ at: number; n: string; c: string }> = ({ at, n, c }) => {
   const s = usePop(at, 420);
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 22, padding: "26px 30px", borderRadius: 32, background: "#fff", boxShadow: "0 16px 36px -20px rgba(20,24,40,.35)", transform: `scale(${s})`, opacity: Math.min(1, s * 2) }}>
+    <div style={{ display: "flex", alignItems: "center", gap: 22, padding: "26px 30px", borderRadius: 32, background: "#fff", boxShadow: "0 16px 36px -20px rgba(20,24,40,.35)", transform: `translateY(${(1 - s) * 24}px)`, opacity: s }}>
       <div style={{ width: 70, height: 70, borderRadius: 20, background: c, color: "#fff", display: "grid", placeItems: "center", fontSize: 38, fontWeight: 900 }}>{n[0]}</div>
       <div style={{ fontSize: 44, fontWeight: 800, color: INK }}>{n}</div>
     </div>
@@ -294,15 +298,14 @@ const BADGES = ["本地运行", "聊天不上传", "开源可查", "AI 用你自
 const Badge: React.FC<{ at: number; text: string }> = ({ at, text }) => {
   const s = usePop(at, 420);
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "16px 28px", borderRadius: 999, background: "#fff", boxShadow: "0 14px 30px -18px rgba(20,24,40,.35)", fontSize: 40, fontWeight: 800, color: INK, transform: `scale(${s})`, opacity: Math.min(1, s * 2) }}>
+    <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "16px 28px", borderRadius: 999, background: "#fff", boxShadow: "0 14px 30px -18px rgba(20,24,40,.35)", fontSize: 40, fontWeight: 800, color: INK, transform: `translateY(${(1 - s) * 16}px)`, opacity: s }}>
       <span style={{ width: 40, height: 40, borderRadius: 20, background: GREEN, color: "#fff", display: "grid", placeItems: "center", fontSize: 26 }}>✓</span>{text}
     </div>
   );
 };
 const Safe: React.FC = () => {
   const f = useCurrentFrame();
-  const { fps } = useVideoConfig();
-  const close = spring({ frame: f - 10, fps, config: { damping: 9, stiffness: 300, mass: 0.6 } });
+  const close = ramp(f, 10, 14);
   const logoAt = 960 - T.safe[0];
   const logo = usePop(logoAt, 300);
   const glow = (Math.sin(f / 8) + 1) / 2;
@@ -327,7 +330,7 @@ const Safe: React.FC = () => {
         {BADGES.map((b, i) => <Badge key={b} at={beat("safe", 2 + i)} text={b} />)}
       </div>
       {f >= logoAt - 2 && (
-        <div style={{ position: "absolute", top: 640, left: 0, right: 0, display: "flex", flexDirection: "column", alignItems: "center", opacity: Math.min(1, logo * 1.5), transform: `scale(${0.8 + logo * 0.2})` }}>
+        <div style={{ position: "absolute", top: 640, left: 0, right: 0, display: "flex", flexDirection: "column", alignItems: "center", opacity: logo, transform: `translateY(${(1 - logo) * 24}px)` }}>
           <div style={{ fontSize: 76, fontWeight: 900, color: INK, textAlign: "center", lineHeight: 1.2 }}>再也不怕被问<br /><span style={{ color: RED }}>「你答应过我啥」</span></div>
           <div style={{ display: "flex", alignItems: "center", gap: 26, marginTop: 60 }}>
             <Img src={staticFile("icon.png")} style={{ width: 140, height: 140 }} />
