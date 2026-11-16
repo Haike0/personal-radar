@@ -14,7 +14,6 @@
   <a href="https://github.com/Haike0/personal-radar/actions/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/Haike0/personal-radar/ci.yml?style=for-the-badge&label=CI&logo=githubactions&logoColor=white"></a>
   <img alt="macOS · Windows · Linux" src="https://img.shields.io/badge/macOS%20·%20Windows%20·%20Linux-111216?style=for-the-badge&logo=apple&logoColor=white">
   <a href="LICENSE"><img alt="License AGPL-3.0" src="https://img.shields.io/badge/License-AGPL--3.0-2F8BFF?style=for-the-badge"></a>
-  <a href="https://github.com/Haike0/personal-radar/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/Haike0/personal-radar?style=for-the-badge&logo=github&color=FFD23F&logoColor=white&labelColor=555"></a>
 </p>
 
 <p align="center">
@@ -111,14 +110,16 @@ ReadMe only reads. It never logs into your chat accounts, never sends anything t
 
 ## Compared with
 
-| | ReadMe | [Monica](https://github.com/monicahq/monica) | [WeClone](https://github.com/xming521/WeClone) | [PingCRM](https://github.com/sneg55/pingcrm) |
-|---|---|---|---|---|
-| Main job | Reminders and per-person memory from your chats | Personal CRM you fill in by hand | Life portrait and an AI clone of you | Networking CRM synced from accounts |
-| Finds dated plans and promises | ✅ with the original words | — | — | Follow-ups |
-| Promise ledger + share card | ✅ | — | — | — |
-| Chat sources | 14, five of them synced automatically | — | Telegram (+ CSV) | Gmail, Telegram, WhatsApp, X, LinkedIn |
-| Desktop download | ✅ macOS · Windows · Linux | Self-host | Python | Self-host / cloud |
-| Runs | On your computer | Self-host or paid cloud | On your computer | Self-host or cloud |
+| | ReadMe | [パピマネ](https://pappimane.com) | [OneWise](https://onewise.ai) | [Pally](https://pally.com) | [PingCRM](https://github.com/sneg55/pingcrm) |
+|---|---|---|---|---|---|
+| What it does | Reminders and per-person memory from your chats | AI customer notes for hostesses, from LINE | Shows who needs a follow-up, from WhatsApp | An AI assistant you text | Networking CRM synced from your accounts |
+| Picks out of your chats | ✅ plans, promises and preferences, each with the original words | Nickname, tastes, next visit | Summaries, including what you promised | Follow-ups and "things you said you'd do" | Follow-ups |
+| Promise ledger + share card | ✅ | — | — | — | — |
+| Chat sources | 14, five of them synced automatically | LINE (exported) | WhatsApp | WhatsApp, iMessage (Mac app), email, Slack… | Gmail, Telegram, WhatsApp, X, LinkedIn |
+| Runs | On your computer, AI with your own key | iPhone / Android app | Online service | Online service, over text messages | Self-host or cloud |
+| Price | Free, open source | Free; Premium ¥2,980/month | From $19.75/month | Free | Free, open source |
+
+<sub>From each product's own website, November 2026.</sub>
 
 ## FAQ
 
@@ -130,28 +131,24 @@ ReadMe only reads. It never logs into your chat accounts, never sends anything t
 
 ## Roadmap
 
-- [x] Desktop downloads for macOS, Windows and Linux
-- [x] Automatic sync for iMessage, WhatsApp (Mac), Telegram, Beeper, WeChat folders
-- [x] Promise ledger and share card
-- [x] English, 简体中文, 繁體中文, 日本語
-- [ ] Notarized Mac app
-- [ ] Read-only online demo
-- [ ] KakaoTalk and Signal importers
-- [ ] MCP server, so Claude and other assistants can ask "what did I promise her?"
-- [ ] An accuracy benchmark for the organizing step
+**Done**
+
+- Desktop downloads for macOS, Windows and Linux
+- Automatic sync for iMessage, WhatsApp (Mac), Telegram, Beeper, WeChat folders
+- Promise ledger and share card
+- English, 简体中文, 繁體中文, 日本語
+
+**Next**
+
+- Notarized Mac app
+- Read-only online demo
+- KakaoTalk and Signal importers
+- MCP server, so Claude and other assistants can ask "what did I promise her?"
+- An accuracy benchmark for the organizing step
 
 ## Contributing
 
 The most useful contributions are new importers (KakaoTalk, Signal…) and fixes for real-world export variants; each format has fixtures and tests in `tests/`. Please read [CONTRIBUTING.md](CONTRIBUTING.md) and the [CLA](CLA.md) first, and never put real chat logs in issues.
-
-## Star history
-
-<a href="https://star-history.com/#Haike0/personal-radar&Date">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Haike0/personal-radar&type=Date&theme=dark">
-    <img alt="Star history" src="https://api.star-history.com/svg?repos=Haike0/personal-radar&type=Date" width="600">
-  </picture>
-</a>
 
 ## Thanks
 

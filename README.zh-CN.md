@@ -14,7 +14,6 @@
   <a href="https://github.com/Haike0/personal-radar/actions/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/Haike0/personal-radar/ci.yml?style=for-the-badge&label=CI&logo=githubactions&logoColor=white"></a>
   <img alt="macOS · Windows · Linux" src="https://img.shields.io/badge/macOS%20·%20Windows%20·%20Linux-111216?style=for-the-badge&logo=apple&logoColor=white">
   <a href="LICENSE"><img alt="License AGPL-3.0" src="https://img.shields.io/badge/License-AGPL--3.0-2F8BFF?style=for-the-badge"></a>
-  <a href="https://github.com/Haike0/personal-radar/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/Haike0/personal-radar?style=for-the-badge&logo=github&color=FFD23F&logoColor=white&labelColor=555"></a>
 </p>
 
 <p align="center">
@@ -111,14 +110,16 @@ ReadMe 只读不写：不登录你的聊天账号，不通过它们发任何东�
 
 ## 和别的工具比
 
-| | ReadMe | [Monica](https://github.com/monicahq/monica) | [WeClone](https://github.com/xming521/WeClone) | [PingCRM](https://github.com/sneg55/pingcrm) |
-|---|---|---|---|---|
-| 主要做什么 | 从聊天里提醒约定、记住每个人 | 手动填写的个人 CRM | 人生画像和你的 AI 分身 | 从账号同步的人脉 CRM |
-| 找出带日期的约定和承诺 | ✅ 附原话 | — | — | 跟进提醒 |
-| 说话算数账本和分享卡片 | ✅ | — | — | — |
-| 聊天来源 | 14 种，其中 5 种自动同步 | — | Telegram（加 CSV） | Gmail、Telegram、WhatsApp、X、LinkedIn |
-| 桌面安装包 | ✅ macOS · Windows · Linux | 自建 | Python | 自建或云 |
-| 运行在哪 | 你的电脑 | 自建或付费云 | 你的电脑 | 自建或云 |
+| | ReadMe | [パピマネ](https://pappimane.com) | [OneWise](https://onewise.ai) | [Pally](https://pally.com) | [PingCRM](https://github.com/sneg55/pingcrm) |
+|---|---|---|---|---|---|
+| 做什么 | 从聊天里提醒约定、记住每个人 | 给夜场从业者的 AI 客人笔记，读 LINE | 读 WhatsApp，提示该跟进谁 | 发短信就能用的 AI 助理 | 从各账号同步的人脉 CRM |
+| 从聊天里找出什么 | ✅ 约定、承诺、喜好，每条附原话 | 称呼、喜好、下次来店 | 聊天摘要，包括你答应过什么 | 待跟进的事、你说过要做的事 | 跟进提醒 |
+| 说话算数账本和分享卡片 | ✅ | — | — | — | — |
+| 聊天来源 | 14 种，其中 5 种自动同步 | LINE（导出） | WhatsApp | WhatsApp、iMessage（Mac 应用）、邮件、Slack 等 | Gmail、Telegram、WhatsApp、X、LinkedIn |
+| 运行在哪 | 你的电脑，AI 用你自己的密钥 | iPhone / Android 应用 | 在线服务 | 在线服务，通过短信使用 | 自建或云 |
+| 价格 | 免费，开源 | 免费；高级版 ¥2,980/月 | $19.75/月起 | 免费 | 免费，开源 |
+
+<sub>信息来自各产品官网，2026 年 11 月。</sub>
 
 ## 常见问题
 
@@ -130,28 +131,24 @@ ReadMe 只读不写：不登录你的聊天账号，不通过它们发任何东�
 
 ## 路线图
 
-- [x] macOS、Windows、Linux 桌面安装包
-- [x] iMessage、WhatsApp（Mac）、Telegram、Beeper、微信文件夹自动同步
-- [x] 说话算数账本和分享卡片
-- [x] English、简体中文、繁體中文、日本語
-- [ ] 经过苹果公证的 Mac 版
-- [ ] 只读的在线演示
-- [ ] KakaoTalk、Signal 导入
-- [ ] MCP 服务：让 Claude 等助手直接问「我答应过她什么？」
-- [ ] 整理准确率评测
+**已完成**
+
+- macOS、Windows、Linux 桌面安装包
+- iMessage、WhatsApp（Mac）、Telegram、Beeper、微信文件夹自动同步
+- 说话算数账本和分享卡片
+- English、简体中文、繁體中文、日本語
+
+**接下来**
+
+- 经过苹果公证的 Mac 版
+- 只读的在线演示
+- KakaoTalk、Signal 导入
+- MCP 服务：让 Claude 等助手直接问「我答应过她什么？」
+- 整理准确率评测
 
 ## 参与
 
 最有用的贡献是新的导入格式（KakaoTalk、Signal…）和对真实导出变体的修正，每种格式在 `tests/` 里都有样例和测试。提交前请先看 [CONTRIBUTING.md](CONTRIBUTING.md) 和 [CLA](CLA.md)，不要在 issue 里贴真实的聊天记录。
-
-## Star 趋势
-
-<a href="https://star-history.com/#Haike0/personal-radar&Date">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Haike0/personal-radar&type=Date&theme=dark">
-    <img alt="Star 趋势" src="https://api.star-history.com/svg?repos=Haike0/personal-radar&type=Date" width="600">
-  </picture>
-</a>
 
 ## 致谢
 

@@ -14,7 +14,6 @@
   <a href="https://github.com/Haike0/personal-radar/actions/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/Haike0/personal-radar/ci.yml?style=for-the-badge&label=CI&logo=githubactions&logoColor=white"></a>
   <img alt="macOS · Windows · Linux" src="https://img.shields.io/badge/macOS%20·%20Windows%20·%20Linux-111216?style=for-the-badge&logo=apple&logoColor=white">
   <a href="LICENSE"><img alt="License AGPL-3.0" src="https://img.shields.io/badge/License-AGPL--3.0-2F8BFF?style=for-the-badge"></a>
-  <a href="https://github.com/Haike0/personal-radar/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/Haike0/personal-radar?style=for-the-badge&logo=github&color=FFD23F&logoColor=white&labelColor=555"></a>
 </p>
 
 <p align="center">
@@ -111,14 +110,16 @@ ReadMe は読むだけです。トークのアカウントにログインせず�
 
 ## ほかのツールとの比較
 
-| | ReadMe | [Monica](https://github.com/monicahq/monica) | [WeClone](https://github.com/xming521/WeClone) | [PingCRM](https://github.com/sneg55/pingcrm) |
-|---|---|---|---|---|
-| 主な役割 | トークから約束を知らせ、一人ひとりを覚えておく | 手入力の個人 CRM | 人生のポートレートと AI 分身 | アカウント連携の人脈 CRM |
-| 日付つきの約束・予定を抽出 | ✅ 元の発言つき | — | — | フォローアップ |
-| 約束帳とシェアカード | ✅ | — | — | — |
-| 取り込み先 | 14 種類（うち 5 種類は自動同期） | — | Telegram（＋CSV） | Gmail、Telegram、WhatsApp、X、LinkedIn |
-| デスクトップ版 | ✅ macOS · Windows · Linux | セルフホスト | Python | セルフホスト／クラウド |
-| 動作場所 | あなたのパソコン | セルフホスト／有料クラウド | あなたのパソコン | セルフホスト／クラウド |
+| | ReadMe | [パピマネ](https://pappimane.com) | [OneWise](https://onewise.ai) | [Pally](https://pally.com) | [PingCRM](https://github.com/sneg55/pingcrm) |
+|---|---|---|---|---|---|
+| 主な役割 | トークから約束を知らせ、一人ひとりを覚えておく | 夜職向けの AI 顧客メモ（LINE から） | WhatsApp から、連絡すべき相手を示す | メッセージで使う AI アシスタント | アカウント連携の人脈 CRM |
+| トークから拾うもの | ✅ 予定・約束・好み（すべて元の発言つき） | 呼び方・好み・次回来店 | 要約（約束した内容を含む） | フォローアップ、やると言ったこと | フォローアップ |
+| 約束帳とシェアカード | ✅ | — | — | — | — |
+| 取り込み先 | 14 種類（うち 5 種類は自動同期） | LINE（書き出し） | WhatsApp | WhatsApp、iMessage（Mac アプリ）、メール、Slack など | Gmail、Telegram、WhatsApp、X、LinkedIn |
+| 動作場所 | あなたのパソコン（AI は自分のキー） | iPhone / Android アプリ | オンラインサービス | オンラインサービス（メッセージ経由） | セルフホスト／クラウド |
+| 料金 | 無料・オープンソース | 無料／Premium 月額 2,980 円 | 月額 19.75 ドルから | 無料 | 無料・オープンソース |
+
+<sub>各サービスの公式サイトより（2026 年 11 月）。</sub>
 
 ## よくある質問
 
@@ -130,28 +131,24 @@ ReadMe は読むだけです。トークのアカウントにログインせず�
 
 ## ロードマップ
 
-- [x] macOS・Windows・Linux のデスクトップ版
-- [x] iMessage・WhatsApp（Mac）・Telegram・Beeper・WeChat フォルダの自動同期
-- [x] 約束帳とシェアカード
-- [x] 日本語・English・简体中文・繁體中文
-- [ ] Apple 公証済みの Mac 版
-- [ ] 読み取り専用のオンラインデモ
-- [ ] KakaoTalk・Signal の読み込み
-- [ ] MCP サーバー（Claude などから「彼女に何を約束した？」と聞ける）
-- [ ] 整理精度のベンチマーク
+**完了**
+
+- macOS・Windows・Linux のデスクトップ版
+- iMessage・WhatsApp（Mac）・Telegram・Beeper・WeChat フォルダの自動同期
+- 約束帳とシェアカード
+- 日本語・English・简体中文・繁體中文
+
+**今後**
+
+- Apple 公証済みの Mac 版
+- 読み取り専用のオンラインデモ
+- KakaoTalk・Signal の読み込み
+- MCP サーバー（Claude などから「彼女に何を約束した？」と聞ける）
+- 整理精度のベンチマーク
 
 ## コントリビュート
 
 いちばん助かるのは、新しい読み込み形式（KakaoTalk、Signal など）と、実際のエクスポートの差異への対応です。形式ごとに `tests/` にサンプルとテストがあります。先に [CONTRIBUTING.md](CONTRIBUTING.md) と [CLA](CLA.md) をお読みください。Issue に本物のトーク履歴は貼らないでください。
-
-## Star の推移
-
-<a href="https://star-history.com/#Haike0/personal-radar&Date">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Haike0/personal-radar&type=Date&theme=dark">
-    <img alt="Star の推移" src="https://api.star-history.com/svg?repos=Haike0/personal-radar&type=Date" width="600">
-  </picture>
-</a>
 
 ## 謝辞
 
