@@ -51,19 +51,18 @@ a { color: inherit; text-decoration: none; }
 
 /* floating glass tab bar + AI button (iOS 26 style: a capsule with a separate round button beside it) */
 /* bottom bar + AI button glass: adjustable in 设置 → 通用 (data-glass on <html>) */
-:root { --glass: .9; --glass-blur: 22px; }
-:root[data-glass="clear"] { --glass: .62; --glass-blur: 22px; }
+:root { --glass: .9; --glass-blur: 16px; }
+:root[data-glass="clear"] { --glass: .62; --glass-blur: 16px; }
 :root[data-glass="solid"] { --glass: .98; --glass-blur: 8px; }
 /* Liquid Glass: a frosted capsule with a bright rim and a soft sheen on top; the lens (TabBar.tsx) marks the tab */
 .tabbar {
   position: fixed; left: 14px; right: calc(14px + 60px + 10px); bottom: calc(max(var(--safe-bottom), 10px) + 2px); z-index: 100;
   height: 60px; padding: 4px; border-radius: 30px; display: flex; justify-content: space-between; touch-action: none;
   background: light-dark(rgba(255, 255, 255, calc(var(--glass) - .22)), rgba(30, 34, 52, calc(var(--glass) - .18)));
-  backdrop-filter: blur(var(--glass-blur)) saturate(1.9) brightness(1.04); -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.9) brightness(1.04);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.8); -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.8);
   box-shadow: inset 0 1px 0 light-dark(rgba(255, 255, 255, .9), rgba(255, 255, 255, .16)), inset 0 -1px 0 light-dark(rgba(0, 0, 0, .04), rgba(0, 0, 0, .2)),
     0 0 0 .5px light-dark(rgba(0, 0, 0, .07), rgba(255, 255, 255, .1)), 0 12px 32px rgba(0, 0, 0, .14), 0 2px 6px rgba(0, 0, 0, .06);
   transition: scale 300ms cubic-bezier(.3, 1.4, .5, 1);
-  view-transition-name: tabbar;
 }
 .tabbar::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
   background: linear-gradient(180deg, light-dark(rgba(255, 255, 255, .55), rgba(255, 255, 255, .07)), transparent 55%); }
@@ -74,7 +73,6 @@ a { color: inherit; text-decoration: none; }
 /* while sliding: the lens lifts off the bar as a clear magnifier and follows the finger exactly */
 .tabbar[data-drag] .tabbar-lens { scale: 1.22 1.16; transition: translate 70ms linear, scale 320ms cubic-bezier(.3, 1.5, .5, 1), background-color 200ms, box-shadow 200ms;
   background: light-dark(rgba(255, 255, 255, .42), rgba(255, 255, 255, .14));
-  backdrop-filter: blur(1.5px) saturate(1.8) brightness(1.06); -webkit-backdrop-filter: blur(1.5px) saturate(1.8) brightness(1.06);
   box-shadow: inset 0 1px 1px rgba(255, 255, 255, .95), inset 0 -1px 2px light-dark(rgba(0, 0, 0, .08), rgba(0, 0, 0, .3)),
     inset 0 0 0 .5px light-dark(rgba(255, 255, 255, .8), rgba(255, 255, 255, .25)), 0 6px 18px rgba(0, 0, 0, .16); }
 .tab { position: relative; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; border-radius: 26px;
@@ -83,6 +81,18 @@ a { color: inherit; text-decoration: none; }
 .tab[data-active] { color: var(--mantine-color-radar-filled); }
 .tabbar[data-drag] .tab[data-active] { scale: 1.12; }
 @media (prefers-reduced-motion: reduce) { .tabbar-lens, .tab, .tabbar { transition: none; } }
+/* no blur where it's unsupported, unwanted or too heavy (data-lite: low-memory Android / data saver, set in layout.tsx) */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .tabbar, .ai-fab, .action-dock { background: light-dark(#fff, #1e2234); }
+}
+@media (prefers-reduced-transparency: reduce) { .tabbar, .ai-fab, .action-dock { background: light-dark(#fff, #1e2234); backdrop-filter: none; -webkit-backdrop-filter: none; } }
+:root[data-lite] .tabbar, :root[data-lite] .ai-fab, :root[data-lite] .action-dock { background: light-dark(#fff, #1e2234); backdrop-filter: none; -webkit-backdrop-filter: none; }
+
+/* item page: the buttons sit on their own frosted panel instead of floating over the text */
+.action-dock { padding: 10px; margin: 0 -6px; border-radius: 26px;
+  background: light-dark(rgba(255, 255, 255, .82), rgba(30, 34, 52, .82));
+  backdrop-filter: blur(16px) saturate(1.6); -webkit-backdrop-filter: blur(16px) saturate(1.6);
+  box-shadow: 0 0 0 .5px light-dark(rgba(0, 0, 0, .07), rgba(255, 255, 255, .08)), 0 10px 28px rgba(0, 0, 0, .12); }
 
 .ai-fab { -webkit-touch-callout: none; }
 a, button, [role="button"], .tabbar, .ai-fab, .pressable, .mantine-SegmentedControl-root, .mantine-Switch-root, .mantine-Badge-root {
@@ -124,8 +134,8 @@ a { color: inherit; text-decoration: none; }
 
 /* floating glass tab bar + AI button (iOS 26 style: a capsule with a separate round button beside it) */
 /* bottom bar + AI button glass: adjustable in 设置 → 通用 (data-glass on <html>) */
-:root { --glass: .9; --glass-blur: 22px; }
-:root[data-glass="clear"] { --glass: .62; --glass-blur: 22px; }
+:root { --glass: .9; --glass-blur: 16px; }
+:root[data-glass="clear"] { --glass: .62; --glass-blur: 16px; }
 :root[data-glass="solid"] { --glass: .98; --glass-blur: 8px; }
 .tabbar {
   position: fixed; left: 14px; right: calc(14px + 60px + 10px); bottom: calc(max(var(--safe-bottom), 10px) + 2px); z-index: 100;
@@ -145,7 +155,6 @@ a { color: inherit; text-decoration: none; }
   backdrop-filter: saturate(1.8) blur(var(--glass-blur)); -webkit-backdrop-filter: saturate(1.8) blur(var(--glass-blur));
   box-shadow: 0 10px 30px rgba(0, 0, 0, .12), 0 1px 3px rgba(0, 0, 0, .06);
   transition: transform 260ms cubic-bezier(.3, 1.5, .5, 1);
-  view-transition-name: ai-fab;
 }
 .ai-fab:active { transform: scale(.9); transition-duration: 120ms; }
 @media (min-width: 48em) { .ai-fab { bottom: 28px; right: 28px; width: 56px; height: 56px; } }
@@ -156,31 +165,10 @@ a { color: inherit; text-decoration: none; }
 
 .fade-in { animation: fade-in 220ms cubic-bezier(.2, .8, .2, 1); }
 
-/* ── page transitions (React <ViewTransition name="page"> in Shell.tsx) ──
-   switching tabs: a quick cross-fade with a slight rise; opening something: it slides in from the right over the old page,
-   which drifts left and dims (iOS push); going back: the reverse. The bar and the AI button stay put. */
-::view-transition-old(root), ::view-transition-new(root) { animation: none; }
-::view-transition-old(tabbar), ::view-transition-old(ai-fab) { display: none; }
-::view-transition-new(tabbar), ::view-transition-new(ai-fab) { animation: none; }
-::view-transition-group(page) { animation-duration: 340ms; animation-timing-function: cubic-bezier(.2, .8, .2, 1); }
-::view-transition-old(page) { animation: vt-out 160ms ease-in both; }
-::view-transition-new(page) { animation: vt-in 300ms cubic-bezier(.2, .8, .2, 1) both; }
-html[data-nav="push"]::view-transition-old(page) { animation: vt-push-out 380ms cubic-bezier(.2, .8, .2, 1) both; }
-html[data-nav="push"]::view-transition-new(page) { animation: vt-push-in 380ms cubic-bezier(.2, .8, .2, 1) both; }
-html[data-nav="pop"]::view-transition-old(page) { animation: vt-pop-out 340ms cubic-bezier(.2, .8, .2, 1) both; z-index: 1; }
-html[data-nav="pop"]::view-transition-new(page) { animation: vt-pop-in 340ms cubic-bezier(.2, .8, .2, 1) both; }
-/* the back button (useBack in nav.ts) animates the whole page itself */
-html.vt-back::view-transition-old(root) { animation: vt-pop-out 320ms cubic-bezier(.2, .8, .2, 1) both; z-index: 1; }
-html.vt-back::view-transition-new(root) { animation: vt-pop-in 320ms cubic-bezier(.2, .8, .2, 1) both; }
-@keyframes vt-out { to { opacity: 0; } }
-@keyframes vt-in { from { opacity: 0; transform: translateY(10px) scale(.992); } }
-@keyframes vt-push-out { to { opacity: .4; transform: translateX(-28%); } }
-@keyframes vt-push-in { from { transform: translateX(100%); box-shadow: -10px 0 30px rgba(0, 0, 0, .08); } }
-@keyframes vt-pop-out { to { opacity: 0; transform: translateX(60%); } }
-@keyframes vt-pop-in { from { opacity: .4; transform: translateX(-28%); } }
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
-}
+/* ── page changes (Shell.tsx .page-enter) ── opacity only, so it costs nothing on a slow phone */
+.page-enter { animation: page-in 180ms ease-out both; }
+@keyframes page-in { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .page-enter { animation: none; } }
 
 /* every tappable thing gives way under the finger and springs back (Mantine buttons, chips, icon buttons, segmented controls) */
 .press { transition: transform 240ms cubic-bezier(.3, 1.5, .5, 1), background-color 140ms, color 140ms, border-color 140ms, box-shadow 140ms; }

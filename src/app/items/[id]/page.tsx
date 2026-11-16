@@ -184,7 +184,7 @@ export default function ItemPage() {
 
       <Divider opacity={0} />
       {open ? (
-        <Stack gap="xs" style={{ position: "sticky", bottom: "calc(var(--tabbar-h) + var(--safe-bottom) + 8px)", zIndex: 5 }}>
+        <Stack gap="xs" className="action-dock" style={{ position: "sticky", bottom: "calc(var(--tabbar-h) + var(--safe-bottom) + 8px)", zIndex: 5 }}>
           <Button size="lg" radius="xl" leftSection={<IconCircleCheck size={20} />} onClick={() => act(it.id, "followed", {}, t("已标记为已关心，不再提醒"))}>{t("标记为已关心")}</Button>
           <SimpleGrid cols={3} spacing="xs">
             <Menu position="top" radius="lg" shadow="md">

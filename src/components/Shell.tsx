@@ -7,7 +7,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { registerSW } from "@/lib/push-client";
 import { recordPath } from "@/lib/nav";
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, ViewTransition, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { CompanionContext } from "@/lib/ai/types";
 import { Companion } from "./Companion";
 import { TabBar } from "./TabBar";
@@ -21,9 +21,6 @@ const TABS = [
 ];
 
 const PHONE_TABS = TABS.filter((tb) => tb.href !== "/companion");
-
-/** How deep a page sits: tabs are 1, a person or an item opened from them is 2 or more. Decides push / pop / switch. */
-const depth = (p: string) => p.split(/[?#]/)[0].split("/").filter(Boolean).length || 1;
 
 type Ctx = { openCompanion: (prompt?: string, context?: CompanionContext) => void; setPageContext: (c: CompanionContext) => void; pageContext: CompanionContext };
 const CompanionCtx = createContext<Ctx | null>(null);
@@ -50,23 +47,6 @@ export function Shell({ children }: { children: ReactNode }) {
   const openCompanion = useCallback((prompt?: string, context?: CompanionContext) => { setOverride(context ?? null); setSeed(prompt); setOpen(true); }, []);
   const value = useMemo(() => ({ openCompanion, setPageContext, pageContext }), [openCompanion, pageContext]);
   useEffect(() => { recordPath(path); }, [path]);
-  // tell the page transition which way to move: deeper = slide in from the right, shallower = back, same level = fade
-  const last = useRef(path);
-  useEffect(() => {
-    const mark = (to: string) => {
-      const a = depth(last.current), b = depth(to);
-      document.documentElement.dataset.nav = b > a ? "push" : b < a ? "pop" : "switch";
-    };
-    const onClick = (e: MouseEvent) => {
-      const a = (e.target as Element | null)?.closest?.("a[href^='/']");
-      if (a) mark(a.getAttribute("href")!);
-    };
-    const onPop = () => mark(location.pathname);
-    document.addEventListener("click", onClick, true);
-    window.addEventListener("popstate", onPop);
-    return () => { document.removeEventListener("click", onClick, true); window.removeEventListener("popstate", onPop); };
-  }, []);
-  useEffect(() => { last.current = path; }, [path]);
   const active = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
   const onCompanionPage = path.startsWith("/companion");
   // first-run pages are a focused flow: no sidebar, no bottom tab bar, no AI button
@@ -119,8 +99,9 @@ export function Shell({ children }: { children: ReactNode }) {
         <AppShell.Main>
           <Box maw={wide ? 1120 : 760} mx="auto" px={{ base: 16, sm: 32 }} pt={{ base: "calc(var(--safe-top) + 18px)", sm: 36 }}
             pb={{ base: bare ? "calc(var(--safe-bottom) + 28px)" : "calc(var(--tabbar-h) + var(--safe-bottom) + 28px)", sm: 48 }}>
-            {/* page changes cross-fade (switching tabs) or slide like iOS (opening / going back); see globals.css */}
-            <ViewTransition name="page">{children}</ViewTransition>
+            {/* each page fades in on its own; the old page is gone at once, so two pages never overlap,
+                and only opacity animates (cheap on any phone, and fixed / sticky bars inside stay put) */}
+            <div key={path} className="page-enter">{children}</div>
           </Box>
         </AppShell.Main>
       </AppShell>
