@@ -46,10 +46,10 @@ const FONTS = {
 } as const;
 const FONT = "var(--film-font)";
 const ease = Easing.bezier(0.2, 0.8, 0.2, 1);
-const fade = (f: number, len: number, inLen = 12, outLen = 12) =>
+export const fade = (f: number, len: number, inLen = 12, outLen = 12) =>
   Math.min(interpolate(f, [0, inLen], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }), interpolate(f, [len - outLen, len], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }));
 
-const Backdrop: React.FC = () => (
+export const Backdrop: React.FC = () => (
   <AbsoluteFill style={{ background: "#f7f8fa" }}>
     <AbsoluteFill style={{ background: "radial-gradient(45% 45% at 20% 15%, rgba(10,199,240,.20), transparent 70%), radial-gradient(45% 45% at 85% 85%, rgba(47,139,255,.18), transparent 70%)" }} />
   </AbsoluteFill>
@@ -90,7 +90,7 @@ const Caption: React.FC<{ title: string; sub: string; frame: number; portrait: b
 };
 
 /** A product scene: caption on one side, phone on the other (stacked in portrait). */
-const Scene: React.FC<{ len: number; portrait: boolean; caption: [string, string]; idx: number; children: (f: number) => React.ReactNode }> = ({ len, portrait, caption, idx, children }) => {
+export const Scene: React.FC<{ len: number; portrait: boolean; caption: [string, string]; idx: number; children: (f: number) => React.ReactNode }> = ({ len, portrait, caption, idx, children }) => {
   const f = useCurrentFrame();
   const o = fade(f, len);
   const { fps } = useVideoConfig();
@@ -159,7 +159,7 @@ const Brand: React.FC<{ lang: Lang; portrait: boolean }> = ({ lang, portrait }) 
   );
 };
 
-const Ledger: React.FC<{ lang: Lang; portrait: boolean; f: number }> = ({ lang, portrait, f }) => {
+export const Ledger: React.FC<{ lang: Lang; portrait: boolean; f: number }> = ({ lang, portrait, f }) => {
   const { fps } = useVideoConfig();
   const pop = spring({ frame: f - 70, fps, config: { damping: 13, mass: 0.9 } });
   const pw = portrait ? 560 : 430;
