@@ -128,12 +128,11 @@ const AskBody: React.FC = () => (
         <Typing from={beat("ask", 4)} to={beat("ask", 6)} />
         <Bubble me at={beat("ask", 6)}>……</Bubble>
       </div>
-      <Boom at={DOOM} />
     </AbsoluteFill>
   </AbsoluteFill>
 );
 
-// 1. 00:47, the question. The panic line lands and the whole screen shakes hard.
+// 1. 00:47, the question. After his "……", the whole screen shakes hard.
 const DOOM = Math.round(beat("ask", 7));
 const Ask: React.FC = () => {
   const f = useCurrentFrame();
@@ -147,19 +146,6 @@ const Ask: React.FC = () => {
     <AbsoluteFill style={{ transform: `translate(${shake}px, ${shakeY}px) rotate(${tilt}deg) scale(${zoom})`, opacity: interpolate(f, [114, 120], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) }}>
       <AskBody />
     </AbsoluteFill>
-  );
-};
-
-/** "完了" punches in while the screen shakes (see Ask) */
-const Boom: React.FC<{ at: number }> = ({ at }) => {
-  const f = useCurrentFrame();
-  const d = f - at;
-  if (d < 0) return null;
-  const punch = interpolate(d, [0, 3, 8], [1.3, 0.96, 1], { extrapolateRight: "clamp", easing: Easing.out(Easing.quad) });
-  return (
-    <div style={{ position: "absolute", left: 0, right: 0, bottom: 230, height: 240, display: "flex", justifyContent: "center", alignItems: "center" }}>
-      <div style={{ fontSize: 80, fontWeight: 900, color: RED, whiteSpace: "nowrap", transform: `scale(${punch})` }}>完了，忘得一干二净</div>
-    </div>
   );
 };
 
