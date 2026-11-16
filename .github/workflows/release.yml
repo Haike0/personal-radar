@@ -1,5 +1,5 @@
 name: Release
-# Push a tag like v1.0.0 → builds the desktop downloads and attaches them to the GitHub release.
+# Push a tag like v1.0.1 → builds the desktop downloads and attaches them to the GitHub release.
 on:
   push:
     tags: ["v*"]
@@ -8,7 +8,7 @@ permissions:
   contents: write
 jobs:
   package:
-    runs-on: macos-14
+    runs-on: macos-latest  # macos-14 runners are no longer offered
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

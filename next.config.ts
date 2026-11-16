@@ -19,7 +19,8 @@ function runtimeDeps(names: string[]) {
     for (const n of Object.keys({ ...pj.dependencies, ...pj.optionalDependencies })) { const r = find(n, dir); if (r) walk(r); }
   };
   for (const n of names) { const r = find(n, process.cwd()); if (r) walk(r); }
-  return [...seen].map((d) => `${path.relative(process.cwd(), d)}/**`);
+  // tracing globs use forward slashes; path.relative gives backslashes on Windows, which then match nothing
+  return [...seen].map((d) => `${path.relative(process.cwd(), d).split(path.sep).join("/")}/**`);
 }
 
 // All pages fetch live data from the local SQLite API at request time, so the
