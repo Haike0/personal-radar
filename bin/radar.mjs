@@ -17,6 +17,7 @@ import os from "node:os";
 import path from "node:path";
 import { createRequire } from "node:module";
 import { finishStandalone } from "./standalone.mjs";
+import { freePort, startFront } from "./front.mjs";
 import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -75,11 +76,20 @@ if (!built || args.includes("--rebuild")) {
 
 const url = `http://${HOST === "127.0.0.1" || HOST === "0.0.0.0" || HOST === "::" ? "localhost" : HOST}:${PORT}`;
 const env = { ...process.env, NODE_ENV: "production", RADAR_PORT: PORT, NEXT_TELEMETRY_DISABLED: "1", RADAR_ROOT: ROOT, RADAR_DEMO_DIR: process.env.RADAR_DEMO_DIR ?? path.join(ROOT, "demo") };
+// Next listens on a private port; the front door (front.mjs) takes the public one and gzips API answers for the phone
+const INNER = String(await freePort());
 const server = fs.existsSync(SA)
-  ? spawn(process.execPath, [SA], { cwd: path.dirname(SA), stdio: ["ignore", "ignore", "inherit"], env: { ...env, PORT, HOSTNAME: HOST } })
-  : spawn(process.execPath, [nextBin(), "start", "-p", PORT, "-H", HOST], { cwd: ROOT, stdio: ["ignore", "ignore", "inherit"], env });
+  ? spawn(process.execPath, [SA], { cwd: path.dirname(SA), stdio: ["ignore", "ignore", "inherit"], env: { ...env, PORT: INNER, HOSTNAME: "127.0.0.1" } })
+  : spawn(process.execPath, [nextBin(), "start", "-p", INNER, "-H", "127.0.0.1"], { cwd: ROOT, stdio: ["ignore", "ignore", "inherit"], env });
 server.on("exit", (code) => process.exit(code ?? 0));
 for (const sig of ["SIGINT", "SIGTERM"]) process.on(sig, () => server.kill(sig));
+try {
+  await startFront({ port: PORT, host: HOST, inner: INNER });
+} catch (e) {
+  console.error(e.code === "EADDRINUSE" ? `端口 ${PORT} 已经被占用（可能 ReadMe 已经开着）。换一个：--port 3211` : `没能打开端口 ${PORT}：${e.message}`);
+  server.kill();
+  process.exit(1);
+}
 
 // wait until it answers, then open the browser
 for (let i = 0; i < 60; i++) {

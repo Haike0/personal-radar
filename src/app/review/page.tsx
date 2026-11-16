@@ -9,6 +9,7 @@ import { Suspense, useMemo, useState } from "react";
 import { ReviewButtons } from "@/components/ItemCard";
 import { usePageContext } from "@/components/Shell";
 import { useApi } from "@/lib/client";
+import { useListMotion } from "@/lib/motion";
 import { relDate } from "@/lib/format";
 import { isKnowledge, KIND_LABEL, unreviewed, type Item } from "@/lib/types";
 
@@ -17,8 +18,9 @@ const line = { borderTop: "1px solid light-dark(rgba(20,24,39,.07), rgba(255,255
 const hash = (n: number) => ((n * 2654435761) >>> 0) % 1000;
 
 function Rows({ list }: { list: Item[] }) {
+  const motion = useListMotion();
   return (
-    <Paper className="surface" radius="xl" style={{ overflow: "hidden" }}>
+    <Paper className="surface" radius="xl" style={{ overflow: "hidden" }} ref={motion}>
       {list.map((i, idx) => (
         <Box key={i.id} px="md" py={12} style={idx ? line : undefined}>
           <Group gap={6} mb={4}>

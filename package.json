@@ -1,6 +1,6 @@
 {
   "name": "readme-app",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "ReadMe — local-first memory for the people you care about: finds plans, promises and preferences in your chats and reminds you, every line traced to the original words.",
   "keywords": [
     "local-first",
@@ -68,7 +68,9 @@
     "serve": "next start -p 3210 -H 127.0.0.1",
     "prepare": "node bin/prepare.mjs"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@formkit/auto-animate": "^0.8.2"
+  },
   "devDependencies": {
     "@mantine/core": "^9.7.5",
     "@mantine/dates": "^9.7.5",

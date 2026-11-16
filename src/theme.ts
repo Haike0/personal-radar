@@ -13,12 +13,19 @@ export const theme = createTheme({
   defaultRadius: "lg",
   cursorType: "pointer",
   respectReducedMotion: true,
+  // every Mantine button / icon button / chip springs under the finger (.press in globals.css) instead of a 1px nudge
+  activeClassName: "press",
   components: {
     Card: { defaultProps: { radius: "xl", padding: "md" } },
     Button: { defaultProps: { radius: "md" } },
     Badge: { defaultProps: { radius: "sm", variant: "light" } },
     ActionIcon: { defaultProps: { radius: "md", variant: "subtle" } },
-    Drawer: { defaultProps: { radius: "xl" } },
-    Modal: { defaultProps: { radius: "xl", centered: true } },
+    // dialogs and menus open with a short spring instead of popping in or fading slowly
+    Drawer: { defaultProps: { radius: "xl", transitionProps: { duration: 320, timingFunction: "cubic-bezier(.2, .8, .2, 1)" } } },
+    Modal: { defaultProps: { radius: "xl", centered: true, transitionProps: { transition: "pop", duration: 240, timingFunction: "cubic-bezier(.2, .8, .2, 1)" } } },
+    Menu: { defaultProps: { transitionProps: { transition: "pop", duration: 180 } } },
+    Popover: { defaultProps: { transitionProps: { transition: "pop", duration: 180 } } },
+    Tooltip: { defaultProps: { transitionProps: { transition: "fade", duration: 140 } } },
+    Collapse: { defaultProps: { transitionDuration: 260, transitionTimingFunction: "cubic-bezier(.2, .8, .2, 1)" } },
   },
 });

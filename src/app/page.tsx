@@ -11,6 +11,7 @@ import { LedgerShare } from "@/components/LedgerShare";
 import { PersonBar, useCurrentPerson } from "@/components/PersonSwitcher";
 import { usePageContext } from "@/components/Shell";
 import { useApi } from "@/lib/client";
+import { useListMotion } from "@/lib/motion";
 import { ORDER, pickFocus } from "@/lib/focus";
 import { dayDiff, greeting, relDate, sinceText, WEEKDAYS, weekdayLine } from "@/lib/format";
 import type { Health } from "@/lib/health";
@@ -31,8 +32,9 @@ function Stat({ n, label, hint, color, onClick }: { n: number; label: string; hi
 }
 
 function Card({ title, extra, children, id }: { title: string; extra?: React.ReactNode; children: React.ReactNode; id?: string }) {
+  const motion = useListMotion();
   return (
-    <Stack gap="xs" id={id} style={{ scrollMarginTop: 16 }}>
+    <Stack gap="xs" id={id} style={{ scrollMarginTop: 16 }} ref={motion}>
       <Group justify="space-between" align="baseline"><Text fw={650}>{title}</Text>{extra}</Group>
       {children}
     </Stack>
@@ -57,9 +59,10 @@ function Week({ items }: { items: Item[] }) {
     .filter((i) => i.eventDate && !isKnowledge(i) && ["open", "snoozed"].includes(i.status) && dayDiff(i.eventDate) >= 0 && dayDiff(i.eventDate) <= 7)
     .sort((a, b) => (a.eventDate! + (a.eventTime ?? "")).localeCompare(b.eventDate! + (b.eventTime ?? "")));
   const unsure = list.filter((i) => i.certainty !== "confirmed" || unreviewed(i)).length;
+  const motion = useListMotion();
   return (
     <Card title={t("未来 7 天")} extra={<More href="/timeline">{t("时间线")}</More>}>
-      <Paper className="surface" radius="xl" style={{ overflow: "hidden" }}>
+      <Paper className="surface" radius="xl" style={{ overflow: "hidden" }} ref={motion}>
         {list.map((i, idx) => (
           <Group key={i.id} renderRoot={(p) => <Link href={`/items/${i.id}`} {...p} />} wrap="nowrap" gap="sm" px="md" py={11} className="pressable" style={idx ? line : undefined}>
             <Text size="xs" fw={600} w={72} className="tabular" c={dayDiff(i.eventDate!) <= 1 ? "red.6" : undefined} style={{ flex: "none", whiteSpace: "nowrap" }}>{shortDay(i)}</Text>
@@ -79,10 +82,11 @@ function Week({ items }: { items: Item[] }) {
 function ReviewBox({ items, personKey }: { items: Item[]; personKey: string }) {
   const list = items.filter((i) => !isKnowledge(i) && i.status === "open" && unreviewed(i))
     .sort((a, b) => (a.eventDate ?? "9999").localeCompare(b.eventDate ?? "9999"));
+  const motion = useListMotion();
   if (!list.length) return null;
   return (
     <Card id="sec-review" title={t("待你核对 · {0}", list.length)} extra={<More href={`/review?person=${encodeURIComponent(personKey)}`}>{t("逐条核对")}</More>}>
-      <Paper className="surface" radius="xl" style={{ overflow: "hidden" }}>
+      <Paper className="surface" radius="xl" style={{ overflow: "hidden" }} ref={motion}>
         {list.slice(0, 3).map((i, idx) => (
           <Box key={i.id} px="md" py={12} style={idx ? line : undefined}>
             <Text component={Link} href={`/items/${i.id}`} size="sm" lh={1.45} display="block">{i.title}</Text>

@@ -8,7 +8,7 @@ import {
   IconHeart, IconHeartHandshake, IconMessageQuestion, IconRefresh, IconSparkles, IconStar, IconUserHeart, IconX,
 } from "@tabler/icons-react";
 import Link from "next/link";
-import { post, refreshAll } from "@/lib/client";
+import { patchItem, post, refreshAll } from "@/lib/client";
 import { relDate } from "@/lib/format";
 import { CERTAINTY_LABEL, STATUS_LABEL, unreviewed, type Category, type Item, type Kind } from "@/lib/types";
 
@@ -19,9 +19,17 @@ const KIND_ICON: Record<Kind, typeof IconHeart> = {
 };
 const CERT_COLOR = { confirmed: "teal", tentative: "yellow", changed: "orange", cancelled: "gray", uncertain: "violet" } as const;
 
+// what each action will do to the item, so the card can change before the Mac confirms (mirrors applyAction in db.ts)
+const PREDICT: Record<string, Record<string, unknown>> = {
+  followed: { status: "followed" }, ignore: { status: "ignored" }, done: { status: "done" }, cancel: { status: "cancelled" },
+  reopen: { status: "open" }, accept: { review: "accepted" }, reject: { review: "rejected", status: "ignored" }, snooze: { status: "snoozed" },
+};
+
 export async function act(id: number, action: string, extra: Record<string, unknown> = {}, label?: string) {
+  if (PREDICT[action]) patchItem(id, PREDICT[action]);
   try {
-    const r = await post<{ historyId: number }>(`/api/items/${id}/action`, { action, ...extra });
+    const r = await post<{ historyId: number; item?: Record<string, unknown> }>(`/api/items/${id}/action`, { action, ...extra });
+    if (r.item) patchItem(id, r.item);
     refreshAll();
     const nid = `act-${r.historyId}`;
     notifications.show({
@@ -38,6 +46,7 @@ export async function act(id: number, action: string, extra: Record<string, unkn
       ),
     });
   } catch (e) {
+    refreshAll(); // put back what the Mac really has
     notifications.show({ color: "red", message: t("操作失败：{0}", (e as Error).message) });
   }
 }

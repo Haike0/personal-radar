@@ -7,9 +7,10 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { registerSW } from "@/lib/push-client";
 import { recordPath } from "@/lib/nav";
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, ViewTransition, type ReactNode } from "react";
 import type { CompanionContext } from "@/lib/ai/types";
 import { Companion } from "./Companion";
+import { TabBar } from "./TabBar";
 
 const TABS = [
   { href: "/", label: t("今天"), icon: IconRadar2 },
@@ -18,6 +19,11 @@ const TABS = [
   { href: "/companion", label: "AI", icon: IconSparkles },
   { href: "/settings", label: t("设置"), icon: IconSettings },
 ];
+
+const PHONE_TABS = TABS.filter((tb) => tb.href !== "/companion");
+
+/** How deep a page sits: tabs are 1, a person or an item opened from them is 2 or more. Decides push / pop / switch. */
+const depth = (p: string) => p.split(/[?#]/)[0].split("/").filter(Boolean).length || 1;
 
 type Ctx = { openCompanion: (prompt?: string, context?: CompanionContext) => void; setPageContext: (c: CompanionContext) => void; pageContext: CompanionContext };
 const CompanionCtx = createContext<Ctx | null>(null);
@@ -44,6 +50,23 @@ export function Shell({ children }: { children: ReactNode }) {
   const openCompanion = useCallback((prompt?: string, context?: CompanionContext) => { setOverride(context ?? null); setSeed(prompt); setOpen(true); }, []);
   const value = useMemo(() => ({ openCompanion, setPageContext, pageContext }), [openCompanion, pageContext]);
   useEffect(() => { recordPath(path); }, [path]);
+  // tell the page transition which way to move: deeper = slide in from the right, shallower = back, same level = fade
+  const last = useRef(path);
+  useEffect(() => {
+    const mark = (to: string) => {
+      const a = depth(last.current), b = depth(to);
+      document.documentElement.dataset.nav = b > a ? "push" : b < a ? "pop" : "switch";
+    };
+    const onClick = (e: MouseEvent) => {
+      const a = (e.target as Element | null)?.closest?.("a[href^='/']");
+      if (a) mark(a.getAttribute("href")!);
+    };
+    const onPop = () => mark(location.pathname);
+    document.addEventListener("click", onClick, true);
+    window.addEventListener("popstate", onPop);
+    return () => { document.removeEventListener("click", onClick, true); window.removeEventListener("popstate", onPop); };
+  }, []);
+  useEffect(() => { last.current = path; }, [path]);
   const active = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
   const onCompanionPage = path.startsWith("/companion");
   // first-run pages are a focused flow: no sidebar, no bottom tab bar, no AI button
@@ -96,21 +119,13 @@ export function Shell({ children }: { children: ReactNode }) {
         <AppShell.Main>
           <Box maw={wide ? 1120 : 760} mx="auto" px={{ base: 16, sm: 32 }} pt={{ base: "calc(var(--safe-top) + 18px)", sm: 36 }}
             pb={{ base: bare ? "calc(var(--safe-bottom) + 28px)" : "calc(var(--tabbar-h) + var(--safe-bottom) + 28px)", sm: 48 }}>
-            {children}
+            {/* page changes cross-fade (switching tabs) or slide like iOS (opening / going back); see globals.css */}
+            <ViewTransition name="page">{children}</ViewTransition>
           </Box>
         </AppShell.Main>
       </AppShell>
 
-      {!desktop && !bare && (
-        <nav className="tabbar" aria-label={t("主导航")}>
-          {TABS.filter((t) => t.href !== "/companion").map((t) => (
-            <Link key={t.href} href={t.href} className="tab" data-active={active(t.href) || undefined}>
-              <t.icon size={24} stroke={active(t.href) ? 2.1 : 1.7} />
-              <span>{t.label}</span>
-            </Link>
-          ))}
-        </nav>
-      )}
+      {!desktop && !bare && <TabBar tabs={PHONE_TABS} activeIndex={Math.max(0, PHONE_TABS.findIndex((tb) => active(tb.href)))} />}
       {!onCompanionPage && !bare && (
         <button className="ai-fab" aria-label={t("打开 AI 助手")} onClick={() => openCompanion()}>
           <IconSparkles size={26} stroke={1.8} />

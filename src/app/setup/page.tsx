@@ -1,6 +1,6 @@
 "use client";
 import { t } from "@/lib/i18n";
-import { Button, Group, Paper, Stack, Stepper, Text, Title } from "@mantine/core";
+import { Button, Group, Paper, Stack, Text, Title } from "@mantine/core";
 import { IconArrowRight, IconCheck } from "@tabler/icons-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -52,16 +52,23 @@ export default function SetupPage() {
   return (
     <Stack gap="lg" className="fade-in">
       <div>
-        <Group justify="space-between" align="center">
-          <Title order={1} fz={28}>{t("用自己的聊天")}</Title>
-          <Button variant="subtle" color="gray" size="xs" radius="xl" onClick={leave}>{t("先不设置，看演示")}</Button>
+        {/* "skip" sits on its own line above the title (like an iOS nav bar), so the title never has to squeeze beside it */}
+        <Group justify="flex-end" mb={2} mt={-6}>
+          <Button variant="subtle" color="gray" size="compact-sm" radius="xl" onClick={leave} rightSection={<IconArrowRight size={14} />}>{t("先不设置，看演示")}</Button>
         </Group>
-        <Text size="sm" className="muted" mt={4}>{t("四步，聊天始终存在这台电脑上。")}</Text>
+        <Title order={1} fz={30} lh={1.15}>{t("用自己的聊天")}</Title>
+        <Text size="sm" className="muted" mt={6}>{t("四步，聊天始终存在这台电脑上。")}</Text>
       </div>
-      <Stepper active={step} onStepClick={setStep} size="sm" allowNextStepsSelect>
-        {STEPS.map((s) => <Stepper.Step key={s.label} label={s.label} description={s.desc} />)}
-      </Stepper>
-      <Paper className="surface" radius="xl" p="lg">{body}</Paper>
+      <div className="steps" role="tablist">
+        {STEPS.map((s, i) => (
+          <button key={s.label} type="button" role="tab" aria-selected={i === step} className="step" data-state={i < step ? "done" : i === step ? "now" : undefined} onClick={() => setStep(i)}>
+            <span className="step-bar"><span /></span>
+            <span className="step-label">{i < step ? <IconCheck size={13} stroke={2.6} /> : <b>{i + 1}</b>}{s.label}</span>
+            <span className="step-desc">{s.desc}</span>
+          </button>
+        ))}
+      </div>
+      <Paper className="surface" radius="xl" p="lg"><div key={step} className="fade-in">{body}</div></Paper>
       <Group justify="space-between">
         <Button variant="subtle" color="gray" radius="md" disabled={step === 0} onClick={() => setStep(step - 1)}>{t("上一步")}</Button>
         {step < STEPS.length - 1
