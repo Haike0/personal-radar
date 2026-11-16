@@ -117,30 +117,6 @@ const LockPhone: React.FC<{ w: number; time: string; date: string; children?: Re
 };
 
 // 1. 00:47, the question
-// the glass the opening shatters into: rings of shards around the point of impact (the panic line), fixed so every render matches
-const IMPACT = { x: 540, y: 1570 };
-const SHARDS: { pts: [number, number][]; c: [number, number]; spin: number; speed: number }[] = (() => {
-  let seed = 11;
-  const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
-  const n = 10;
-  const ang = Array.from({ length: n }, (_, i) => ((i + 0.15 + rnd() * 0.7) / n) * Math.PI * 2);
-  const ring = (r: number, jit: number) => ang.map((a) => [IMPACT.x + Math.cos(a) * r * (1 - jit / 2 + rnd() * jit), IMPACT.y + Math.sin(a) * r * (1 - jit / 2 + rnd() * jit)] as [number, number]);
-  const r1 = ring(170, 0.5), r2 = ring(620, 0.4), r3 = ring(1300, 0.3), r4 = ring(3200, 0);
-  const out: { pts: [number, number][]; c: [number, number]; spin: number; speed: number }[] = [];
-  const add = (pts: [number, number][], speed: number) => {
-    const c: [number, number] = [pts.reduce((t, p) => t + p[0], 0) / pts.length, pts.reduce((t, p) => t + p[1], 0) / pts.length];
-    out.push({ pts, c, spin: (rnd() - 0.5) * 140, speed: speed * (0.8 + rnd() * 0.5) });
-  };
-  for (let i = 0; i < n; i++) {
-    const j = (i + 1) % n;
-    add([[IMPACT.x, IMPACT.y], r1[i], r1[j]], 1.6);
-    add([r1[i], r2[i], r2[j], r1[j]], 1.25);
-    add([r2[i], r3[i], r3[j], r2[j]], 1);
-    add([r3[i], r4[i], r4[j], r3[j]], 0.8);
-  }
-  return out;
-})();
-
 const AskBody: React.FC = () => (
   <AbsoluteFill>
     <Backdrop />
@@ -157,37 +133,24 @@ const AskBody: React.FC = () => (
   </AbsoluteFill>
 );
 
-// 1. 00:47, the question. The panic line lands, the screen shakes, cracks, and shatters into the drop.
-const DOOM = Math.round(beat("ask", 6) + 7);
-const CRACK = DOOM + 5, FLY = DOOM + 8;
+// 1. 00:47, the question. The panic line lands and the whole screen shakes hard.
+const DOOM = Math.round(beat("ask", 7));
 const Ask: React.FC = () => {
   const f = useCurrentFrame();
   const d = f - DOOM;
-  const shake = d >= 0 && f < FLY ? Math.sin(d * 2.6) * 22 * Math.exp(-d / 6) : 0;
-  const shakeY = d >= 0 && f < FLY ? Math.cos(d * 3.1) * 12 * Math.exp(-d / 6) : 0;
-  const zoom = d >= 0 ? 1 + 0.05 * Math.exp(-d / 4) : 1;
-  if (f < CRACK) return <AbsoluteFill style={{ transform: `translate(${shake}px, ${shakeY}px) scale(${zoom})` }}><AskBody /></AbsoluteFill>;
-  // cracked: the shards part by a few pixels (the seams show), then fly apart, spinning and falling
-  const t = interpolate(f, [FLY, 120], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.in(Easing.quad) });
-  const seam = interpolate(f, [CRACK, FLY], [0, 1], { extrapolateRight: "clamp" });
+  const k = d >= 0 ? Math.exp(-d / 7) : 0;
+  const shake = d >= 0 ? Math.sin(d * 2.7) * 38 * k : 0;
+  const shakeY = d >= 0 ? Math.cos(d * 3.3) * 18 * k : 0;
+  const tilt = d >= 0 ? Math.sin(d * 2.1) * 1.2 * k : 0;
+  const zoom = d >= 0 ? 1 + 0.06 * Math.exp(-d / 4) : 1;
   return (
-    <AbsoluteFill style={{ background: "#0b0d12" }}>
-      {SHARDS.map((sh, i) => {
-        const dx = sh.c[0] - IMPACT.x, dy = sh.c[1] - IMPACT.y, len = Math.hypot(dx, dy) || 1;
-        const push = seam * 5 + t * 950 * sh.speed;
-        const x = (dx / len) * push, y = (dy / len) * push + t * t * 700;
-        return (
-          <AbsoluteFill key={i} style={{ transform: `translate(${x}px, ${y}px) rotate(${sh.spin * t}deg) scale(${1 - t * 0.25})`, transformOrigin: `${sh.c[0]}px ${sh.c[1]}px`, opacity: 1 - t * 0.3,
-            filter: "drop-shadow(0 0 1.5px rgba(255,255,255,.9))" }}>
-            <AbsoluteFill style={{ clipPath: `polygon(${sh.pts.map(([px, py]) => `${px}px ${py}px`).join(",")})` }}><AskBody /></AbsoluteFill>
-          </AbsoluteFill>
-        );
-      })}
+    <AbsoluteFill style={{ transform: `translate(${shake}px, ${shakeY}px) rotate(${tilt}deg) scale(${zoom})`, opacity: interpolate(f, [114, 120], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) }}>
+      <AskBody />
     </AbsoluteFill>
   );
 };
 
-/** "完了" punches in; the scene around it then shatters (see Ask) */
+/** "完了" punches in while the screen shakes (see Ask) */
 const Boom: React.FC<{ at: number }> = ({ at }) => {
   const f = useCurrentFrame();
   const d = f - at;
