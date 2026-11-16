@@ -1,21 +1,22 @@
 // Background music for the demo film, synthesized from scratch (no samples, no third-party tracks).
 //   node media/video/bgm.mjs   → media/video/public/bgm.wav
-// Upbeat dance-pop, 120 BPM in D major: D · A · Bm · G (I–V–vi–IV). Four-on-the-floor kick, claps on 2 and 4,
-// off-beat hats and bass, bright plucked arpeggios and a short hook melody, with the pad ducking under the kick.
-// At 120 BPM a bar is 2 s, so the drop lands exactly on the logo (4 s) and the drums stop on the ending (32 s).
-// The question at the start gets a lighter groove (claps, shaker, plucks) and a riser into the drop.
+// Punchy dance-pop, 128 BPM in D major: D · A · Bm · G (I–V–vi–IV). Heavy four-on-the-floor kick, clap + snare on 2 and 4,
+// rolling 16th bass and wide saw chord stabs that pump under the kick, plucked arpeggios and a hook melody.
+// The beat grid is shifted so the drop lands exactly on the logo (4 s); a half-second of silence before it makes it hit.
+// The question at the start gets a filtered groove and a build-up (snare roll + riser) into the drop.
 import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 
 const SR = 44100, DUR = 37.06, N = Math.round(SR * DUR);
-const BPM = 120, BEAT = 60 / BPM, BAR = BEAT * 4;
+const BPM = 128, BEAT = 60 / BPM, BAR = BEAT * 4;
 const L = new Float32Array(N), R = new Float32Array(N), SEND = new Float32Array(N), PAD = new Float32Array(N);
 const hz = (m) => 440 * 2 ** ((m - 69) / 12);
 const TAU = Math.PI * 2;
 
 // film moments (seconds), from the scene table in Film.tsx (30 fps)
 const BRAND = 120 / 30, APP = 195 / 30, CARD = (600 + 70) / 30, END = 960 / 30;
+const GRID0 = BRAND - 2 * BAR; // bar 2 starts on the logo
 
 const CHORDS = [
   [62, 66, 69, 74], // D   D F# A D
@@ -74,58 +75,72 @@ const clap = () => { const h = hp(0.6); return (t) => h() * (Math.exp(-t * 28) +
 const crash = () => { const h = hp(1); return (t) => h() * Math.exp(-t * 2.2) * 0.35; };
 const chime = (f) => (t) => Math.exp(-t * 1.8) * Math.min(1, t * 300) * (Math.sin(TAU * f * t + 2 * Math.exp(-t * 3) * Math.sin(TAU * f * 3.5 * t)) + 0.3 * Math.sin(TAU * f * 2 * t));
 
-const bars = Math.ceil(DUR / BAR);
-for (let b = 0; b < bars; b++) {
-  const t = b * BAR, ch = CHORDS[b % 4], root = ROOTS[b % 4];
-  if (t >= DUR) break;
-  const full = t >= BRAND - 0.01 && t < END - 0.01;   // the drop: everything plays
-  const intro = t < BRAND - 0.01;                       // the question: lighter groove
-  const outro = t >= END - 0.01;
-  if (outro) continue;
-  // plucked arpeggio on every 8th: up, down, with the top note on the off-beats
+// wide saw chord stab (7 detuned voices), the "big room" chord sound
+const stab = (f, len) => (t) => {
+  const env = Math.min(1, t * 300) * Math.exp(-t * 5) * Math.min(1, (len - t) * 40);
+  let v = 0;
+  for (const d of [0.985, 0.992, 0.997, 1, 1.003, 1.008, 1.015]) for (let k = 1; k <= 10; k++) v += Math.sin(TAU * f * d * k * t + d * k * 3) / k * Math.exp(-t * k * 0.6);
+  return env * v / 7;
+};
+const snare = () => { const h = hp(0.3); return (t) => 0.5 * h() * Math.exp(-t * 18) + 0.4 * Math.sin(TAU * 190 * t) * Math.exp(-t * 30); };
+const kickBig = (t) => { const f = 46 + 140 * Math.exp(-t * 26); return Math.tanh(1.6 * Math.exp(-t * 7) * Math.sin(TAU * f * t)) + 0.35 * Math.exp(-t * 120) * Math.sin(TAU * 2400 * t); };
+
+const nBars = Math.ceil((DUR - GRID0) / BAR);
+for (let b = 0; b < nBars; b++) {
+  const t = GRID0 + b * BAR, ch = CHORDS[((b % 4) + 4) % 4], root = ROOTS[((b % 4) + 4) % 4];
+  if (t >= END - 0.01) break;
+  const drop = t >= BRAND - 0.01;
+  // plucked arpeggio on 16ths in the drop, 8ths in the intro
   const arp = [ch[0] + 12, ch[1] + 12, ch[2] + 12, ch[3] + 12, ch[2] + 12, ch[1] + 12, ch[3] + 12, ch[2] + 12];
-  arp.forEach((m, k) => add(t + k * BEAT / 2, BEAT * 0.9, pluck(hz(m), BEAT * 0.9, k % 2 ? 0.12 : 0.15, 8), k % 2 ? 0.35 : -0.35, 0.3));
-  // pad (ducked under the kick in the drop)
-  if (full) for (const m of ch) add(t, BAR + 0.05, pad(hz(m), BAR + 0.05), 0, 0, 0.06, PAD);
-  // claps on 2 and 4 and a shaker on 16ths, in the intro too
-  for (const q of [1, 3]) add(t + q * BEAT, 0.25, clap(), 0, 0.25, intro ? 0.55 : 0.7);
-  if (intro) for (const q of [0, 2]) add(t + q * BEAT, 0.3, kick, 0, 0, 0.55);
-  for (let s = 0; s < 16; s++) add(t + s * BEAT / 4, 0.05, hat(90), 0.25, 0.05, s % 4 === 2 ? 0.15 : 0.08);
-  if (full) {
-    for (let q = 0; q < 4; q++) {
-      add(t + q * BEAT, 0.35, kick, 0, 0, 0.95);
-      add(t + q * BEAT + BEAT / 2, 0.14, hat(24), -0.2, 0.08, 0.3);   // open hat on the off-beat
-      add(t + q * BEAT + BEAT / 2, BEAT * 0.45, bass(hz(root + (q % 2 ? 12 : 0)), BEAT * 0.45), 0, 0, 0.36);
-    }
-    add(t, BEAT * 0.4, bass(hz(root), BEAT * 0.4), 0, 0, 0.3);
-    // the hook melody from when the app appears, two bars per phrase
-    if (t >= APP - BAR) {
-      const ph = HOOK[Math.floor(b / 2) % 4];
-      for (const [beat, m, len] of ph) {
-        const tt = t + (b % 2) * 0 + beat * BEAT;
-        if (b % 2 === 0) add(tt, len * BEAT, lead(hz(m), len * BEAT, 0.2), 0.1, 0.35);
-        else add(tt, len * BEAT, lead(hz(m - 12), len * BEAT, 0.11), -0.1, 0.35);
-      }
+  const step = drop ? 16 : 8;
+  for (let k = 0; k < step; k++) add(t + k * BAR / step, BAR / step * 1.6, pluck(hz(arp[k % 8] + (drop && k % 4 === 3 ? 12 : 0)), BAR / step * 1.6, drop ? 0.08 : 0.12, 9), k % 2 ? 0.4 : -0.4, 0.3);
+  if (!drop) {
+    // intro: clap on 2 and 4, kick on 1 and 3, shaker
+    for (const q of [1, 3]) add(t + q * BEAT, 0.25, clap(), 0, 0.25, 0.6);
+    for (const q of [0, 2]) add(t + q * BEAT, 0.3, kickBig, 0, 0, 0.5);
+    for (let s16 = 0; s16 < 16; s16++) add(t + s16 * BEAT / 4, 0.05, hat(90), 0.25, 0.05, s16 % 4 === 2 ? 0.14 : 0.07);
+    continue;
+  }
+  // chord stabs: on the off-beats ("and" of each beat), pumping
+  for (let q = 0; q < 4; q++) for (const m of ch) add(t + q * BEAT + BEAT / 2, BEAT * 0.45, stab(hz(m), BEAT * 0.45), 0, 0.25, 0.085, PAD);
+  // long chord underneath on the first beat
+  for (const m of ch) add(t, BAR, pad(hz(m), BAR), 0, 0, 0.04, PAD);
+  for (let q = 0; q < 4; q++) {
+    add(t + q * BEAT, 0.4, kickBig, 0, 0, 1.0);
+    if (q % 2) { add(t + q * BEAT, 0.25, clap(), 0, 0.3, 0.7); add(t + q * BEAT, 0.25, snare(), 0, 0.2, 0.55); }
+    add(t + q * BEAT + BEAT / 2, 0.14, hat(22), -0.2, 0.08, 0.3);   // open hat on the off-beat
+    // rolling bass: three 16ths after each kick (the kick owns the first)
+    for (const s16 of [1, 2, 3]) add(t + q * BEAT + s16 * BEAT / 4, BEAT / 4 * 0.9, bass(hz(root + (s16 === 2 ? 12 : 0)), BEAT / 4 * 0.9), 0, 0, 0.34);
+  }
+  for (let s16 = 0; s16 < 16; s16++) add(t + s16 * BEAT / 4, 0.04, hat(120), 0.3, 0.03, s16 % 2 ? 0.1 : 0.06);
+  // hook melody from when the app appears
+  if (t >= APP - BAR) {
+    const ph = HOOK[((Math.floor(b / 2) % 4) + 4) % 4];
+    for (const [beat, m, len] of ph) {
+      if (b % 2 === 0) add(t + beat * BEAT, len * BEAT, lead(hz(m), len * BEAT, 0.3), 0.1, 0.35);
+      else add(t + beat * BEAT, len * BEAT, lead(hz(m - 12), len * BEAT, 0.2), -0.1, 0.35);
     }
   }
 }
-// riser into the drop: rising noise and a snare roll that speeds up
-add(BRAND - 1.6, 1.6, (() => { const h = hp(0.8); return (t) => h() * (t / 1.6) ** 2 * 0.25; })(), 0, 0.4);
-for (let k = 0; k < 16; k++) { const tt = BRAND - 1 + k * (1 / 16); add(tt, 0.08, clap(), 0, 0.2, 0.15 + k * 0.025); }
-add(BRAND, 2.5, crash(), 0, 0.5, 0.8);
+// build-up: riser and a snare roll that doubles in speed, then half a beat of silence before the drop
+add(BRAND - 2 * BAR, 2 * BAR - BEAT / 2, (() => { const h = hp(0.7); const len = 2 * BAR - BEAT / 2; return (t) => h() * (t / len) ** 2.5 * 0.35; })(), 0, 0.4);
+for (let k = 0; k < 24; k++) { const tt = BRAND - BAR - BEAT / 2 + k * ((BAR) / 24); if (tt < BRAND - BEAT / 2) add(tt, 0.07, snare(), 0, 0.2, 0.15 + k * 0.03); }
+{ const s0 = Math.round((BRAND - BEAT / 2) * SR), s1 = Math.round(BRAND * SR); for (let i = s0; i < s1; i++) { L[i] = 0; R[i] = 0; SEND[i] = 0; PAD[i] = 0; } }
+add(BRAND, 2.5, crash(), 0, 0.5, 0.9);
 // moments: logo, ledger card, and the final chord
 add(BRAND + 0.05, 2.5, chime(hz(86)), -0.2, 0.6, 0.06);
 add(CARD, 2.5, chime(hz(90)), 0.15, 0.6, 0.08); add(CARD + 0.08, 2.5, chime(hz(93)), -0.15, 0.6, 0.05);
-add(END, 2.5, crash(), 0, 0.5, 0.5);
-for (const [k, m] of [62, 69, 74, 78, 81].entries()) add(END + 0.03 * k, DUR - END, pluck(hz(m), DUR - END, 0.12, 1.4), (k - 2) * 0.2, 0.6);
+add(END, 2.5, crash(), 0, 0.5, 0.6);
+for (const [k, m] of [62, 69, 74, 78, 81].entries()) add(END + 0.03 * k, DUR - END, stab(hz(m), DUR - END), (k - 2) * 0.2, 0.6, 0.08);
+add(END, 1.2, kickBig, 0, 0, 1.0);
 
 // sidechain: the pad dips on every kick and swells back, the "pumping" feel of dance pop
 for (let i = 0; i < N; i++) {
   const t = i / SR;
   if (!PAD[i]) continue;
-  const ph = (t % BEAT) / BEAT;
-  const duck = t >= BRAND && t < END ? 0.35 + 0.65 * Math.min(1, ph * 3) : 1;
-  L[i] += PAD[i] * duck * 0.9; R[i] += PAD[i] * duck * 0.9; SEND[i] += PAD[i] * duck * 0.3;
+  const ph = (((t - GRID0) % BEAT) + BEAT) % BEAT / BEAT;
+  const duck = t >= BRAND && t < END ? 0.2 + 0.8 * Math.min(1, ph * 2.5) : 1;
+  L[i] += PAD[i] * duck * 1.1; R[i] += PAD[i] * duck * 1.1; SEND[i] += PAD[i] * duck * 0.3;
 }
 
 // room: four combs and two all-passes (Schroeder), fed by the send
@@ -165,6 +180,6 @@ fs.mkdirSync(path.dirname(out), { recursive: true });
 const raw = out.replace(/\.wav$/, ".raw.wav");
 fs.writeFileSync(raw, pcm);
 // a brighter top and a little less low end (dance-pop mixes sit bright), then web-video loudness (-16 LUFS) with a true-peak ceiling
-execFileSync("ffmpeg", ["-loglevel", "error", "-y", "-i", raw, "-af", "highpass=f=28,bass=g=-2:f=110,treble=g=2:f=5000,loudnorm=I=-16:TP=-1.5:LRA=7", "-ar", String(SR), out]);
+execFileSync("ffmpeg", ["-loglevel", "error", "-y", "-i", raw, "-af", "highpass=f=28,bass=g=-2:f=110,treble=g=3:f=5000,loudnorm=I=-16:TP=-1.5:LRA=7", "-ar", String(SR), out]);
 fs.rmSync(raw);
 console.log("bgm.wav", (fs.statSync(out).size / 1e6).toFixed(1), "MB");
