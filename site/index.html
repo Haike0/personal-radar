@@ -48,6 +48,33 @@ h1{font-size:var(--t-display);word-break:keep-all;overflow-wrap:anywhere;line-he
 .lede{font-size:var(--t-md);color:var(--muted);max-width:720px;margin:24px auto 0}
 .ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:36px}
 .note{font-size:var(--t-xs);color:var(--faint);margin-top:14px}
+.btn.big{padding:15px 28px 15px 24px;font-size:var(--t-md);min-width:210px;justify-content:center}
+.btn.big svg{width:24px;height:24px}
+.btn.big span{display:flex;flex-direction:column;align-items:flex-start;line-height:1.15}
+.btn.big small{font-size:11px;font-weight:500;opacity:.7}
+.note a{color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+/* LINE badge: Japanese page only */
+.linebadge{display:none;align-items:center;gap:10px;margin:0 auto 18px;background:#06c755;color:#fff;font-weight:700;font-size:var(--t-md);padding:10px 20px 10px 10px;border-radius:999px;box-shadow:0 10px 30px -12px rgba(6,199,85,.7)}
+.linebadge .lb-dot{background:#fff;color:#06c755;font-size:12px;font-weight:800;padding:4px 9px;border-radius:999px;letter-spacing:.02em}
+.linebadge .lb-go{opacity:.85}
+html:lang(ja) .linebadge{display:inline-flex}
+html:lang(ja) .hero .eyebrow{display:none}
+/* phones: say it installs on a computer first */
+.mcard,.mnote{display:none}
+html.mobile .desk{display:none}
+html.mobile .mcard{display:block;text-align:left;max-width:460px;margin:32px auto 0;background:var(--card);border:2px solid var(--blue);border-radius:20px;padding:20px;box-shadow:0 18px 40px -24px rgba(47,139,255,.6)}
+.mhead{display:flex;align-items:center;gap:10px;font-size:var(--t-md);color:var(--blue)}
+.mhead svg{width:28px;height:28px;flex:none}
+.mhead b{color:var(--fg)}
+.mcard p{color:var(--muted);font-size:var(--t-sm);margin-top:8px}
+.msteps{list-style:none;counter-reset:s;margin-top:14px;display:grid;gap:8px}
+.msteps li{counter-increment:s;display:flex;gap:10px;align-items:flex-start;font-size:var(--t-sm)}
+.msteps li::before{content:counter(s);flex:none;width:22px;height:22px;border-radius:50%;background:var(--fg);color:var(--bg);font-size:12px;font-weight:700;display:grid;place-items:center;margin-top:1px}
+.mbtns{display:grid;gap:10px;margin-top:16px}
+.mbtns .btn{justify-content:center;border:0;cursor:pointer;font-family:inherit;white-space:nowrap}
+.mbtns .btn.ghost{border:1px solid var(--line);color:var(--fg)}
+.mbtns .btn[hidden]{display:none}
+html.mobile .mnote{display:block;background:rgba(255,255,255,.1);border-radius:12px;padding:10px 14px;font-weight:600;margin-bottom:20px}
 .shot{margin:64px auto 0;max-width:1160px}
 .shot img{width:100%;border-radius:18px}
 /* sections */
@@ -103,7 +130,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 .reveal.in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
 @media (max-width:900px){.links .hide{display:none}.grid{grid-template-columns:1fr 1fr}.ledger{grid-template-columns:1fr}.priv,.oses{grid-template-columns:1fr 1fr}.dl{padding:48px 24px}}
-@media (max-width:600px){.wrap{padding-inline:16px}.grid{grid-template-columns:1fr}.f{min-height:480px}.priv,.oses{grid-template-columns:1fr}section{padding:80px 0}.hero{padding-top:64px}.links{gap:12px}}
+@media (max-width:600px){.wrap{padding-inline:16px}.grid{grid-template-columns:1fr}.f{min-height:480px}.priv,.oses{grid-template-columns:1fr}section{padding:80px 0}.hero{padding-top:64px}.links{gap:12px}.btn.big{min-width:0;flex:1}.linebadge{font-size:14px;white-space:nowrap;gap:8px;padding:8px 14px 8px 8px}}
 </style>
 </head>
 <body>
@@ -122,14 +149,24 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 </nav>
 
 <header class="hero wrap">
+  <a class="linebadge" href="#faq" id="lineBadge"><span class="lb-dot">LINE</span><span data-i="lineBadge"></span><span class="lb-go">→</span></a>
   <div class="eyebrow"><b></b><span data-i="openSource"></span></div>
   <h1 data-i="tagline"></h1>
   <p class="lede" data-i="sub"></p>
-  <div class="ctas">
-    <a class="btn primary" id="cta" href="#download"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 21h16"/></svg><span id="ctaText"></span></a>
+  <div class="ctas desk" id="ctas">
+    <a class="btn primary big" id="dlMac"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.37 12.6c-.02-2.3 1.88-3.4 1.96-3.46-1.07-1.56-2.73-1.78-3.32-1.8-1.41-.14-2.76.83-3.47.83-.72 0-1.82-.81-3-.79-1.54.02-2.96.9-3.75 2.27-1.6 2.78-.41 6.9 1.15 9.15.76 1.1 1.67 2.34 2.86 2.3 1.15-.05 1.58-.74 2.97-.74 1.38 0 1.77.74 2.98.72 1.23-.02 2.01-1.12 2.76-2.23.87-1.28 1.23-2.52 1.25-2.58-.03-.01-2.4-.92-2.42-3.66zM14.1 5.86c.63-.77 1.06-1.83.94-2.9-.91.04-2.02.61-2.67 1.37-.58.67-1.1 1.76-.96 2.8 1.02.08 2.06-.52 2.69-1.27z"/></svg><span><small data-i="dlFor"></small>Mac</span></a>
+    <a class="btn primary big" id="dlWin"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 5.1l7.4-1v7.2H3V5.1zm8.3-1.1L21 2.6v8.7h-9.7V4zM3 12.7h7.4v7.2L3 18.9v-6.2zm8.3 0H21v8.7l-9.7-1.4v-7.3z"/></svg><span><small data-i="dlFor"></small>Windows</span></a>
+  </div>
+  <p class="note desk"><span data-i="free"></span> · <a href="#download" data-i="otherOs"></a></p>
+  <div class="mcard" id="mcard">
+    <div class="mhead"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="15" height="11" rx="2"/><path d="M6 19h7M9.5 15v4"/><rect x="17" y="9" width="5" height="10" rx="1.2"/></svg><b data-i="mTitle"></b></div>
+    <p data-i="mText"></p>
+    <ol class="msteps" id="msteps"></ol>
+    <div class="mbtns"><button class="btn primary" id="mShare"></button><button class="btn ghost" id="mCopy"></button></div>
+  </div>
+  <div class="ctas" style="margin-top:18px">
     <a class="btn ghost" href="https://github.com/Haike0/personal-radar"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg>GitHub</a>
   </div>
-  <p class="note" data-i="free"></p>
   <div class="shot reveal"><picture><source id="heroDark" media="(prefers-color-scheme: dark)"><img id="hero" alt="ReadMe"></picture></div>
 </header>
 
@@ -171,6 +208,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 
 <section id="download" class="wrap">
   <div class="dl">
+    <p class="mnote" data-i="mTitle"></p>
     <h2 data-i="hDownload"></h2>
     <p class="sub" data-i="pDownload"></p>
     <div class="oses" id="oses"></div>
@@ -189,6 +227,10 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 const REL = "https://github.com/Haike0/personal-radar/releases/latest/download/";
 const T = {
   zh: {
+    dlFor:"下载", otherOs:"Intel Mac、Linux 和安装说明", lineBadge:"",
+    mTitle:"ReadMe 要先装在电脑上", mText:"手机上没法直接安装。请用 Mac 或 Windows 电脑打开这个网页下载，装好后手机也能看提醒。",
+    mSteps:["在电脑上打开本页，下载安装","在电脑上导入聊天记录","手机连上电脑，把页面加到主屏幕，接收提醒"],
+    mShare:"把网址发给自己", mCopy:"复制网址", mCopied:"已复制，到电脑上粘贴打开",
     navFeatures:"功能", navDownload:"下载", openSource:"开源 · 免费 · 在你自己的电脑上运行",
     tagline:'TA 说过的话，<br><span class="grad">ReadMe 都记得。</span>',
     sub:"从聊天里找出约好的事、答应过的事和 TA 的喜好，到日子提醒你。每一条都能点回原话，聊天不离开你的电脑。",
@@ -207,6 +249,10 @@ const T = {
     feedback:"反馈问题", features:null
   },
   en: {
+    dlFor:"Download for", otherOs:"Intel Mac, Linux and install notes", lineBadge:"",
+    mTitle:"ReadMe installs on a computer first", mText:"It can't be installed on a phone. Open this page on a Mac or Windows computer to download it. Once it's set up, your phone can get the reminders too.",
+    mSteps:["Open this page on your computer and install","Import your chats on the computer","Connect your phone, add the page to your home screen, get reminders"],
+    mShare:"Send the link to myself", mCopy:"Copy link", mCopied:"Copied. Paste it on your computer",
     navFeatures:"Features", navDownload:"Download", openSource:"Open source · Free · Runs on your computer",
     tagline:'Remember <span class="grad">everything they told you.</span>',
     sub:"ReadMe reads your chats and finds the plans, promises and little preferences, then reminds you on the day. Every line links back to the original message, and your chats never leave your computer.",
@@ -225,21 +271,25 @@ const T = {
     feedback:"Feedback"
   },
   ja: {
+    dlFor:"ダウンロード", otherOs:"Intel Mac・Linux・インストール方法", lineBadge:"LINE のトーク履歴を読み込めます",
+    mTitle:"ReadMe はまずパソコンに入れます", mText:"スマホには直接インストールできません。Mac か Windows のパソコンでこのページを開いてダウンロードしてください。設定後はスマホでもリマインダーを受け取れます。",
+    mSteps:["パソコンでこのページを開き、インストール","パソコンで LINE などのトーク履歴を読み込む","スマホをつないでホーム画面に追加し、リマインダーを受け取る"],
+    mShare:"自分にリンクを送る", mCopy:"リンクをコピー", mCopied:"コピーしました。パソコンで貼り付けて開いてください",
     navFeatures:"機能", navDownload:"ダウンロード", openSource:"オープンソース・無料・あなたのパソコンで動作",
     tagline:'あの人の言葉を、<br><span class="grad">ReadMe が覚えています。</span>',
-    sub:"トーク履歴から約束や予定、好きなものを見つけて、その日に知らせます。どれも元のメッセージに戻って確かめられます。トークはあなたのパソコンから出ません。",
+    sub:"LINE のトーク履歴を読み込むだけ。約束や予定、好きなものを見つけて、その日に知らせます。どれも元のメッセージに戻って確かめられます。トークはあなたのパソコンから出ません。",
     free:"macOS・Windows・Linux 対応 · 日本語・English・中文",
     kVideo:"1分でわかる", hVideo:"トークを読み込めば、あとは ReadMe が覚えておく",
     kFeatures:"できること", hFeatures:"大事なことを、それが必要になる日に",
     kLedger:"約束帳", hLedger:"誰が何を約束して、本当に守ったのか", pLedger:"ReadMe はお互いの約束を洗い出し、その後のトークから守られたかを判定して、根拠のメッセージを示します。ワンタップでカードにして、友だちに、あるいは本人にシェアできます。",
-    kSources:"取り込み先", hSources:"いつものトークアプリに、ほぼ対応", sources:"iMessage・WhatsApp・Telegram・Beeper・復号済みの WeChat フォルダを自動同期。LINE・QQ・Discord・Instagram・Messenger・Google Chat・テキスト履歴も読み込めます。ReadMe は読むだけで、送信も復号もしません。",
+    kSources:"取り込み先", hSources:"LINE も、いつものトークアプリも", sources:"LINE は「トーク履歴を送信」で書き出したファイルをそのまま読み込めます。QQ・Discord・Instagram・Messenger・Google Chat・テキスト履歴にも対応。iMessage・WhatsApp・Telegram・Beeper・復号済みの WeChat フォルダは自動同期。ReadMe は読むだけで、送信も復号もしません。",
     kPrivacy:"プライバシー", hPrivacy:"トークはあなたのパソコンの中だけ",
     priv:[["0","アカウントもサーバーもなし"],["2","AI に送るのは整理と質問のときだけ。どちらもプレビュー可"],["6","種類の個人情報を送信前に自動で隠す"],["100%","ローカルモデルなら完全オフライン"]],
     hDownload:"無料ダウンロード。開けばすぐ使えます。", pDownload:"実行環境を同梱しているので、ほかに何も入れる必要はありません。", dl:"ダウンロード",
     how:"Mac：.dmg を開いて ReadMe をアプリケーションへドラッグ。まだ公証前のため、初回は右クリック →「開く」（macOS 15 以降は「システム設定 → プライバシーとセキュリティ」で「このまま開く」）。Windows：展開して <code>ReadMe.cmd</code> をダブルクリック。開発者は <code>npx github:Haike0/personal-radar</code> でも。",
     oses:[["mac-arm64.dmg","Mac","Apple シリコン"],["mac-x64.dmg","Mac","Intel"],["windows-x64.zip","Windows","10 / 11"],["linux-x64.tar.gz","Linux","x64"]],
     kFaq:"よくある質問",
-    faq:[["無料ですか？","はい。ReadMe はオープンソース（AGPL-3.0）です。有料の AI サービスを使う場合は利用分をそのサービスに支払います。ローカルモデルなら無料です。"],["LINE は自動で取り込めますか？","LINE には公式の連携がないので、トークごとに「トーク履歴を送信」で書き出した .txt を読み込みます。iMessage・WhatsApp（Mac）・Telegram は自動同期できます。"],["スマホで使えますか？","使えます。パソコンとスマホを自分専用のネットワーク（Tailscale など）に入れ、ページをホーム画面に追加してください。リマインダーはプッシュ通知で届きます。"],["勝手にメッセージを送りませんか？","送りません。ReadMe には送信機能がありません。"],["AI が間違えたら？","どの項目も出典につながっています。新しい項目は「要確認」のまま。どれでも修正・削除できます。"]],
+    faq:[["LINE のトーク履歴は読み込めますか？","読み込めます。LINE アプリでトークを開き、右上の「≡」→「その他」（または「設定」）→「トーク履歴を送信」で .txt を書き出し、ReadMe にドラッグするだけです。LINE には公式の連携がないため、自動同期ではなくトークごとの読み込みです。iMessage・WhatsApp（Mac）・Telegram は自動同期できます。"],["無料ですか？","はい。ReadMe はオープンソース（AGPL-3.0）です。有料の AI サービスを使う場合は利用分をそのサービスに支払います。ローカルモデルなら無料です。"],["スマホで使えますか？","使えます。パソコンとスマホを自分専用のネットワーク（Tailscale など）に入れ、ページをホーム画面に追加してください。リマインダーはプッシュ通知で届きます。"],["勝手にメッセージを送りませんか？","送りません。ReadMe には送信機能がありません。"],["AI が間違えたら？","どの項目も出典につながっています。新しい項目は「要確認」のまま。どれでも修正・削除できます。"]],
     feedback:"フィードバック"
   }
 };
@@ -249,7 +299,10 @@ const FEAT = {
   ja:[["today","今日やること","約束の時間や頼まれごとが、その日のトップに出ます。予定が変われば古いほうは自動で消えます。"],["person","人物メモ","好きなもの、苦手なもの、家族、近況。どれも元の発言つき。"],["card","約束帳","お互いの約束を洗い出し、守れたかどうかを判定。シェアできるカードもワンタップで。"],["report","トーク分析","返信の速さ、どちらが先に話しかけるか、口ぐせ、よく話す時間帯。AIなしで手元で計算。"],["ask","AIに聞く","「転職の話、なんて言ってた？」あなたのトークだけを根拠に、出典つきで答えます。"],["calendar","カレンダー","恋人・友人・同僚などグループごとに、1か月分の予定をまとめて表示。"]]
 };
 const CHIPS = [["iMessage",1],["WhatsApp",1],["Telegram",1],["Beeper",1],["WeChat",1],["LINE",0],["QQ",0],["Discord",0],["Instagram",0],["Messenger",0],["Google Chat",0],["Markdown / TXT",0]];
-const os = (() => { const u = navigator.userAgent; if (/Windows/.test(u)) return "windows-x64.zip"; if (/Linux/.test(u) && !/Android/.test(u)) return "linux-x64.tar.gz"; if (/Mac/.test(u)) return "mac-arm64.dmg"; return null; })();
+const UA = navigator.userAgent;
+const mobile = /iPhone|iPad|iPod|Android|Mobile/i.test(UA) || (/Macintosh/.test(UA) && navigator.maxTouchPoints > 1); // iPad asks for the desktop site
+if (mobile) document.documentElement.classList.add("mobile");
+const os = (() => { const u = UA; if (mobile) return null; if (/Windows/.test(u)) return "windows-x64.zip"; if (/Linux/.test(u) && !/Android/.test(u)) return "linux-x64.tar.gz"; if (/Mac/.test(u)) return "mac-arm64.dmg"; return null; })();
 
 function setLang(l) {
   const t = T[l], f = FEAT[l], fs = l === "zh" ? "zh" : l;
@@ -266,13 +319,19 @@ function setLang(l) {
   v.parentElement.classList.toggle("vertical", vert);
   if (!v.src.endsWith(src)) { v.poster = `assets/poster-${tag}.webp`; v.src = src; }
   document.getElementById("grid").innerHTML = f.map(([k, h, p]) => `<div class="f reveal"><h3>${h}</h3><p>${p}</p><img class="ph" loading="lazy" src="assets/tile-${k}-${fs}.webp" alt="${h}"></div>`).join("");
-  document.getElementById("chips").innerHTML = CHIPS.map(([n, on]) => `<span class="chip${on ? " on" : ""}">${n}</span>`).join("");
+  const chips = l === "ja" ? [["LINE",1], ...CHIPS.filter((c) => c[0] !== "LINE")] : CHIPS;
+  document.getElementById("chips").innerHTML = chips.map(([n, on]) => `<span class="chip${on ? " on" : ""}">${n}</span>`).join("");
   document.getElementById("priv").innerHTML = t.priv.map(([b, s]) => `<div class="p"><b>${b}</b>${s}</div>`).join("");
   document.getElementById("oses").innerHTML = t.oses.map(([file, name, sub]) => `<a class="os${file === os ? " me" : ""}" href="${REL}ReadMe-${file}"><div class="t">${name}</div><div class="d">${sub}</div></a>`).join("");
   document.getElementById("faq").innerHTML = t.faq.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join("");
-  const mine = t.oses.find((o) => o[0] === os);
-  document.getElementById("ctaText").textContent = mine ? `${t.dl} · ${mine[1]}` : t.dl;
-  document.getElementById("cta").href = mine ? REL + "ReadMe-" + mine[0] : "#download";
+  // the two big buttons: Apple-chip Mac and Windows, whichever this computer is goes first
+  const mac = document.getElementById("dlMac"), win = document.getElementById("dlWin");
+  mac.href = REL + "ReadMe-mac-arm64.dmg"; win.href = REL + "ReadMe-windows-x64.zip";
+  if (os === "windows-x64.zip") mac.before(win); else win.before(mac);
+  document.getElementById("msteps").innerHTML = t.mSteps.map((x) => `<li>${x}</li>`).join("");
+  document.getElementById("mShare").textContent = t.mShare;
+  document.getElementById("mShare").hidden = !navigator.share;
+  document.getElementById("mCopy").textContent = t.mCopy;
   try { localStorage.setItem("readme.lang", l); } catch {}
   history.replaceState(null, "", `?lang=${l}${location.hash}`);
   observe();
@@ -282,6 +341,16 @@ function observe() {
   document.querySelectorAll(".reveal:not(.in)").forEach((el) => io.observe(el));
 }
 document.querySelectorAll(".lang button").forEach((b) => b.addEventListener("click", () => setLang(b.dataset.lang)));
+const here = () => location.origin + location.pathname + "?lang=" + document.documentElement.lang.slice(0, 2);
+document.getElementById("mShare").addEventListener("click", () => navigator.share({ title: "ReadMe", url: here() }).catch(() => {}));
+document.getElementById("mCopy").addEventListener("click", async (e) => {
+  const b = e.currentTarget, l = document.documentElement.lang.slice(0, 2);
+  try { await navigator.clipboard.writeText(here()); b.textContent = T[l].mCopied; }
+  catch { prompt("", here()); }
+  setTimeout(() => { b.textContent = T[l].mCopy; }, 4000);
+});
+// the LINE badge opens the LINE question at the bottom
+document.getElementById("lineBadge").addEventListener("click", () => setTimeout(() => { const d = document.querySelector("#faq details"); if (d) d.open = true; }, 0));
 const q = new URLSearchParams(location.search).get("lang");
 let saved = null; try { saved = localStorage.getItem("readme.lang"); } catch {}
 const nav = (navigator.language || "en").toLowerCase();
