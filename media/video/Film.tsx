@@ -10,7 +10,7 @@ type Props = { lang: Lang; portrait: boolean };
 
 const C = {
   zh: {
-    hook: "她说过的话，\n你还记得几句？", hook2: "每天几百条消息，\n重要的那几句，两天就被冲没了。", brand: "ReadMe 替你记住",
+    hook: "你还记得\n答应我啥不？", hook2: "不只是她。\n兄弟、老板、爸妈说过的话，\n两天就被冲没了。", brand: "ReadMe 替你记住",
     s: [["到日子，主动提醒你", "约好的时间、答应过的事，自动出现在今天"], ["每个人的画像", "喜好、忌讳、近况，每一条都能点回原话"], ["说话算数账本", "谁答应了什么、谁真的做到了，一键晒图"], ["常用的聊天软件都能接", "iMessage、WhatsApp、Telegram 自动同步"]],
     end: "聊天不离开你的电脑", end2: "开源 · 免费 · macOS / Windows / Linux",
   },
@@ -131,7 +131,7 @@ const Hook: React.FC<{ lang: Lang; portrait: boolean }> = ({ lang, portrait }) =
         );
       })}
       <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", padding: 80, textAlign: "center" }}>
-        <div style={{ background: "rgba(247,248,250,.78)", backdropFilter: "blur(10px)", padding: "48px 64px", borderRadius: 40 }}>
+        <div style={{ background: "rgba(247,248,250,.9)", backdropFilter: "blur(14px)", padding: "48px 64px", borderRadius: 40 }}>
           <div style={{ fontSize: TY(portrait).title, lineHeight: 1.18, fontWeight: 780, color: "#0f1115", letterSpacing: -1, opacity: t, transform: `scale(${0.94 + t * 0.06})`, maxWidth: portrait ? 900 : 1500, whiteSpace: "pre-line" }}>{br(C[lang].hook, portrait)}</div>
           <div style={{ fontSize: TY(portrait).sub, lineHeight: 1.5, color: "#5d6370", marginTop: 22, opacity: t2, maxWidth: portrait ? 860 : 1300, whiteSpace: "pre-line" }}>{br(C[lang].hook2, portrait)}</div>
         </div>
