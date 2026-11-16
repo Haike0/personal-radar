@@ -310,7 +310,7 @@ const Safe: React.FC = () => {
   const open = 1 - Math.min(1, close);
   return (
     <AbsoluteFill style={{ alignItems: "center", paddingTop: 200, opacity: interpolate(f, [0, 6], [0, 1], { extrapolateRight: "clamp" }) }}>
-      <div style={{ transform: `translateY(${move * -110}px) scale(${1 - move * 0.45})`, display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <div style={{ transform: `translateY(${move * -110}px) scale(${1 - move * 0.45})`, opacity: 1 - move, display: "flex", flexDirection: "column", alignItems: "center" }}>
         <div style={{ position: "relative", width: 320, height: 320, display: "grid", placeItems: "center" }}>
           <div style={{ position: "absolute", inset: 0, borderRadius: "50%", background: `radial-gradient(circle, rgba(47,123,246,${0.18 + glow * 0.12}) 0%, transparent 70%)` }} />
           <svg width="230" height="260" viewBox="0 0 230 260">
