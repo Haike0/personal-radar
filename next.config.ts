@@ -37,6 +37,10 @@ const nextConfig: NextConfig = {
   // Next's own route runtimes too: instrumentation.ts (background sync, real data only) needs app-route-turbo, which
   // the tracer leaves out, so a fresh install worked in demo mode and broke as soon as real chats were imported.
   outputFileTracingIncludes: { "*": [...runtimeDeps(["telegram", "web-push"]), "node_modules/next/dist/compiled/next-server/*.prod.js"] },
+  // Keep the page cache in memory only. By default Next writes rendered pages to .next/server/route-cache/ at run time,
+  // which changes files inside the installed app: on the Mac that breaks the app's code signature (macOS may then call a
+  // downloaded app "damaged"), and the install folder isn't always writable. Pages prerendered at build time still load.
+  experimental: { isrFlushToDisk: false },
   // the floating "N" dev-tools badge only exists in dev mode; hide it so it doesn't cover the UI
   devIndicators: false,
   // iPhone access later goes through a Tailscale HTTPS hostname

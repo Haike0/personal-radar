@@ -28,6 +28,11 @@ if (!fs.existsSync(path.join(ROOT, ".next", "standalone", "node_modules", "next"
   console.error("The build is missing Next's route runtime (see outputFileTracingIncludes in next.config.ts). Rebuild first.");
   process.exit(1);
 }
+// the server must not write its page cache into the app folder (it would break the Mac app's signature)
+if (!/"isrFlushToDisk":false/.test(fs.readFileSync(path.join(ROOT, ".next", "standalone", "server.js"), "utf8"))) {
+  console.error("The build still writes its page cache to disk (see experimental.isrFlushToDisk in next.config.ts). Rebuild first.");
+  process.exit(1);
+}
 
 // 1) the app folder: what the npm package carries, minus the source code
 const payload = path.join(DIST, "payload", "app");
