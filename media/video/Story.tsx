@@ -122,8 +122,13 @@ const Ask: React.FC = () => {
   // the one deliberate jolt in the film: the screen shakes as it sinks in
   const d = f - beat("ask", 7);
   const shake = d >= 0 && d < 16 ? Math.sin(d * 2.6) * 22 * Math.exp(-d / 5) : 0;
+  const shakeY = d >= 0 && d < 16 ? Math.cos(d * 3.1) * 10 * Math.exp(-d / 5) : 0;
+  const zoom = d >= 0 ? 1 + 0.05 * Math.exp(-d / 4) : 1;
+  const edge = d >= 0 ? Math.exp(-d / 4) : 0; // the screen edges flash red
   return (
-    <AbsoluteFill style={{ padding: "150px 60px 0", transform: `translateX(${shake}px)`, opacity: interpolate(f, [114, 120], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) }}>
+    <AbsoluteFill style={{ opacity: interpolate(f, [114, 120], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) }}>
+    <AbsoluteFill style={{ background: `radial-gradient(ellipse at center, rgba(255,59,107,0) 45%, rgba(255,59,107,${0.45 * edge}) 100%)`, zIndex: 2, pointerEvents: "none" }} />
+    <AbsoluteFill style={{ padding: "150px 60px 0", transform: `translate(${shake}px, ${shakeY}px) scale(${zoom})` }}>
       <Title tag="凌晨 00:47">女朋友发来…</Title>
       <div style={{ marginTop: 90, display: "flex", flexDirection: "column", gap: 30 }}>
         <Bubble at={beat("ask", 0)} big>不是说十点给我打电话吗？</Bubble>
@@ -133,18 +138,28 @@ const Ask: React.FC = () => {
       </div>
       <Boom at={beat("ask", 7)} />
     </AbsoluteFill>
+    </AbsoluteFill>
   );
 };
 
-/** "完了" punches in while the screen shakes (no decorations) */
+/** "完了" hits like a blast: a bloom of light behind it, a red/cyan tear, while the screen shakes and the edges flash red */
 const Boom: React.FC<{ at: number }> = ({ at }) => {
   const f = useCurrentFrame();
   const d = f - at;
   if (d < 0) return null;
   const punch = interpolate(d, [0, 3, 8], [1.25, 0.97, 1], { extrapolateRight: "clamp", easing: Easing.out(Easing.quad) });
+  // a burst of light behind the words (no outlines): a hot core that blooms out and fades
+  const bloom = interpolate(d, [0, 14], [0, 1], { extrapolateRight: "clamp", easing: Easing.out(Easing.cubic) });
+  const split = 12 * Math.exp(-d / 3); // the words tear into red/cyan for a moment, like a glitch
+  const word = { position: "absolute" as const, inset: 0, fontSize: 78, fontWeight: 900, whiteSpace: "nowrap" as const };
   return (
     <div style={{ position: "absolute", left: 0, right: 0, bottom: 230, height: 240, display: "flex", justifyContent: "center", alignItems: "center" }}>
-      <div style={{ position: "relative", fontSize: 78, fontWeight: 900, color: RED, transform: `scale(${punch})` }}>完了，忘得一干二净</div>
+      <div style={{ position: "absolute", width: 900, height: 900, borderRadius: "50%", background: "radial-gradient(circle, rgba(255,240,200,.95) 0%, rgba(255,120,80,.75) 18%, rgba(255,59,107,.35) 40%, rgba(255,59,107,0) 68%)", transform: `scale(${0.25 + bloom * 1.1})`, opacity: 1 - bloom, filter: "blur(6px)" }} />
+      <div style={{ position: "relative", transform: `scale(${punch})` }}>
+        {split > 0.6 && <div style={{ ...word, color: "rgba(0,200,255,.75)", transform: `translate(${-split}px, ${split * 0.3}px)` }}>完了，忘得一干二净</div>}
+        {split > 0.6 && <div style={{ ...word, color: "rgba(255,40,60,.75)", transform: `translate(${split}px, ${-split * 0.3}px)` }}>完了，忘得一干二净</div>}
+        <div style={{ position: "relative", fontSize: 78, fontWeight: 900, color: RED, whiteSpace: "nowrap" }}>完了，忘得一干二净</div>
+      </div>
     </div>
   );
 };
