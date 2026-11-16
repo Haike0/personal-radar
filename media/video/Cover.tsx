@@ -35,8 +35,8 @@ export const Cover: React.FC = () => (
         <div style={{ fontSize: 36, fontWeight: 800, color: "#2f7bf6" }}>ReadMe 提醒你</div>
         <div style={{ marginLeft: "auto", fontSize: 30, color: "#8a90a0" }}>刚刚</div>
       </div>
-      <div style={{ marginTop: 16, fontSize: 46, fontWeight: 800, color: "#111318", lineHeight: 1.3 }}>你答应过：周六陪她去看展</div>
-      <div style={{ marginTop: 12, fontSize: 32, color: "#5d6370", borderLeft: "6px solid #2f7bf6", paddingLeft: 16 }}>原话 · 11/12 23:41「行 周六陪你去」</div>
+      <div style={{ marginTop: 16, fontSize: 46, fontWeight: 800, color: "#111318", lineHeight: 1.3 }}>下周三：你们在一起一周年</div>
+      <div style={{ marginTop: 12, fontSize: 32, color: "#5d6370", borderLeft: "6px solid #2f7bf6", paddingLeft: 16 }}>原话 · 10/3 23:41「一周年我来订餐厅」</div>
     </div>
 
     <div style={{ marginTop: "auto", marginBottom: 20, alignSelf: "center", fontSize: 72, fontWeight: 900, color: "#111318" }}>
